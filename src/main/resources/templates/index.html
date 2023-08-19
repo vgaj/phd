@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Phone Home Detector</title>
+</head>
+<body>
+<h3>Unusual Data Sent to Hosts</h3>
+<div th:each="result: ${content.results}">
+    <div>
+        <b th:text="${result.hostName}" />
+        <i th:text="'(' + ${result.totalBytes} + ' total bytes, ' + ${result.totalTimes} + ' times)'" />
+        <a th:href="@{/data(address=${result.ipAddress})}">see data</a>
+    </div>
+    <div th:text="'&nbsp;&nbsp;score: ' + ${result.score}" />
+    <div th:each="line: ${result.resultLines}" >
+        <div th:text="'&nbsp;&nbsp;' + ${line.message}" />
+        <div th:each="msg: ${line.subMessages}" th:text="'&nbsp;&nbsp;&nbsp;&nbsp;' + ${msg}" />
+    </div>
+</div>
+<h3>Last few messages</h3>
+<div th:each="message: ${content.messages}" th:text="${message}"/>
+</body>
+</html>
