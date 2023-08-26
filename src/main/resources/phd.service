@@ -3,6 +3,8 @@ Description=Phone Home Detector
 After=multi-user.target
 
 [Service]
+# Work around for https://github.com/kaitoy/pcap4j/issues/308
+Environment="SystemRoot="
 ExecStart=/usr/bin/java -Djava.net.preferIPv4Stack=true -jar /opt/phd/phonehomedetector-0.0.1-SNAPSHOT.jar
 
 [Install]
