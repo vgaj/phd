@@ -4,6 +4,11 @@ import com.github.vgaj.phd.data.MessageData;
 import org.pcap4j.core.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.event.ApplicationStartingEvent;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.ContextStoppedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -28,14 +33,16 @@ public class MonitorTask implements Runnable
 
     private PcapHandle handle;
 
-    @PostConstruct
+    // Occurs after @PostConstruct
+    @EventListener(ApplicationReadyEvent.class)
     public void start()
     {
         monitorThread = new Thread(this);
         monitorThread.start();
     }
 
-    @PreDestroy
+    // Occurs before @PreDestroy
+    @EventListener(ContextClosedEvent.class)
     public void stop()
     {
         try
@@ -45,6 +52,7 @@ public class MonitorTask implements Runnable
         }
         catch (NotOpenException | InterruptedException e)
         {
+            // TODO
             e.printStackTrace();
         }
     }

@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
-@SpringBootTest
+//@SpringBootTest
 class DataAnalyserTests
 {
 	@Test
