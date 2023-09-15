@@ -21,6 +21,7 @@
 	</properties>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>com.github.vgaj.phd</groupId>
 			<artifactId>phd-common</artifactId>
@@ -30,8 +31,7 @@
 		<dependency>
 			<groupId>org.pcap4j</groupId>
 			<artifactId>pcap4j-core</artifactId>
-			<!-- TODO 1.8.2 -->
-			<version>2.0.0-alpha.6</version>
+			<version>1.8.2</version>
 		</dependency>
 
 		<dependency>

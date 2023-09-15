@@ -1,16 +1,18 @@
 package com.github.vgaj.phd.logic;
 
+import org.pcap4j.packet.Packet;
+
 import com.github.vgaj.phd.data.MessageData;
 import com.github.vgaj.phd.data.MonitorData;
 import com.github.vgaj.phd.data.NewDataEvent;
 import com.github.vgaj.phd.util.PcapPacketHelper;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
-import org.pcap4j.core.PcapPacket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.time.Instant;
 
 /**
  * Consumes new captured data via a Distruptor
@@ -37,7 +39,7 @@ public class NewDataProcessor
         monitorData.addData(newDataEvent.getHost(), newDataEvent.getLength(), newDataEvent.getEpochMinute());
     }
 
-    private void translate(NewDataEvent event, long sequence, PcapPacket pcapPacket)
+    private void translate(NewDataEvent event, long sequence, Packet pcapPacket)
     {
         if (!pcapHelper.isIpv4(pcapPacket))
         {
@@ -50,7 +52,7 @@ public class NewDataProcessor
         }
         event.setHost(pcapHelper.getDestHost(pcapPacket));
         event.setLength(pcapHelper.getLength(pcapPacket));
-        event.setEpochMinute(pcapHelper.getEpochMinute(pcapPacket));
+        event.setEpochMinute(Instant.now().getEpochSecond() / 60);
     }
 
     /**
@@ -69,7 +71,7 @@ public class NewDataProcessor
      * Queue a captured packet to be processed
      * @param pcapPacket Data that was captured
      */
-    public void processNewData(PcapPacket pcapPacket)
+    public void processNewData(Packet pcapPacket)
     {
         disruptor.getRingBuffer().publishEvent(this::translate, pcapPacket);
     }

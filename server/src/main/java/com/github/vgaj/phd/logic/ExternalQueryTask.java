@@ -41,7 +41,7 @@ public class ExternalQueryTask  implements Runnable
         try
         {
             //handle.breakLoop();
-            queryThread.join(5000);
+            queryThread.join(1);
         }
         catch (InterruptedException e)
         {
@@ -94,6 +94,7 @@ public class ExternalQueryTask  implements Runnable
                     new Thread(() -> {
                         while (true)
                         {
+                            System.out.println("top of loop");
                             try
                             {
                                 System.out.println("reading message");
@@ -106,14 +107,14 @@ public class ExternalQueryTask  implements Runnable
                                 }
                                 else
                                 {
-                                    System.out.println("exiting due to error");
+                                    // Connection was closed
                                     break;
                                 }
                             }
                             catch (IOException e1)
                             {
                                 e1.printStackTrace();
-                                System.out.println("exiting due to error");
+                                System.out.println("exiting due to error " + e1.toString());
                             }
 
                         }

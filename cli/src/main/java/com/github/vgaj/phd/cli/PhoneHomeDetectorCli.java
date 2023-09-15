@@ -26,6 +26,6 @@ public class PhoneHomeDetectorCli
         sockComms.writeSocketMessage(message);
         Optional<String> response = sockComms.readSocketMessage();
         System.out.println("Received: " + response.get());
-        Thread.sleep(5000);
+
     }
 }
