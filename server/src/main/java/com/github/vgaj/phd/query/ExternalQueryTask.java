@@ -2,9 +2,8 @@ package com.github.vgaj.phd.query;
 
 import com.github.vgaj.phd.display.ModelGenerator;
 import com.github.vgaj.phd.ipc.DomainSocketComms;
-import com.github.vgaj.phd.query.SummaryResultsQuery;
-import com.github.vgaj.phd.query.SummaryResultsResponse;
-import org.pcap4j.core.NotOpenException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ContextClosedEvent;
@@ -12,21 +11,20 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.SocketOption;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Component
 public class ExternalQueryTask  implements Runnable
 {
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     private Thread queryThread;
 
     @Autowired
@@ -49,25 +47,23 @@ public class ExternalQueryTask  implements Runnable
             queryThread.interrupt();
             queryThread.join(1);
         }
-        catch (InterruptedException e)
+        catch (InterruptedException ignored)
         {
-            // TODO use a logging framework
-            e.printStackTrace();
         }
     }
 
     @Override
     public void run()
     {
+        UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
 
-        Path socketPath = Path.of("/tmp", "phone_home_detector_ipc");
-        UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(socketPath);
-
-        try {
-            Files.deleteIfExists(socketPath);
-        } catch (IOException e) {
-            //TODO
-            e.printStackTrace();
+        try
+        {
+            Files.deleteIfExists(DomainSocketComms.SOCKET_PATH);
+        }
+        catch (IOException e)
+        {
+            logger.error("Failed to delete " + DomainSocketComms.SOCKET_PATH, e);
             return;
         }
 
@@ -81,10 +77,10 @@ public class ExternalQueryTask  implements Runnable
                 }
                 catch (IOException e)
                 {
-                    //TODO
-                    e.printStackTrace();
+                    logger.error("Failed to bind to " + DomainSocketComms.SOCKET_PATH, e);
                     return;
                 }
+
                 // Make to world read/writable
                 Set<PosixFilePermission> permissions = new HashSet<>();
                 permissions.add(PosixFilePermission.OWNER_READ);
@@ -93,75 +89,74 @@ public class ExternalQueryTask  implements Runnable
                 permissions.add(PosixFilePermission.GROUP_WRITE);
                 permissions.add(PosixFilePermission.OTHERS_READ);
                 permissions.add(PosixFilePermission.OTHERS_WRITE);
-                try {
-                    Files.setPosixFilePermissions(socketPath, permissions);
-                } catch (IOException e) {
-                    // TODO
-                    System.err.println("Error changing permissions: " + e.getMessage());
+                try
+                {
+                    Files.setPosixFilePermissions(DomainSocketComms.SOCKET_PATH, permissions);
+                }
+                catch (IOException e)
+                {
+                    logger.error("Failed to change permissions for " + DomainSocketComms.SOCKET_PATH, e);
                     return;
                 }
 
                 while (true)
                 {
-                    System.out.println("accept...");
                     SocketChannel channel = null;
-                    try {
+                    try
+                    {
                         channel = serverChannel.accept();
-                        System.out.println("accepted");
-                    } catch (IOException e) {
-                        //TODO
-                        e.printStackTrace();
+                        logger.info("New client connected.");
+                    }
+                    catch (IOException e)
+                    {
+                        logger.error("Failed accept connection on " + DomainSocketComms.SOCKET_PATH, e);
                         return;
                     }
-                    DomainSocketComms<SummaryResultsQuery, SummaryResultsResponse> sockComms
-                            = new DomainSocketComms<>(channel);
+                    DomainSocketComms sockComms = new DomainSocketComms(channel);
                     new Thread(() -> {
                         while (true)
                         {
-                            System.out.println("top of loop");
                             try
                             {
-                                System.out.println("reading message");
-                                Optional<SummaryResultsQuery> request = sockComms.readSocketMessage();
-                                System.out.println("got message");
-                                if (request.isPresent())
+                                SummaryResultsQuery request = (SummaryResultsQuery) sockComms.readSocketMessage(SummaryResultsQuery.class);
+                                if (request != null)
                                 {
+                                    logger.info("Received a request.");
                                     SummaryResultsResponse response = new SummaryResultsResponse();
                                     response.setData(modelGenerator.getDisplayContent());
                                     sockComms.writeSocketMessage(response);
+                                    logger.info("Sent response.");
                                 }
                                 else
                                 {
                                     // Connection was closed
+                                    logger.info("Client disconnected.");
                                     break;
                                 }
                             }
-                            catch (IOException e1)
+                            catch (IOException connectionException)
                             {
-                                //TODO
-                                e1.printStackTrace();
-                                System.out.println("exiting due to error " + e1.toString());
+                                logger.error("Error communicating with client", connectionException);
+                                break;
                             }
-
                         }
                     }).start();
                 }
             }
             catch (IOException e)
             {
-                //TODO
-                e.printStackTrace();
+                logger.error("Failed to open " + DomainSocketComms.SOCKET_PATH, e);
             }
         }
         finally
         {
             try
             {
-                Files.deleteIfExists(socketPath);
-            } catch (IOException e)
+                Files.deleteIfExists(DomainSocketComms.SOCKET_PATH);
+            }
+            catch (IOException e)
             {
-                //TODO
-                e.printStackTrace();
+                logger.error("Failed to delete " + DomainSocketComms.SOCKET_PATH, e);
             }
         }
     }

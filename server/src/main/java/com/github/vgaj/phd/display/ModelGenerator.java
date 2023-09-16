@@ -43,7 +43,7 @@ public class ModelGenerator
     public DisplayContent getDisplayContent()
     {
         DisplayContent content = new DisplayContent();
-        content.results = new LinkedList<>();
+        content.results = new ArrayList<>();
 
         // The data
         ArrayList<Map.Entry<RemoteAddress, DataForAddress>> entries = monitorData.getCopyOfRawData();

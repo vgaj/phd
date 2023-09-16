@@ -8,17 +8,13 @@ import java.io.IOException;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.nio.channels.SocketChannel;
-import java.nio.file.Path;
-import java.util.Optional;
 
 public class PhoneHomeDetectorCli
 {
     public static void main(String[] args)
     {
         System.out.println("Phone Home Detector Results");
-        // TODO common config
-        Path socketPath = Path.of("/tmp", "phone_home_detector_ipc");
-        UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(socketPath);
+        UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
         SocketChannel channel = null;
         try
         {
@@ -31,15 +27,11 @@ public class PhoneHomeDetectorCli
             return;
         }
 
-        DomainSocketComms<SummaryResultsResponse, SummaryResultsQuery> sockComms
-                = new DomainSocketComms<>(channel);
-
-        Optional<SummaryResultsResponse> response = Optional.empty();
+        DomainSocketComms sockComms = new DomainSocketComms(channel);
         try
         {
             SummaryResultsQuery request = new SummaryResultsQuery();
             sockComms.writeSocketMessage(request);
-            response = sockComms.readSocketMessage();
         }
         catch (IOException e)
         {
@@ -47,20 +39,31 @@ public class PhoneHomeDetectorCli
             return;
         }
 
-        if (response.isEmpty())
+        SummaryResultsResponse response = null;
+        try
+        {
+            response = (SummaryResultsResponse) sockComms.readSocketMessage(SummaryResultsResponse.class);
+        }
+        catch (IOException e)
+        {
+            System.out.println("Failed to read response. Error: " + e);
+            return;
+        }
+        if (response == null)
         {
             System.out.println("Did not receive a response");
         }
         else
         {
             StringBuilder sb = new StringBuilder();
-            response.get().getData().results.forEach(r ->
+            response.getData().results.forEach(r ->
             {
+                // TODO more details
+                // TODO add query for one address
                 sb.append(r.ipAddress);
                 sb.append(System.lineSeparator());
             });
             System.out.println(sb);
         }
-
     }
 }

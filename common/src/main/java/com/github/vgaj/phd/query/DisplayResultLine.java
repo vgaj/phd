@@ -1,6 +1,7 @@
 package com.github.vgaj.phd.query;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,6 +12,5 @@ public class DisplayResultLine implements Serializable
         this.message = message;
     }
     public String message;
-    public List<String> subMessages = new LinkedList<>();
+    public ArrayList<String> subMessages = new ArrayList<>();
 }
-
