@@ -1,9 +1,10 @@
-package com.github.vgaj.phd.display;
+package com.github.vgaj.phd.query;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DisplayResult
+public class DisplayResult implements Serializable
 {
 
     public String hostName;

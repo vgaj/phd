@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.Optional;
 
-public class DomainSocketComms <T extends Serializable>
+public class DomainSocketComms <TREAD extends Serializable, TWRITE extends Serializable>
 {
     private final SocketChannel channel;
     private final int MAX_MESSAGE_SIZE = 64*1024;
@@ -13,7 +13,7 @@ public class DomainSocketComms <T extends Serializable>
     {
         this.channel = channel;
     }
-    public void writeSocketMessage(T message) throws IOException
+    public void writeSocketMessage(TWRITE message) throws IOException
     {
         // Serialize to Buffer
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -30,12 +30,11 @@ public class DomainSocketComms <T extends Serializable>
         }
     }
 
-    public Optional<T> readSocketMessage() throws IOException
+    public Optional<TREAD> readSocketMessage() throws IOException
     {
         // Read from domain socket
         ByteBuffer buffer = ByteBuffer.allocate(MAX_MESSAGE_SIZE);
         int bytesRead = channel.read(buffer);
-        System.out.println("Read bytes " + bytesRead);
         if (bytesRead < 0)
         {
             return Optional.empty();
@@ -48,6 +47,8 @@ public class DomainSocketComms <T extends Serializable>
         InputStream is = new ByteArrayInputStream(bytes);
         ObjectInputStream ois = new ObjectInputStream(is);
 
+        // TODO filter
+
         // Deserialize
         Object message = null;
         try
@@ -56,17 +57,15 @@ public class DomainSocketComms <T extends Serializable>
         }
         catch (ClassNotFoundException e)
         {
+            // TODO
             e.printStackTrace();
+            return Optional.empty();
         }
 
         ois.close();
         is.close();
 
-        if (message!=null && message instanceof Serializable)
-        {
-            return Optional.of((T)message);
-        }
-        System.out.println("empty");
-        return Optional.empty();
+        // TODO instanceof
+        return Optional.of((TREAD) message);
     }
 }
