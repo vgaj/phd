@@ -5,7 +5,7 @@
 
   <groupId>com.github.vgaj</groupId>
   <artifactId>phd</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
   <name>phd</name>
   <description>Phone Home Detector</description>
