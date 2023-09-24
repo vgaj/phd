@@ -6,6 +6,7 @@ import java.util.List;
 
 public class DisplayContent implements Serializable
 {
+    // TODO consider using records
     public ArrayList<DisplayResult> results;
     public ArrayList<String> messages;
 }

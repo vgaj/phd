@@ -2,18 +2,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>com.github.vgaj</groupId>
   <artifactId>phd</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>phd</name>
-	<description>Phone Home Detector</description>
+  <description>Phone Home Detector</description>
   <url>https://github.com/vgaj/phd</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <revision>0.0.1-SNAPSHOT</revision>
+    <spring.version>2.6.1</spring.version>
   </properties>
 
   <dependencyManagement>
@@ -24,12 +27,69 @@
         <version>1.18.22</version>
         <scope>compile</scope>
       </dependency>
+
+      <dependency>
+        <groupId>org.pcap4j</groupId>
+        <artifactId>pcap4j-core</artifactId>
+        <version>1.8.2</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.lmax</groupId>
+        <artifactId>disruptor</artifactId>
+        <version>3.4.4</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-test</artifactId>
+        <scope>test</scope>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.github.vgaj.phd</groupId>
+        <artifactId>phd-common</artifactId>
+        <version>${revision}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
   <modules>
     <module>server</module>
     <module>common</module>
     <module>cli</module>
+    <module>ui</module>
   </modules>
 </project>

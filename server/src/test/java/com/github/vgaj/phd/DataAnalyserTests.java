@@ -1,12 +1,11 @@
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.logic.AnalyserUtil;
-import com.github.vgaj.phd.result.TransferCount;
-import com.github.vgaj.phd.result.TransferIntervalMinutes;
-import com.github.vgaj.phd.result.TransferSizeBytes;
-import com.github.vgaj.phd.result.TransferTimestamp;
+import com.github.vgaj.phd.server.logic.AnalyserUtil;
+import com.github.vgaj.phd.server.result.TransferCount;
+import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
+import com.github.vgaj.phd.server.result.TransferSizeBytes;
+import com.github.vgaj.phd.server.result.TransferTimestamp;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 

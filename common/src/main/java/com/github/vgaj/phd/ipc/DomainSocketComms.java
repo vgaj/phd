@@ -1,12 +1,15 @@
 package com.github.vgaj.phd.ipc;
 
 import java.io.*;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class DomainSocketComms
+public class DomainSocketComms implements AutoCloseable
 {
     public static final Path SOCKET_PATH = Path.of("/tmp", "phone_home_detector_ipc");
     public static final int MAX_MESSAGE_SIZE = 64*1024;
@@ -59,6 +62,9 @@ public class DomainSocketComms
                     // - String
                     return cl.getPackage() == READ_TYPE.getPackage()
                             || cl.isArray()
+                            || cl == InetAddress.class
+                            || cl == Inet4Address.class
+                            || cl == Inet6Address.class
                             || cl == ArrayList.class
                             || cl == String.class;
                 },
@@ -90,6 +96,14 @@ public class DomainSocketComms
         {
             return null;
         }
+    }
 
+    @Override
+    public void close() throws Exception
+    {
+        if (channel != null)
+        {
+            channel.close();
+        }
     }
 }
