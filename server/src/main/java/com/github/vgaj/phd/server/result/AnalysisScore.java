@@ -11,7 +11,6 @@ public class AnalysisScore
     private int score = 0;
     public AnalysisScore( AnalysisResult result)
     {
-        // TODO: Score logic
         if (result.areAllIntervalsTheSame_c11())
         {
             score += 3;

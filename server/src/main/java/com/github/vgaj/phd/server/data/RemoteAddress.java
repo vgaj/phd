@@ -15,6 +15,7 @@ public class RemoteAddress
     // TODO: Log4J configuration
     Logger logger = LoggerFactory.getLogger(this.getClass());
     private final byte[] octets = new byte[4];
+
     private String hostname = null;
     private boolean lookupAttempted = false;
 
@@ -77,13 +78,11 @@ public class RemoteAddress
                     reverseHostname = String.join(".", parts);
                 }
 
-                hostname += "/";
             }
             catch (UnknownHostException e)
             {
                 logger.error("Failed to lookup address", e);
             }
-            hostname += getAddressString();
         }
         return hostname;
     }

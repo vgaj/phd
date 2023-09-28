@@ -79,15 +79,12 @@ public class DomainSocketComms implements AutoCloseable
         }
         catch (ClassNotFoundException e)
         {
-            // TODO
-            e.printStackTrace();
             return null;
         }
 
         ois.close();
         is.close();
 
-        // TODO instanceof
         if (READ_TYPE.isInstance(message))
         {
             return READ_TYPE.cast(message);
