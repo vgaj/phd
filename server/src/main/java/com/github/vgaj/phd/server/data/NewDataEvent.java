@@ -12,5 +12,5 @@ public class NewDataEvent
     private RemoteAddress host;
     private int length;
     private long epochMinute;
-
+    private long queuedTime;
 }
