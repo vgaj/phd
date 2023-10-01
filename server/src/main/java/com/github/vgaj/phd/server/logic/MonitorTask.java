@@ -87,6 +87,7 @@ public class MonitorTask implements Runnable
                 return;
             }
 
+            // NB: Packets are getting captured from this point
             handle = nif.openLive(65536, PROMISCUOUS, 100);
 
             messageData.addMessage("Using filter: " + filter);

@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.LongAdder;
 public class NewDataProcessor
 {
     private static final int BUFFER_SIZE = 65536;
-    private static final boolean DEBUG_LOG = false;
+    private static final boolean DEBUG_LOG = true;
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Disruptor<NewDataEvent> disruptor;
@@ -129,10 +129,13 @@ public class NewDataProcessor
         long startHandleMax = maxDelayToHandlerStart.getAndSet(0);
         long translateMax = maxTimeToTranslate.getAndSet(0);
         long handleMax = maxTimeToHandle.getAndSet(0);
-        if (packetCount > 0)
+        if (DEBUG_LOG)
         {
-            logger.info("\n{} packets in last {} second(s)\n maximum time to START translate/handling {}/ {}\n maximum time to PERFORM translation/handling {}/ {}",
-                    packetCount, statsReportRate, formatNs(startTranslateMax), formatNs(startHandleMax), formatNs(translateMax), formatNs(handleMax));
+            if (packetCount > 0)
+            {
+                logger.info("\n{} packets in last {} second(s)\n maximum time to START translate/handling {}/ {}\n maximum time to PERFORM translation/handling {}/ {}",
+                        packetCount, statsReportRate, formatNs(startTranslateMax), formatNs(startHandleMax), formatNs(translateMax), formatNs(handleMax));
+            }
         }
     }
 

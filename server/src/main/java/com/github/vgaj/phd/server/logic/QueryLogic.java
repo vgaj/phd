@@ -41,6 +41,8 @@ public class QueryLogic
      */
     public DisplayContent getDisplayContent()
     {
+        // TODO: run the logic periodically and just return the last result
+
         DisplayContent content = new DisplayContent();
         content.results = new ArrayList<>();
 
