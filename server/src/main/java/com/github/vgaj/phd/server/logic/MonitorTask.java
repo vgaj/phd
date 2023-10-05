@@ -10,6 +10,7 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.pcap4j.core.PcapNetworkInterface.PromiscuousMode.PROMISCUOUS;
@@ -50,13 +51,42 @@ public class MonitorTask implements Runnable
         }
         catch (NotOpenException | InterruptedException e)
         {
-            // TODO
-            e.printStackTrace();
+            messageData.addError("Error while stopping", e);
         }
     }
 
     @Value("${phm.filter}")
     private String filter;
+
+    /**
+     * Update the libpcap filter with a list of addresses to exclude
+     * On low-end hardware this operation takes about:
+     * - 2ms for 50 addresses
+     * - 50ms for 250
+     * - 6 seconds for 2500
+     * - and you get a Segmentation fault with 10000
+     * @param addressesToExclude Addresses to exclude
+     */
+    public void updateFilter(List<String> addressesToExclude)
+    {
+        try
+        {
+
+            long start = System.nanoTime();
+            StringBuilder newFilter = new StringBuilder();
+            newFilter.append("(").append(filter).append(")");
+            addressesToExclude.forEach( address -> newFilter.append(" and not host ").append(address));
+            // TODO: Look at rolling own JNA
+            handle.setFilter(newFilter.toString(), BpfProgram.BpfCompileMode.OPTIMIZE);
+            long duration = System.nanoTime() - start;
+            System.out.println("Filter update took " + duration);
+
+        }
+        catch (PcapNativeException | NotOpenException e)
+        {
+            messageData.addError("Failed to update libpcap filter", e);
+        }
+    }
 
     @Override
     public void run()
@@ -83,7 +113,7 @@ public class MonitorTask implements Runnable
             }
             catch (PcapNativeException e)
             {
-                messageData.addMessage(e.toString());
+                messageData.addError("Error looking for NIC", e);
                 return;
             }
 
@@ -103,8 +133,7 @@ public class MonitorTask implements Runnable
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            messageData.addMessage(e.toString());
+            messageData.addError("Exiting monitor thread due to an error ", e);
         }
     }
 }

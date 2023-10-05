@@ -32,10 +32,21 @@ public class MessageData
             messages = new String[maxMessagesToShow];
         }
     }
+    
+    public void addError(String msg, Throwable t)
+    {
+        logger.error(msg, t);
+        add(msg);
+    }
 
     public void addMessage(String msg)
     {
         logger.info(msg);
+        add(msg);
+    }
+
+    private void add(String msg)
+    {
         ensureBufferInitialised();
         messages[msgIndex] = msg;
         msgIndex = getNext(msgIndex);

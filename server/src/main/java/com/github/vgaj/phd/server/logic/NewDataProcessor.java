@@ -86,7 +86,7 @@ public class NewDataProcessor
         if (!pcapHelper.isIpv4(pcapPacketData.pcapPacket))
         {
             // TODO is this exiting?
-            messageData.addMessage("Not IPv4");
+            messageData.addMessage("Received data that was not IPv4");
             return;
         }
         if (DEBUG_LOG)
