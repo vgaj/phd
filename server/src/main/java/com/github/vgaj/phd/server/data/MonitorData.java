@@ -1,5 +1,6 @@
 package com.github.vgaj.phd.server.data;
 
+import com.github.vgaj.phd.server.messages.MessageData;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
 import com.github.vgaj.phd.server.result.TransferTimestamp;
 import lombok.NonNull;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 public class MonitorData
 {
     // TODO: Periodic cleanup of uninteresting data
+    // TODO: Save data and reload on restart
 
     @Autowired
     MessageData messageData;

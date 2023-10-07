@@ -1,6 +1,6 @@
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.server.logic.AnalyserUtil;
+import com.github.vgaj.phd.server.analysis.AnalyserUtil;
 import com.github.vgaj.phd.server.result.TransferCount;
 import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;

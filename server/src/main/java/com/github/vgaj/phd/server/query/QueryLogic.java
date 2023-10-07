@@ -1,12 +1,13 @@
-package com.github.vgaj.phd.server.logic;
+package com.github.vgaj.phd.server.query;
 
+import com.github.vgaj.phd.server.analysis.Analyser;
 import com.github.vgaj.phd.server.data.DataForAddress;
-import com.github.vgaj.phd.server.data.MessageData;
+import com.github.vgaj.phd.server.messages.MessageData;
 import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
-import com.github.vgaj.phd.query.DisplayContent;
-import com.github.vgaj.phd.query.DisplayResult;
-import com.github.vgaj.phd.query.DisplayResultLine;
+import com.github.vgaj.phd.common.query.DisplayContent;
+import com.github.vgaj.phd.common.query.DisplayResult;
+import com.github.vgaj.phd.common.query.DisplayResultLine;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 import com.github.vgaj.phd.server.result.AnalysisScore;
 import org.springframework.beans.factory.annotation.Autowired;

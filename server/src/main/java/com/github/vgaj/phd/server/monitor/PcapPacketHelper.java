@@ -1,4 +1,4 @@
-package com.github.vgaj.phd.server.util;
+package com.github.vgaj.phd.server.monitor;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import org.pcap4j.packet.Packet;

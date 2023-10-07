@@ -1,4 +1,4 @@
-package com.github.vgaj.phd.query;
+package com.github.vgaj.phd.common.query;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

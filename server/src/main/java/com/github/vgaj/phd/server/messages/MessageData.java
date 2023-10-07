@@ -1,4 +1,4 @@
-package com.github.vgaj.phd.server.data;
+package com.github.vgaj.phd.server.messages;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +11,6 @@ import java.util.List;
 @Component
 public class MessageData
 {
-    // TODO: Save data and reload on restart
-
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // Maximum number of messages to store

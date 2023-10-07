@@ -1,4 +1,4 @@
-package com.github.vgaj.phd.ipc;
+package com.github.vgaj.phd.common.ipc;
 
 import java.io.*;
 import java.net.Inet4Address;

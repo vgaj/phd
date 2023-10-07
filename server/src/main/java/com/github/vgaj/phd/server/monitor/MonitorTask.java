@@ -1,6 +1,6 @@
-package com.github.vgaj.phd.server.logic;
+package com.github.vgaj.phd.server.monitor;
 
-import com.github.vgaj.phd.server.data.MessageData;
+import com.github.vgaj.phd.server.messages.MessageData;
 import org.pcap4j.core.*;
 
 import org.springframework.beans.factory.annotation.Autowired;

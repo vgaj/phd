@@ -1,13 +1,12 @@
 package com.github.vgaj.phd.cli;
 
-import com.github.vgaj.phd.ipc.DomainSocketComms;
-import com.github.vgaj.phd.query.DetailedResultsQuery;
-import com.github.vgaj.phd.query.DetailedResultsResponse;
-import com.github.vgaj.phd.query.SummaryResultsQuery;
-import com.github.vgaj.phd.query.SummaryResultsResponse;
+import com.github.vgaj.phd.common.ipc.DomainSocketComms;
+import com.github.vgaj.phd.common.query.DetailedResultsQuery;
+import com.github.vgaj.phd.common.query.DetailedResultsResponse;
+import com.github.vgaj.phd.common.query.SummaryResultsQuery;
+import com.github.vgaj.phd.common.query.SummaryResultsResponse;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;

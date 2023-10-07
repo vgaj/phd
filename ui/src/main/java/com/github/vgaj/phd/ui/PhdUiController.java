@@ -1,13 +1,12 @@
 package com.github.vgaj.phd.ui;
 
-import com.github.vgaj.phd.ipc.DomainSocketComms;
-import com.github.vgaj.phd.query.DetailedResultsQuery;
-import com.github.vgaj.phd.query.DetailedResultsResponse;
-import com.github.vgaj.phd.query.SummaryResultsQuery;
-import com.github.vgaj.phd.query.SummaryResultsResponse;
+import com.github.vgaj.phd.common.ipc.DomainSocketComms;
+import com.github.vgaj.phd.common.query.DetailedResultsQuery;
+import com.github.vgaj.phd.common.query.DetailedResultsResponse;
+import com.github.vgaj.phd.common.query.SummaryResultsQuery;
+import com.github.vgaj.phd.common.query.SummaryResultsResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,11 +18,9 @@ import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
-public class PhdController
+public class PhdUiController
 {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 

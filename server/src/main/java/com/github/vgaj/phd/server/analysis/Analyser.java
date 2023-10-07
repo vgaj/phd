@@ -1,4 +1,4 @@
-package com.github.vgaj.phd.server.logic;
+package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
@@ -58,8 +58,8 @@ public class Analyser
         Map<TransferIntervalMinutes,List<TransferSizeBytes>> intervalsBetweenData = analyserUtil.getIntervalsBetweenData(dataForAddress);
 
         // For testing
-//        result.setMinimalCriteriaMatch(true);
-//        result.setAllTransfersAtSameInterval_c11(new TransferIntervalMinutes(13));
+        //result.setMinimalCriteriaMatch(true);
+        //result.setAllTransfersAtSameInterval_c11(new TransferIntervalMinutes(13));
 
         // TODO: start capturing more data when it is interesting
 

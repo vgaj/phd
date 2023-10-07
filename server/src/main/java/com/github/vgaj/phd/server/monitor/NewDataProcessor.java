@@ -1,11 +1,11 @@
-package com.github.vgaj.phd.server.logic;
+package com.github.vgaj.phd.server.monitor;
 
+import com.github.vgaj.phd.server.data.RemoteAddress;
+import lombok.Data;
 import org.pcap4j.packet.Packet;
 
-import com.github.vgaj.phd.server.data.MessageData;
+import com.github.vgaj.phd.server.messages.MessageData;
 import com.github.vgaj.phd.server.data.MonitorData;
-import com.github.vgaj.phd.server.data.NewDataEvent;
-import com.github.vgaj.phd.server.util.PcapPacketHelper;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 import org.slf4j.Logger;
@@ -39,6 +39,18 @@ public class NewDataProcessor
 
     @Autowired
     private PcapPacketHelper pcapHelper;
+
+    // TODO: remove class
+    @Data
+    private class NewDataEvent
+    {
+        // TODO: Can the data be stored here?
+        private RemoteAddress host;
+        private int length;
+        private long epochMinute;
+        private long queuedTime;
+    }
+
 
     private class DisruptorQueueItem
     {

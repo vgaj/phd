@@ -1,4 +1,4 @@
-package com.github.vgaj.phd.server.logic;
+package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.server.result.TransferCount;
 import com.github.vgaj.phd.server.result.TransferIntervalMinutes;

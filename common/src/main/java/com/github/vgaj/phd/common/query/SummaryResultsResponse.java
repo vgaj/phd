@@ -1,6 +1,5 @@
-package com.github.vgaj.phd.query;
+package com.github.vgaj.phd.common.query;
 
-import jdk.jfr.DataAmount;
 import lombok.Data;
 
 import java.io.Serializable;

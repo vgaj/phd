@@ -1,7 +1,7 @@
-package com.github.vgaj.phd.server.logic;
+package com.github.vgaj.phd.server.query;
 
-import com.github.vgaj.phd.ipc.DomainSocketComms;
-import com.github.vgaj.phd.query.*;
+import com.github.vgaj.phd.common.ipc.DomainSocketComms;
+import com.github.vgaj.phd.common.query.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
