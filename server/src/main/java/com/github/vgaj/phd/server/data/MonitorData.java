@@ -47,7 +47,7 @@ public class MonitorData
     {
         return data.get(address);
     }
-    
+
     public List<RemoteAddress> getAddresses()
     {
         List<RemoteAddress> addresses = new LinkedList<>();
