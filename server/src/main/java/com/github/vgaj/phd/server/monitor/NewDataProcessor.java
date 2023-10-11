@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.LongAdder;
 public class NewDataProcessor
 {
     private static final int BUFFER_SIZE = 65536;
-    private static final boolean DEBUG_LOG = true;
+    private static final boolean DEBUG_LOG = false;
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Disruptor<NewDataEvent> disruptor;

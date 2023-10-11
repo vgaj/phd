@@ -1,5 +1,6 @@
 package com.github.vgaj.phd.server.monitor;
 
+import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageData;
 import org.pcap4j.core.*;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.pcap4j.core.PcapNetworkInterface.PromiscuousMode.PROMISCUOUS;
 
@@ -67,7 +69,7 @@ public class MonitorTask implements Runnable
      * - and you get a Segmentation fault with 10000
      * @param addressesToExclude Addresses to exclude
      */
-    public void updateFilter(List<String> addressesToExclude)
+    public void updateFilter(Set<RemoteAddress> addressesToExclude)
     {
         try
         {
@@ -75,11 +77,14 @@ public class MonitorTask implements Runnable
             long start = System.nanoTime();
             StringBuilder newFilter = new StringBuilder();
             newFilter.append("(").append(filter).append(")");
-            addressesToExclude.forEach( address -> newFilter.append(" and not host ").append(address));
+            addressesToExclude.forEach( address -> newFilter.append(" and not host ").append(address.getAddressString()));
             // TODO: Look at rolling own JNA
             handle.setFilter(newFilter.toString(), BpfProgram.BpfCompileMode.OPTIMIZE);
-            long duration = System.nanoTime() - start;
-            System.out.println("Filter update took " + duration);
+            long durationMs = (System.nanoTime() - start) / 1000000;
+            if (durationMs > 0)
+            {
+                messageData.addMessage("Filter update took " + durationMs + " ms");
+            }
 
         }
         catch (PcapNativeException | NotOpenException e)

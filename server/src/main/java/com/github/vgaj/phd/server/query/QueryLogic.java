@@ -47,34 +47,35 @@ public class QueryLogic
         DisplayContent content = new DisplayContent();
         content.results = new ArrayList<>();
 
-        // The data
-        ArrayList<Map.Entry<RemoteAddress, DataForAddress>> entries = monitorData.getCopyOfRawData();
-        Collections.sort(entries, new Comparator<Map.Entry<RemoteAddress, DataForAddress>>() {
+        // The addresses
+        List<RemoteAddress> addresses = monitorData.getAddresses();
+
+        Collections.sort(addresses, new Comparator<RemoteAddress>() {
             @Override
-            public int compare(Map.Entry<RemoteAddress, DataForAddress> e1, Map.Entry<RemoteAddress, DataForAddress> e2)
+            public int compare(RemoteAddress e1, RemoteAddress e2)
             {
-                if (e1.getKey() == null || e1.getKey().getReverseHostname() == null || e2.getKey() == null || e2.getKey().getReverseHostname() == null)
+                if (e1 == null || e1.getReverseHostname() == null || e2 == null || e2.getReverseHostname() == null)
                 {
                     return 0;
                 }
                 else
                 {
-                    return e1.getKey().getReverseHostname().compareTo(e2.getKey().getReverseHostname());
+                    return e1.getReverseHostname().compareTo(e2.getReverseHostname());
                 }
             }
         });
 
-        entries.forEach( entryForAddress ->
+        addresses.forEach( address ->
         {
-            AnalysisResult result = analyser.analyse(entryForAddress.getKey());
+            AnalysisResult result = analyser.analyse(address);
             if (result.isMinimalCriteriaMatch())
             {
                 DisplayResult displayResult = new DisplayResult();
                 content.results.add(displayResult);
-                displayResult.hostName = entryForAddress.getKey().getHostString();
-                displayResult.ipAddress = entryForAddress.getKey().getAddressString();
-                displayResult.totalBytes = entryForAddress.getValue().getTotalBytes();
-                displayResult.totalTimes = entryForAddress.getValue().getMinuteBlockCount();
+                displayResult.hostName = address.getHostString();
+                displayResult.ipAddress = address.getAddressString();
+                displayResult.totalBytes = monitorData.getDataForAddress(address).getTotalBytes();
+                displayResult.totalTimes = monitorData.getDataForAddress(address).getMinuteBlockCount();
 
                 // TODO: sort by score
                 displayResult.score = (new AnalysisScore(result)).getScore();

@@ -1,5 +1,7 @@
 package com.github.vgaj.phd.server.data;
 
+import lombok.Getter;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -12,9 +14,8 @@ public class DataForAddress
 {
     private int totalBytes = 0;
 
-    // TODO: This class needs to be thread safe, but don't need a concurrent map
-
     // Number of bytes in minute blocks
+    @Getter
     private final ConcurrentMap<Long, Integer> byteCountPerMinute = new ConcurrentHashMap<>();
 
     public void addBytes(int count, long epochMinute)
@@ -38,6 +39,7 @@ public class DataForAddress
         return new ArrayList<>(byteCountPerMinute.entrySet());
     }
 
+    // TODO Remove
     public List<String> getPerMinuteDataForDisplay(int countToShow)
     {
         var data = byteCountPerMinute.entrySet();

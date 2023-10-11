@@ -3,6 +3,7 @@ package com.github.vgaj.phd.server.data;
 import com.github.vgaj.phd.server.messages.MessageData;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
 import com.github.vgaj.phd.server.result.TransferTimestamp;
+import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,15 +43,16 @@ public class MonitorData
         return entries;
     }
 
-    public ArrayList<Map.Entry<RemoteAddress, DataForAddress>> getCopyOfRawData()
-    {
-        ArrayList<Map.Entry<RemoteAddress, DataForAddress>> entries = new ArrayList<>();
-        data.entrySet().forEach(e -> entries.add(e));
-        return entries;
-    }
-
     public DataForAddress getDataForAddress(RemoteAddress address)
     {
         return data.get(address);
     }
+    
+    public List<RemoteAddress> getAddresses()
+    {
+        List<RemoteAddress> addresses = new LinkedList<>();
+        data.keySet().forEach(a -> addresses.add(a));
+        return addresses;
+    }
+
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.util.*;
 
 @Component
@@ -115,4 +116,30 @@ public class Analyser
         }
         return result;
     }
+
+
+    public Set<RemoteAddress> getAddressesToIgnore()
+    {
+        HashSet<RemoteAddress> addressesToIgnore = new HashSet<>();
+
+        long now = Instant.now().getEpochSecond() / 60;
+        monitorData.getAddresses().forEach(address ->
+        {
+            boolean receivedDataInLastInterval = false;
+            for (long minute = now; minute > now - minIntervalMinutes; minute--)
+            {
+                if (monitorData.getDataForAddress(address).getByteCountPerMinute().getOrDefault(minute, 0) > 0)
+                {
+                    if (receivedDataInLastInterval)
+                    {
+                        addressesToIgnore.add(address);
+                        break;
+                    }
+                    receivedDataInLastInterval = true;
+                }
+            }
+        });
+        return addressesToIgnore;
+    }
+
 }
