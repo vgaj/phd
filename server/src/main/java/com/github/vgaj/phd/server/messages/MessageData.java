@@ -14,7 +14,7 @@ public class MessageData
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // Maximum number of messages to store
-    @Value("${phm.display.message.count}")
+    @Value("${phd.display.message.count}")
     private Integer maxMessagesToShow;
 
     // Where the next message will go

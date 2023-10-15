@@ -3,7 +3,6 @@ package com.github.vgaj.phd.server.data;
 import com.github.vgaj.phd.server.messages.MessageData;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
 import com.github.vgaj.phd.server.result.TransferTimestamp;
-import lombok.Getter;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

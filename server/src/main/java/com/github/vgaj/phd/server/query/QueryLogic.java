@@ -1,7 +1,6 @@
 package com.github.vgaj.phd.server.query;
 
-import com.github.vgaj.phd.server.analysis.Analyser;
-import com.github.vgaj.phd.server.data.DataForAddress;
+import com.github.vgaj.phd.server.analysis.AnalysisTask;
 import com.github.vgaj.phd.server.messages.MessageData;
 import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
@@ -32,9 +31,9 @@ public class QueryLogic
     private MessageData messageData;
 
     @Autowired
-    private Analyser analyser;
+    private AnalysisTask analyserTask;
 
-    @Value("${phm.display.maximum.data}")
+    @Value("${phd.display.maximum.data}")
     private Integer maxDataToShow;
 
     /**
@@ -67,9 +66,11 @@ public class QueryLogic
 
         addresses.forEach( address ->
         {
-            AnalysisResult result = analyser.analyse(address);
-            if (result.isMinimalCriteriaMatch())
+            Optional<AnalysisResult> resultFromCache = analyserTask.getResult(address);
+            if (resultFromCache.isPresent() && resultFromCache.get().isMinimalCriteriaMatch())
             {
+                AnalysisResult result = resultFromCache.get();
+
                 DisplayResult displayResult = new DisplayResult();
                 content.results.add(displayResult);
                 displayResult.hostName = address.getHostString();
@@ -127,6 +128,4 @@ public class QueryLogic
         results.addAll(monitorData.getDataForAddress(new RemoteAddress(address)).getPerMinuteDataForDisplay(maxDataToShow));
         return results;
     }
-
-
 }

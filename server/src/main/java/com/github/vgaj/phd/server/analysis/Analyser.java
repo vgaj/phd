@@ -21,19 +21,19 @@ public class Analyser
     /**
      * The minimum interval between data that is of interest
      */
-    @Value("${phm.minimum.interval.minutes}")
+    @Value("${phd.minimum.interval.minutes}")
     private Integer minIntervalMinutes;
 
     /**
      * The minimum number of pairs of transmissions at an interval that is of interest
      */
-    @Value("${phm.minimum.count.at.interval}")
+    @Value("${phd.minimum.count.at.interval}")
     private Integer minCountAtInterval;
 
     /**
      * The minimum number of transmissions of the same size that are considered interesting
      */
-    @Value("${phm.minimum.count.of.size}")
+    @Value("${phd.minimum.count.of.size}")
     private Integer minCountOfSameSize;
 
     private AnalyserUtil analyserUtil = new AnalyserUtil();
@@ -116,7 +116,6 @@ public class Analyser
         }
         return result;
     }
-
 
     public Set<RemoteAddress> getAddressesToIgnore()
     {

@@ -11,7 +11,6 @@ import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -57,7 +56,7 @@ public class MonitorTask implements Runnable
         }
     }
 
-    @Value("${phm.filter}")
+    @Value("${phd.filter}")
     private String filter;
 
     /**
