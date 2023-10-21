@@ -9,6 +9,8 @@ import com.github.vgaj.phd.common.query.DisplayResult;
 import com.github.vgaj.phd.common.query.DisplayResultLine;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 import com.github.vgaj.phd.server.result.AnalysisScore;
+import com.github.vgaj.phd.server.result.ResultCategorisation;
+import com.github.vgaj.phd.server.result.ResultCategorisationImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -70,6 +72,7 @@ public class QueryLogic
             if (resultFromCache.isPresent() && resultFromCache.get().isMinimalCriteriaMatch())
             {
                 AnalysisResult result = resultFromCache.get();
+                ResultCategorisation resultCategorisation = new ResultCategorisationImpl(result);
 
                 DisplayResult displayResult = new DisplayResult();
                 content.results.add(displayResult);
@@ -79,28 +82,28 @@ public class QueryLogic
                 displayResult.totalTimes = monitorData.getDataForAddress(address).getMinuteBlockCount();
 
                 // TODO: sort by score
-                displayResult.score = (new AnalysisScore(result)).getScore();
+                displayResult.score = (new AnalysisScore(resultCategorisation)).getScore();
 
-                if (result.areAllIntervalsTheSame_c11())
+                if (resultCategorisation.areAllIntervalsTheSame_c11())
                 {
-                    displayResult.resultLines.add( new DisplayResultLine("all intervals are " + result.getIntervalOfAllTransfers_c11() + " minutes"));
+                    displayResult.resultLines.add( new DisplayResultLine("all intervals are " + result.getRepeatedIntervals().get(0).getKey() + " minutes"));
                 }
 
-                if (result.areSomeIntervalsTheSame_c12())
+                if (resultCategorisation.areSomeIntervalsTheSame_c12())
                 {
                     DisplayResultLine resultLine = new DisplayResultLine("intervals between data:");
-                    result.getRepeatedIntervals_c12().forEach(r ->
+                    result.getRepeatedIntervals().forEach(r ->
                             resultLine.subMessages.add(r.getKey() + " min, " + r.getValue() + " times"));
                     displayResult.resultLines.add(resultLine);
                 }
-                if (result.areAllTransfersTheSameSize_c21())
+                if (resultCategorisation.areAllTransfersTheSameSize_c21())
                 {
-                    displayResult.resultLines.add( new DisplayResultLine("all transfers are " + result.getSizeOfAllTransfers_c21() + " bytes"));
+                    displayResult.resultLines.add( new DisplayResultLine("all transfers are " + result.getRepeatedTransferSizes().get(0).getKey() + " bytes"));
                 }
-                if (result.areSomeTransfersTheSameSize_c22())
+                if (resultCategorisation.areSomeTransfersTheSameSize_c22())
                 {
                     DisplayResultLine resultLine = new DisplayResultLine("repeated data sizes:");
-                    result.getRepeatedTransferSizes_c22().forEach(r ->
+                    result.getRepeatedTransferSizes().forEach(r ->
                             resultLine.subMessages.add(r.getKey() + " bytes, " + r.getValue() + " times"));
                     displayResult.resultLines.add( resultLine);
                 }

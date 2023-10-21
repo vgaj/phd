@@ -74,15 +74,7 @@ public class Analyser
             result.setMinimalCriteriaMatch(true);
 
             //=============
-            // Criteria 1.1: All transfers are at the same interval
-            if (intervalsBetweenData.size() == 1 &&
-                   intervalsBetweenData.entrySet().stream().findFirst().get().getValue().size() >= minCountAtInterval)
-            {
-                result.setAllTransfersAtSameInterval_c11((intervalsBetweenData.entrySet().stream().findFirst().get().getKey()));
-            }
-
-            //=============
-            // Criteria 1.2: Repeated transfers at the same interval
+            // Repeated transfers at the same interval
             intervalsBetweenData.entrySet().stream()
                     .filter(e -> e.getValue().size() >= minCountAtInterval)
                     .sorted((entry1, entry2) ->
@@ -91,28 +83,19 @@ public class Analyser
                         Integer size2 = entry2.getValue().size();
                         return size1.compareTo(size2);
                     })
-                    .forEach(entry -> result.addIntervalFrequency_c12(entry.getKey(), new TransferCount(entry.getValue().size())));
+                    .forEach(entry -> result.addRepeatedInterval(entry.getKey(), new TransferCount(entry.getValue().size())));
 
             // TODO: Check if most are at same interval
             // TODO: Check if average interval is roughly (total run time / number of times)
             // TODO: Check if last reading is less than 2 x Average interval ago
-
-            //=============
-            // Criteria 2.1: All data is of the same size
-            Map<TransferSizeBytes, TransferCount> dataFrequencies = analyserUtil.getDataSizeFrequenciesFromRaw(dataForAddress);
-            if (dataFrequencies.size() == 1
-                    && dataFrequencies.entrySet().stream().findFirst().get().getValue().getCount() >= minCountOfSameSize)
-            {
-                TransferSizeBytes sameSizeBytes = dataFrequencies.entrySet().stream().findFirst().get().getKey();
-                result.setAllDataIsSameSize_c21(sameSizeBytes);
-            }
             // TODO: Check if all sizes are similar - look at Std Dev
 
             //=============
-            // Criteria 2.2: Repeated transfers of the same size
+            // Repeated transfers of the same size
             // Map of transfer size in bytes -> number of transfers
+            Map<TransferSizeBytes, TransferCount> dataFrequencies = analyserUtil.getDataSizeFrequenciesFromRaw(dataForAddress);
             dataFrequencies.entrySet().stream().filter(e -> e.getValue().getCount() >= minCountOfSameSize)
-                    .forEach(e -> result.addTransferSizeFrequency_c22(e.getKey(),e.getValue()));
+                    .forEach(e -> result.addRepeatedTransferSize(e.getKey(),e.getValue()));
         }
         return result;
     }
