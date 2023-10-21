@@ -23,7 +23,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
     @Override
     public boolean areAllTransfersTheSameSize_c21()
     {
-        return result.getRepeatedTransferSizes().size() == 0;
+        return result.getRepeatedTransferSizes().size() == 1;
     }
     @Override
     public boolean areSomeTransfersTheSameSize_c22()
