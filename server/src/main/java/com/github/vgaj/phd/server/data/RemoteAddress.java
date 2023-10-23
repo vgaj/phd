@@ -1,8 +1,8 @@
 package com.github.vgaj.phd.server.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NoArgsConstructor;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -10,13 +10,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@NoArgsConstructor
 public class RemoteAddress
 {
-    // TODO: Log4J configuration
-    Logger logger = LoggerFactory.getLogger(this.getClass());
     private final byte[] octets = new byte[4];
 
     private String hostname = null;
+
     private boolean lookupAttempted = false;
 
     @Getter
@@ -39,6 +39,7 @@ public class RemoteAddress
         octets[3] = address.getAddress()[3];
     }
 
+    @JsonIgnore
     public String getAddressString()
     {
         StringBuilder ip = new StringBuilder();
@@ -53,6 +54,7 @@ public class RemoteAddress
         return ip.toString();
     }
 
+    @JsonIgnore
     public String getHostString()
     {
         return (hostname != null) ? hostname : getAddressString();
@@ -62,26 +64,19 @@ public class RemoteAddress
      * If the IP address has not previously been looked up then it is looked up.
      * @return The hostname
      */
-    public String lookupHost()
+    @JsonIgnore
+    public String lookupHost() throws UnknownHostException
     {
         if (!lookupAttempted)
         {
             lookupAttempted = true;
-            try
+            InetAddress addr = InetAddress.getByAddress(octets);
+            hostname = addr.getHostName();
+            if (hostname != null)
             {
-                InetAddress addr = InetAddress.getByAddress(octets);
-                hostname = addr.getHostName();
-                if (hostname != null)
-                {
-                    List<String> parts = Arrays.asList(hostname.split("\\."));
-                    Collections.reverse(parts);
-                    reverseHostname = String.join(".", parts);
-                }
-
-            }
-            catch (UnknownHostException e)
-            {
-                logger.error("Failed to lookup address", e);
+                List<String> parts = Arrays.asList(hostname.split("\\."));
+                Collections.reverse(parts);
+                reverseHostname = String.join(".", parts);
             }
         }
         return hostname;

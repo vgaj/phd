@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class AnalysisTask
 {
-    private final ConcurrentMap<RemoteAddress, AnalysisResult> results = new ConcurrentHashMap<>();
+    private final ConcurrentMap<RemoteAddress, AnalysisResult> resultsCache = new ConcurrentHashMap<>();
 
     @Autowired
     private MonitorData monitorData;
@@ -31,12 +31,12 @@ public class AnalysisTask
     {
         monitorData.getAddresses().forEach(address ->
         {
-            results.put(address, analyser.analyse(address));
+            resultsCache.put(address, analyser.analyse(address));
         });
     }
 
     public Optional<AnalysisResult> getResult( RemoteAddress address)
     {
-        return Optional.ofNullable(results.get(address));
+        return Optional.ofNullable(resultsCache.get(address));
     }
 }

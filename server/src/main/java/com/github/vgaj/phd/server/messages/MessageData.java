@@ -11,6 +11,7 @@ import java.util.List;
 @Component
 public class MessageData
 {
+    // TODO: Log4J configuration
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // Maximum number of messages to store

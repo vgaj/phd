@@ -21,6 +21,6 @@ public class TransferTimestamp
 
     public TransferIntervalMinutes subtract(TransferTimestamp other)
     {
-        return new TransferIntervalMinutes((int) (timestamp - other.timestamp));
+        return TransferIntervalMinutes.of((int) (timestamp - other.timestamp));
     }
 }

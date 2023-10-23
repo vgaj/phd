@@ -44,6 +44,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>com.fasterxml.jackson.dataformat</groupId>
+			<artifactId>jackson-dataformat-xml</artifactId>
+			<version>2.15.3</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

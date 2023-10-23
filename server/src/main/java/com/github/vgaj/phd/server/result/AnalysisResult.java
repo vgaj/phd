@@ -8,7 +8,7 @@ public interface AnalysisResult
     // TODO: Needed?
     boolean isMinimalCriteriaMatch();
 
-    List<Map.Entry<TransferIntervalMinutes, TransferCount>> getRepeatedIntervals();
+    List<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedIntervals();
 
-    List<Map.Entry<TransferSizeBytes, TransferCount>> getRepeatedTransferSizes();
+    List<Pair<TransferSizeBytes, TransferCount>> getRepeatedTransferSizes();
 }

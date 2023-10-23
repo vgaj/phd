@@ -46,8 +46,8 @@ class DataAnalyserTests
 		Map<TransferIntervalMinutes, List<TransferSizeBytes>> result = new AnalyserUtil().getIntervalsBetweenData(data);
 
 		assert result.size() == 2;
-		assert result.get(new TransferIntervalMinutes(5)).size() == 1;
-		assert result.get(new TransferIntervalMinutes(10)).size() == 3;
+		assert result.get(TransferIntervalMinutes.of(5)).size() == 1;
+		assert result.get(TransferIntervalMinutes.of(10)).size() == 3;
 	}
 
 	@Test

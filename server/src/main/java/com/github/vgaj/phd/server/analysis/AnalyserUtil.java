@@ -51,7 +51,7 @@ public class AnalyserUtil
         Map<TransferSizeBytes,TransferCount> result = new HashMap<>();
         Map<TransferSizeBytes,Long> tempResult = dataSizes.stream().map(s -> s.getSize())
                 .collect(Collectors.groupingBy(s -> new TransferSizeBytes(s), Collectors.counting()));
-        tempResult.entrySet().forEach(e -> result.put(e.getKey(), new TransferCount(e.getValue().intValue())));
+        tempResult.entrySet().forEach(e -> result.put(e.getKey(), TransferCount.of(e.getValue().intValue())));
         return result;
     }
     public Map<TransferSizeBytes,TransferCount> getDataSizeFrequenciesFromRaw(List<Map.Entry<TransferTimestamp, TransferSizeBytes>> dataForAddress)

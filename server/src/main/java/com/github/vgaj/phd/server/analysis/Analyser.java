@@ -60,7 +60,7 @@ public class Analyser
 
         // For testing
         //result.setMinimalCriteriaMatch(true);
-        //result.setAllTransfersAtSameInterval_c11(new TransferIntervalMinutes(13));
+        //result.addRepeatedInterval(new TransferIntervalMinutes(13), new TransferCount(42));
 
         // TODO: start capturing more data when it is interesting
 
@@ -83,7 +83,7 @@ public class Analyser
                         Integer size2 = entry2.getValue().size();
                         return size1.compareTo(size2);
                     })
-                    .forEach(entry -> result.addRepeatedInterval(entry.getKey(), new TransferCount(entry.getValue().size())));
+                    .forEach(entry -> result.addRepeatedInterval(entry.getKey(), TransferCount.of(entry.getValue().size())));
 
             // TODO: Check if most are at same interval
             // TODO: Check if average interval is roughly (total run time / number of times)

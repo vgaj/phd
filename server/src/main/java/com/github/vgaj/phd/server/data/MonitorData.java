@@ -4,9 +4,12 @@ import com.github.vgaj.phd.server.messages.MessageData;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
 import com.github.vgaj.phd.server.result.TransferTimestamp;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -27,9 +30,17 @@ public class MonitorData
     {
         if (!data.containsKey(host))
         {
-            String hostname = host.lookupHost();
-            messageData.addMessage("New host: " + hostname);
-            data.put(host, new DataForAddress());
+            String hostname = null;
+            try
+            {
+                hostname = host.lookupHost();
+                messageData.addMessage("New host: " + hostname);
+                data.put(host, new DataForAddress());
+            }
+            catch (UnknownHostException e)
+            {
+                messageData.addError("Failed to lookup address", e);
+            }
         }
         data.get(host).addBytes(length, epochMinute);
     }
