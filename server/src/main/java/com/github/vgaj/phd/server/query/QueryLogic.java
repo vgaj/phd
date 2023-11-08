@@ -1,6 +1,7 @@
 package com.github.vgaj.phd.server.query;
 
-import com.github.vgaj.phd.server.analysis.AnalysisTask;
+import com.github.vgaj.phd.server.analysis.AnalysisCache;
+import com.github.vgaj.phd.server.data.DataForAddress;
 import com.github.vgaj.phd.server.messages.MessageData;
 import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
@@ -33,7 +34,7 @@ public class QueryLogic
     private MessageData messageData;
 
     @Autowired
-    private AnalysisTask analyserTask;
+    private AnalysisCache analyserCache;
 
     @Value("${phd.display.maximum.data}")
     private Integer maxDataToShow;
@@ -43,13 +44,11 @@ public class QueryLogic
      */
     public DisplayContent getDisplayContent()
     {
-        // TODO: run the logic periodically and just return the last result
-
         DisplayContent content = new DisplayContent();
         content.results = new ArrayList<>();
 
         // The addresses
-        List<RemoteAddress> addresses = monitorData.getAddresses();
+        List<RemoteAddress> addresses = analyserCache.getAddresses();
 
         Collections.sort(addresses, new Comparator<RemoteAddress>() {
             @Override
@@ -68,7 +67,7 @@ public class QueryLogic
 
         addresses.forEach( address ->
         {
-            Optional<AnalysisResult> resultFromCache = analyserTask.getResult(address);
+            Optional<AnalysisResult> resultFromCache = analyserCache.getResult(address);
             if (resultFromCache.isPresent() && resultFromCache.get().isMinimalCriteriaMatch())
             {
                 AnalysisResult result = resultFromCache.get();
@@ -78,8 +77,12 @@ public class QueryLogic
                 content.results.add(displayResult);
                 displayResult.hostName = address.getHostString();
                 displayResult.ipAddress = address.getAddressString();
-                displayResult.totalBytes = monitorData.getDataForAddress(address).getTotalBytes();
-                displayResult.totalTimes = monitorData.getDataForAddress(address).getMinuteBlockCount();
+                DataForAddress currentDataForAddress = monitorData.getDataForAddress(address);
+                if (currentDataForAddress != null)
+                {
+                    displayResult.totalBytes = currentDataForAddress.getTotalBytes();
+                    displayResult.totalTimes = currentDataForAddress.getMinuteBlockCount();
+                }
 
                 // TODO: sort by score
                 displayResult.score = (new AnalysisScore(resultCategorisation)).getScore();

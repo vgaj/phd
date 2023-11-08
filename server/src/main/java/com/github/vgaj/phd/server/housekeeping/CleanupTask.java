@@ -24,7 +24,7 @@ public class CleanupTask
 
     private Set<RemoteAddress> lastAddressesToIgnore = null;
 
-    @Scheduled(fixedRateString = "${phd.cleanup.interval.ms}")
+    @Scheduled(fixedRateString = "${phd.cleanup.interval.ms}", initialDelayString = "${phd.cleanup.interval.ms}")
     public void removeFrequentAddresses()
     {
         // TODO Enforce a maximum to ignore

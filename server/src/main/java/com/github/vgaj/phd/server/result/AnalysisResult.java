@@ -11,4 +11,6 @@ public interface AnalysisResult
     List<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedIntervals();
 
     List<Pair<TransferSizeBytes, TransferCount>> getRepeatedTransferSizes();
+
+    AnalysisResult merge (AnalysisResult other);
 }

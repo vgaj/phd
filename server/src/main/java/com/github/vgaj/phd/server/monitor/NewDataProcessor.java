@@ -120,8 +120,9 @@ public class NewDataProcessor
         disruptor.getRingBuffer().publishEvent(this::translate, pcapPacket);
     }
 
-    private final int statsReportRate = 1;
-    @Scheduled(fixedRate = statsReportRate * 1000)
+    // TODO make configurable
+    private final int statsReportRate = 1 * 1000;
+    @Scheduled(fixedRate = statsReportRate, initialDelay = statsReportRate)
     public void reportStats()
     {
         long packetCount = packetCounter.sumThenReset();

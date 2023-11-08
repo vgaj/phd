@@ -26,6 +26,7 @@ public class ExternalQueryTask  implements Runnable
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Thread queryThread;
+    private boolean isShuttingDown = false;
 
     @Autowired
     private QueryLogic query;
@@ -44,6 +45,7 @@ public class ExternalQueryTask  implements Runnable
     {
         try
         {
+            isShuttingDown = true;
             queryThread.interrupt();
             queryThread.join(1);
         }
@@ -77,7 +79,10 @@ public class ExternalQueryTask  implements Runnable
                 }
                 catch (IOException e)
                 {
-                    logger.error("Failed to bind to " + DomainSocketComms.SOCKET_PATH, e);
+                    if (!isShuttingDown)
+                    {
+                        logger.error("Failed to bind to " + DomainSocketComms.SOCKET_PATH, e);
+                    }
                     return;
                 }
 
@@ -109,7 +114,10 @@ public class ExternalQueryTask  implements Runnable
                     }
                     catch (IOException e)
                     {
-                        logger.error("Failed accept connection on " + DomainSocketComms.SOCKET_PATH, e);
+                        if (!isShuttingDown)
+                        {
+                            logger.error("Failed accept connection on " + DomainSocketComms.SOCKET_PATH, e);
+                        }
                         return;
                     }
                     DomainSocketComms sockComms = new DomainSocketComms(channel);

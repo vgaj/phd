@@ -64,7 +64,6 @@ public class RemoteAddress
      * If the IP address has not previously been looked up then it is looked up.
      * @return The hostname
      */
-    @JsonIgnore
     public String lookupHost() throws UnknownHostException
     {
         if (!lookupAttempted)

@@ -60,7 +60,7 @@ public class Analyser
 
         // For testing
         //result.setMinimalCriteriaMatch(true);
-        //result.addRepeatedInterval(new TransferIntervalMinutes(13), new TransferCount(42));
+        //result.addRepeatedInterval(TransferIntervalMinutes.of(13), TransferCount.of(42));
 
         // TODO: start capturing more data when it is interesting
 

@@ -1,5 +1,6 @@
 package com.github.vgaj.phd.server.result;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,7 @@ public class AnalysisResultImpl implements AnalysisResult
         intervals.add( Pair.of(intervalMinutes, numberOfTimes));
     }
 
+    @JsonIgnore
     @Override
     public List<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedIntervals()
     {
@@ -40,27 +42,29 @@ public class AnalysisResultImpl implements AnalysisResult
         dataSizes.add( Pair.of(transferSizeBytes, numberOfTimes));
     }
 
+    @JsonIgnore
     @Override
     public List<Pair<TransferSizeBytes, TransferCount>> getRepeatedTransferSizes()
     {
         return dataSizes;
     }
 
-    public AnalysisResultImpl merge (AnalysisResultImpl other)
+    @Override
+    public AnalysisResult merge (AnalysisResult other)
     {
         AnalysisResultImpl combinedResult = new AnalysisResultImpl();
 
         HashMap<TransferIntervalMinutes, TransferCount> combinedIntervals = new HashMap<>();
         this.intervals.forEach(interval -> combinedIntervals.put(interval.getKey(), interval.getValue()));
-        other.intervals.forEach(interval -> combinedIntervals.merge(interval.getKey(), interval.getValue(), TransferCount::merge));
+        other.getRepeatedIntervals().forEach(interval -> combinedIntervals.merge(interval.getKey(), interval.getValue(), TransferCount::merge));
         combinedIntervals.forEach((interval,count) -> combinedResult.addRepeatedInterval(interval, count));
 
         HashMap<TransferSizeBytes, TransferCount> combinedSizes = new HashMap<>();
         this.dataSizes.forEach(size -> combinedSizes.put(size.getKey(), size.getValue()));
-        other.dataSizes.forEach(size -> combinedSizes.merge(size.getKey(), size.getValue(), TransferCount::merge));
+        other.getRepeatedTransferSizes().forEach(size -> combinedSizes.merge(size.getKey(), size.getValue(), TransferCount::merge));
         combinedSizes.forEach((size,count) -> combinedResult.addRepeatedTransferSize(size, count));
 
-        combinedResult.minimalCriteriaMatch = this.minimalCriteriaMatch || other.minimalCriteriaMatch;
+        combinedResult.minimalCriteriaMatch = this.minimalCriteriaMatch || other.isMinimalCriteriaMatch();
 
         return combinedResult;
     }
