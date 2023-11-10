@@ -9,13 +9,6 @@ import java.util.*;
 public class AnalysisResultImpl implements AnalysisResult
 {
     /**
-     * MINIMAL CRITERIA
-     */
-    @Getter
-    @Setter
-    private boolean minimalCriteriaMatch;
-
-    /**
      * TRANSFER INTERVAL - List of: interval in minutes -> number of times
      */
     private List<Pair<TransferIntervalMinutes, TransferCount>> intervals = new ArrayList<>();
@@ -63,8 +56,6 @@ public class AnalysisResultImpl implements AnalysisResult
         this.dataSizes.forEach(size -> combinedSizes.put(size.getKey(), size.getValue()));
         other.getRepeatedTransferSizes().forEach(size -> combinedSizes.merge(size.getKey(), size.getValue(), TransferCount::merge));
         combinedSizes.forEach((size,count) -> combinedResult.addRepeatedTransferSize(size, count));
-
-        combinedResult.minimalCriteriaMatch = this.minimalCriteriaMatch || other.isMinimalCriteriaMatch();
 
         return combinedResult;
     }

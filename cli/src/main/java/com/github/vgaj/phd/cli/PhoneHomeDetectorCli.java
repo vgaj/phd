@@ -1,10 +1,7 @@
 package com.github.vgaj.phd.cli;
 
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
-import com.github.vgaj.phd.common.query.DetailedResultsQuery;
-import com.github.vgaj.phd.common.query.DetailedResultsResponse;
-import com.github.vgaj.phd.common.query.SummaryResultsQuery;
-import com.github.vgaj.phd.common.query.SummaryResultsResponse;
+import com.github.vgaj.phd.common.query.*;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -12,6 +9,9 @@ import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class PhoneHomeDetectorCli
 {
@@ -36,8 +36,6 @@ public class PhoneHomeDetectorCli
         }
         else if (args.length != 0)
         {
-            // TODO shell script to drive
-            // TODO man page
             System.out.println("No options      Shows overall results");
             System.out.println("-h <IP address> Shows history for an address");
             System.out.println("-?              Shows help");
@@ -87,6 +85,16 @@ public class PhoneHomeDetectorCli
             if (fullResults)
             {
                 SummaryResultsResponse summaryResponse = (SummaryResultsResponse) response;
+                ArrayList<DisplayResult> results = summaryResponse.getData().results;
+
+                Collections.sort(results, new Comparator<DisplayResult>() {
+                    @Override
+                    public int compare(DisplayResult e1, DisplayResult e2)
+                    {
+                        // Want reverse order which highest score on top
+                        return e2.score - e1.score;
+                    }
+                });
                 StringBuilder sb = new StringBuilder();
                 summaryResponse.getData().results.forEach(r ->
                 {

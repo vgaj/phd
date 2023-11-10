@@ -41,12 +41,11 @@ public class Analyser
     /**
      * This is the logic which analyses the data for a given host
      * @param address The address to do the analysis for
-     * @return Structure containing the results of the analysis
+     * @return Structure containing the results of the analysis if the minimal criteria is met
      */
-    public AnalysisResult analyse(RemoteAddress address)
+    public Optional<AnalysisResult> analyse(RemoteAddress address)
     {
         AnalysisResultImpl result = new AnalysisResultImpl();
-        result.setMinimalCriteriaMatch(false);
 
         // List of:
         //  - time
@@ -59,7 +58,6 @@ public class Analyser
         Map<TransferIntervalMinutes,List<TransferSizeBytes>> intervalsBetweenData = analyserUtil.getIntervalsBetweenData(dataForAddress);
 
         // For testing
-        //result.setMinimalCriteriaMatch(true);
         //result.addRepeatedInterval(TransferIntervalMinutes.of(13), TransferCount.of(42));
 
         // TODO: start capturing more data when it is interesting
@@ -71,8 +69,6 @@ public class Analyser
         if (intervalsBetweenData.size() > 0 &&
                 intervalsBetweenData.entrySet().stream().allMatch(entryForFrequency -> entryForFrequency.getKey().getInterval() >= minIntervalMinutes))
         {
-            result.setMinimalCriteriaMatch(true);
-
             //=============
             // Repeated transfers at the same interval
             intervalsBetweenData.entrySet().stream()
@@ -96,8 +92,13 @@ public class Analyser
             Map<TransferSizeBytes, TransferCount> dataFrequencies = analyserUtil.getDataSizeFrequenciesFromRaw(dataForAddress);
             dataFrequencies.entrySet().stream().filter(e -> e.getValue().getCount() >= minCountOfSameSize)
                     .forEach(e -> result.addRepeatedTransferSize(e.getKey(),e.getValue()));
+
+            return Optional.of(result);
         }
-        return result;
+        else
+        {
+            return Optional.empty();
+        }
     }
 
     public Set<RemoteAddress> getAddressesToIgnore()

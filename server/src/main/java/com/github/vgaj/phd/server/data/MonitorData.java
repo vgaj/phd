@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentMap;
 public class MonitorData
 {
     // TODO: Periodic cleanup of uninteresting data
-    // TODO: Save data and reload on restart
 
     @Autowired
     MessageData messageData;

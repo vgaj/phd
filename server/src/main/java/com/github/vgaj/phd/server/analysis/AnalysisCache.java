@@ -21,6 +21,11 @@ public class AnalysisCache
         currentResults.put(address, result);
     }
 
+    public void removeCurrentResult(RemoteAddress address)
+    {
+        currentResults.remove(address);
+    }
+
     public void putPreviousResult(RemoteAddress address, AnalysisResult result)
     {
         previousResults.put(address, result);

@@ -17,7 +17,6 @@ public class ResultXmlSerialisationTest
     public static AnalysisResultImpl makeAnalysisResult(int interval1, int intervalCount1, int interval2, int intervalCount2, int size1, int sizeCount1, int size2, int sizeCount2)
     {
         AnalysisResultImpl result = new AnalysisResultImpl();
-        result.setMinimalCriteriaMatch(true);
         result.addRepeatedInterval( TransferIntervalMinutes.of(interval1), TransferCount.of(intervalCount1));
         result.addRepeatedInterval( TransferIntervalMinutes.of(interval2), TransferCount.of(intervalCount2));
         result.addRepeatedTransferSize( TransferSizeBytes.of(size1), TransferCount.of(sizeCount1));
@@ -44,7 +43,6 @@ public class ResultXmlSerialisationTest
         AnalysisResultImpl fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, AnalysisResultImpl.class);
 
         // Assert
-        assert fromXml.isMinimalCriteriaMatch() == true;
         assert fromXml.getRepeatedIntervals().size() == 2;
         assert fromXml.getRepeatedTransferSizes().size() == 2;
         assert fromXml.getRepeatedIntervals().get(0).getKey().getInterval() == interval1;
@@ -69,7 +67,6 @@ public class ResultXmlSerialisationTest
         AnalysisResultImpl fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, AnalysisResultImpl.class);
 
         // Assert
-        assert fromXml.isMinimalCriteriaMatch() == false;
         assert fromXml.getRepeatedIntervals().size() == 1;
         assert fromXml.getRepeatedIntervals().get(0).getKey().getInterval() == 1;
         assert fromXml.getRepeatedIntervals().get(0).getValue().getCount() == 2;

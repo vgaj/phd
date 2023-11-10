@@ -68,7 +68,7 @@ public class QueryLogic
         addresses.forEach( address ->
         {
             Optional<AnalysisResult> resultFromCache = analyserCache.getResult(address);
-            if (resultFromCache.isPresent() && resultFromCache.get().isMinimalCriteriaMatch())
+            if (resultFromCache.isPresent())
             {
                 AnalysisResult result = resultFromCache.get();
                 ResultCategorisation resultCategorisation = new ResultCategorisationImpl(result);
@@ -84,7 +84,6 @@ public class QueryLogic
                     displayResult.totalTimes = currentDataForAddress.getMinuteBlockCount();
                 }
 
-                // TODO: sort by score
                 displayResult.score = (new AnalysisScore(resultCategorisation)).getScore();
 
                 if (resultCategorisation.areAllIntervalsTheSame_c11())
