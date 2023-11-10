@@ -8,6 +8,10 @@ import java.util.*;
 
 public class AnalysisResultImpl implements AnalysisResult
 {
+    @Setter
+    @Getter
+    long lastSeenEpochMinute;
+
     /**
      * TRANSFER INTERVAL - List of: interval in minutes -> number of times
      */
@@ -56,6 +60,9 @@ public class AnalysisResultImpl implements AnalysisResult
         this.dataSizes.forEach(size -> combinedSizes.put(size.getKey(), size.getValue()));
         other.getRepeatedTransferSizes().forEach(size -> combinedSizes.merge(size.getKey(), size.getValue(), TransferCount::merge));
         combinedSizes.forEach((size,count) -> combinedResult.addRepeatedTransferSize(size, count));
+
+        combinedResult.setLastSeenEpochMinute(
+                this.getLastSeenEpochMinute() > other.getLastSeenEpochMinute() ? this.getLastSeenEpochMinute() : other.getLastSeenEpochMinute());
 
         return combinedResult;
     }

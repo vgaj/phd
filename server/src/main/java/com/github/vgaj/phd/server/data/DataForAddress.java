@@ -14,7 +14,11 @@ public class DataForAddress
 {
     private int totalBytes = 0;
 
-    // Number of bytes in minute blocks
+    /**
+     * Number of bytes in minute blocks
+     * key -> epoch minute
+     * value -> byte count
+     */
     @Getter
     private final ConcurrentMap<Long, Integer> byteCountPerMinute = new ConcurrentHashMap<>();
 
@@ -32,6 +36,11 @@ public class DataForAddress
     public int getMinuteBlockCount()
     {
         return byteCountPerMinute.keySet().size();
+    }
+
+    public long getLatestEpochMinute()
+    {
+        return byteCountPerMinute.keySet().stream().max(Long::compareTo).orElse(0L);
     }
 
     public List<Map.Entry<Long, Integer>> getPerMinuteData()

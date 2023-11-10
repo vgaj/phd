@@ -10,5 +10,6 @@ public class DisplayResult implements Serializable
     public int totalBytes;
     public int totalTimes;
     public int score;
+    public long lastSeenEpochMinute;
     public ArrayList<DisplayResultLine> resultLines = new ArrayList<>();
 }

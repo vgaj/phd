@@ -57,9 +57,6 @@ public class Analyser
         // interval (minutes) -> list to lengths of data at this interval
         Map<TransferIntervalMinutes,List<TransferSizeBytes>> intervalsBetweenData = analyserUtil.getIntervalsBetweenData(dataForAddress);
 
-        // For testing
-        //result.addRepeatedInterval(TransferIntervalMinutes.of(13), TransferCount.of(42));
-
         // TODO: start capturing more data when it is interesting
 
         //=============
@@ -93,10 +90,22 @@ public class Analyser
             dataFrequencies.entrySet().stream().filter(e -> e.getValue().getCount() >= minCountOfSameSize)
                     .forEach(e -> result.addRepeatedTransferSize(e.getKey(),e.getValue()));
 
+            // Set the last set time
+            result.setLastSeenEpochMinute(monitorData.getDataForAddress(address).getLatestEpochMinute());
+
             return Optional.of(result);
         }
         else
         {
+            /* For testing
+            if (true)
+            {
+                result.addRepeatedInterval(TransferIntervalMinutes.of(13), TransferCount.of(42));
+                result.setLastSeenEpochMinute(monitorData.getDataForAddress(address).getLatestEpochMinute());
+                return Optional.of(result);
+            }
+            */
+
             return Optional.empty();
         }
     }

@@ -77,6 +77,7 @@ public class QueryLogic
                 content.results.add(displayResult);
                 displayResult.hostName = address.getHostString();
                 displayResult.ipAddress = address.getAddressString();
+                displayResult.lastSeenEpochMinute = result.getLastSeenEpochMinute();
                 DataForAddress currentDataForAddress = monitorData.getDataForAddress(address);
                 if (currentDataForAddress != null)
                 {

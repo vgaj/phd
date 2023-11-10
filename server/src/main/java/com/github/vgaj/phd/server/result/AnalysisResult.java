@@ -5,6 +5,8 @@ import java.util.Map;
 
 public interface AnalysisResult
 {
+    long getLastSeenEpochMinute();
+
     List<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedIntervals();
 
     List<Pair<TransferSizeBytes, TransferCount>> getRepeatedTransferSizes();

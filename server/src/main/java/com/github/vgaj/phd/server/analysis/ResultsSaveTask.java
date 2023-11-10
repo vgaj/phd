@@ -1,5 +1,6 @@
 package com.github.vgaj.phd.server.analysis;
 
+import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.result.AnalysisResultImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,9 @@ public class ResultsSaveTask
 
     @Autowired
     AnalysisCache analysisCache;
+
+    @Autowired
+    private MonitorData monitorData;
 
     // TODO make configurable
     private Path xmlFilePath = Paths.get("/opt/phd/results.xml");
@@ -55,8 +59,7 @@ public class ResultsSaveTask
         logger.info("Saving results to XML...");
         ResultsSaveList toXml = new ResultsSaveList();
         analysisCache.getAddresses().forEach(address -> {
-            // TODO time
-            toXml.getResultsForSaving().add(ResultsSaveItem.of(address, (AnalysisResultImpl) analysisCache.getResult(address).get(), 0));
+            toXml.getResultsForSaving().add(ResultsSaveItem.of(address, (AnalysisResultImpl) analysisCache.getResult(address).get()));
         });
         try
         {

@@ -18,13 +18,14 @@ public class DataMergeTests
         RemoteAddress address2 = new RemoteAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
         address1.lookupHost();
         address2.lookupHost();
-        AnalysisResultImpl result1 = ResultXmlSerialisationTest.makeAnalysisResult(1, 11, 2, 22, 5, 55, 6, 666);
-        AnalysisResultImpl result2 = ResultXmlSerialisationTest.makeAnalysisResult(1, 10, 3, 10, 5, 11, 7, 777);
+        AnalysisResultImpl result1 = ResultXmlSerialisationTest.makeAnalysisResult(1, 11, 2, 22, 5, 55, 6, 666, 888);
+        AnalysisResultImpl result2 = ResultXmlSerialisationTest.makeAnalysisResult(1, 10, 3, 10, 5, 11, 7, 777, 999);
 
         // Act
         AnalysisResult combined = result1.merge(result2);
 
         // Assert
+        assert combined.getLastSeenEpochMinute() == 999;
         List<Pair<TransferIntervalMinutes, TransferCount>> intervals = combined.getRepeatedIntervals();
         List<Pair<TransferSizeBytes, TransferCount>> sizes = combined.getRepeatedTransferSizes();
         assert intervals.get(0).getKey().getInterval() == 1  && intervals.get(0).getValue().getCount() == 21; // 11 + 10

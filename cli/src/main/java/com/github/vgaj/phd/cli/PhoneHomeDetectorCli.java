@@ -9,6 +9,9 @@ import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -103,6 +106,9 @@ public class PhoneHomeDetectorCli
                     {
                         sb.append(" (").append(r.hostName).append(")");
                     }
+                    sb.append(System.lineSeparator());
+                    sb.append("  Last Seen: ");
+                    sb.append(EpochMinuteUtil.toString(r.lastSeenEpochMinute));
                     sb.append(System.lineSeparator());
                     sb.append("  Score: ").append(r.score).append(System.lineSeparator());
                     r.resultLines.forEach(line ->

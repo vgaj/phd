@@ -6,12 +6,11 @@ import lombok.Getter;
 
 public class ResultsSaveItem
 {
-    public static ResultsSaveItem of(RemoteAddress address, AnalysisResultImpl result, long lastSeenEpochMinute)
+    public static ResultsSaveItem of(RemoteAddress address, AnalysisResultImpl result)
     {
         ResultsSaveItem item = new ResultsSaveItem();
         item.address = address;
         item.result = result;
-        item.lastSeenEpochMinute = lastSeenEpochMinute;
         return item;
     }
     @Getter
@@ -19,7 +18,4 @@ public class ResultsSaveItem
 
     @Getter
     private AnalysisResultImpl result;
-
-    @Getter
-    private long lastSeenEpochMinute;
 }

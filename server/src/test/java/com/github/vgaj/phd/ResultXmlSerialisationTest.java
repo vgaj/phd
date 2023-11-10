@@ -14,13 +14,14 @@ import java.net.UnknownHostException;
 public class ResultXmlSerialisationTest
 {
 
-    public static AnalysisResultImpl makeAnalysisResult(int interval1, int intervalCount1, int interval2, int intervalCount2, int size1, int sizeCount1, int size2, int sizeCount2)
+    public static AnalysisResultImpl makeAnalysisResult(int interval1, int intervalCount1, int interval2, int intervalCount2, int size1, int sizeCount1, int size2, int sizeCount2, long lastSeen)
     {
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addRepeatedInterval( TransferIntervalMinutes.of(interval1), TransferCount.of(intervalCount1));
         result.addRepeatedInterval( TransferIntervalMinutes.of(interval2), TransferCount.of(intervalCount2));
         result.addRepeatedTransferSize( TransferSizeBytes.of(size1), TransferCount.of(sizeCount1));
         result.addRepeatedTransferSize( TransferSizeBytes.of(size2), TransferCount.of(sizeCount2));
+        result.setLastSeenEpochMinute(lastSeen);
         return result;
     }
 
@@ -36,13 +37,15 @@ public class ResultXmlSerialisationTest
         int sizeCount1 = 6;
         int size2 = 7;
         int sizeCount2 = 8;
-        AnalysisResultImpl result = makeAnalysisResult(interval1, intervalCount1, interval2, intervalCount2, size1, sizeCount1, size2, sizeCount2);
+        long lastSeen = 9;
+        AnalysisResultImpl result = makeAnalysisResult(interval1, intervalCount1, interval2, intervalCount2, size1, sizeCount1, size2, sizeCount2, lastSeen);
 
         // Act
         String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(result);
         AnalysisResultImpl fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, AnalysisResultImpl.class);
 
         // Assert
+        assert fromXml.getLastSeenEpochMinute() == lastSeen;
         assert fromXml.getRepeatedIntervals().size() == 2;
         assert fromXml.getRepeatedTransferSizes().size() == 2;
         assert fromXml.getRepeatedIntervals().get(0).getKey().getInterval() == interval1;
@@ -119,10 +122,11 @@ public class ResultXmlSerialisationTest
         int sizeCount1 = 6;
         int size2 = 7;
         int sizeCount2 = 8;
-        AnalysisResultImpl result = makeAnalysisResult(interval1, intervalCount1, interval2, intervalCount2, size1, sizeCount1, size2, sizeCount2);
+        long lastSeen = 9;
+        AnalysisResultImpl result = makeAnalysisResult(interval1, intervalCount1, interval2, intervalCount2, size1, sizeCount1, size2, sizeCount2, lastSeen);
 
         ResultsSaveList results = new ResultsSaveList();
-        results.getResultsForSaving().add(ResultsSaveItem.of(address,result,7));
+        results.getResultsForSaving().add(ResultsSaveItem.of(address,result));
 
         // Act
         String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(results);
@@ -130,12 +134,12 @@ public class ResultXmlSerialisationTest
 
         // Assert
         assert fromXml.getResultsForSaving().get(0).getAddress().getReverseHostname().equals(address.getReverseHostname());
+        assert fromXml.getResultsForSaving().get(0).getResult().getLastSeenEpochMinute() == lastSeen;
         assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedIntervals().get(0).getKey().getInterval() == 1;
         assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedIntervals().get(0).getValue().getCount() == 2;
         assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedIntervals().get(1).getKey().getInterval() == 3;
         assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedIntervals().get(1).getValue().getCount() == 4;
         assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedTransferSizes().get(0).getKey().getSize() == 5;
         assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedTransferSizes().get(0).getValue().getCount() == 6;
-        assert fromXml.getResultsForSaving().get(0).getLastSeenEpochMinute() == 7;
     }
 }
