@@ -5,12 +5,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DisplayResultLine implements Serializable
+public record DisplayResultLine (String message,  String[] subMessages) implements Serializable
 {
-    public DisplayResultLine(String message)
-    {
-        this.message = message;
-    }
-    public String message;
-    public ArrayList<String> subMessages = new ArrayList<>();
 }

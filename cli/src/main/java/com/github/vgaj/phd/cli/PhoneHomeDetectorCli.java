@@ -2,6 +2,7 @@ package com.github.vgaj.phd.cli;
 
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
 import com.github.vgaj.phd.common.query.*;
+import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -9,12 +10,7 @@ import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 
 public class PhoneHomeDetectorCli
 {
@@ -88,37 +84,37 @@ public class PhoneHomeDetectorCli
             if (fullResults)
             {
                 SummaryResultsResponse summaryResponse = (SummaryResultsResponse) response;
-                ArrayList<DisplayResult> results = summaryResponse.getData().results;
+                List<DisplayResult> results = Arrays.asList((summaryResponse.data().results()));
 
                 Collections.sort(results, new Comparator<DisplayResult>() {
                     @Override
                     public int compare(DisplayResult e1, DisplayResult e2)
                     {
                         // Want reverse order which highest score on top
-                        return e2.score - e1.score;
+                        return e2.score() - e1.score();
                     }
                 });
                 StringBuilder sb = new StringBuilder();
-                summaryResponse.getData().results.forEach(r ->
+                results.forEach(r ->
                 {
-                    sb.append(r.ipAddress);
-                    if (!r.ipAddress.equals(r.hostName))
+                    sb.append(r.ipAddress());
+                    if (!r.ipAddress().equals(r.hostName()))
                     {
-                        sb.append(" (").append(r.hostName).append(")");
+                        sb.append(" (").append(r.hostName()).append(")");
                     }
                     sb.append(System.lineSeparator());
                     sb.append("  Last Seen: ");
-                    sb.append(EpochMinuteUtil.toString(r.lastSeenEpochMinute));
+                    sb.append(EpochMinuteUtil.toString(r.lastSeenEpochMinute()));
                     sb.append(System.lineSeparator());
-                    sb.append("  Score: ").append(r.score).append(System.lineSeparator());
-                    r.resultLines.forEach(line ->
+                    sb.append("  Score: ").append(r.score()).append(System.lineSeparator());
+                    for (DisplayResultLine line : r.resultLines())
                     {
-                        sb.append("    ").append(line.message).append(System.lineSeparator());
-                        line.subMessages.forEach(subline ->
+                        sb.append("    ").append(line.message()).append(System.lineSeparator());
+                        for (String subline : line.subMessages())
                         {
                             sb.append("      ").append(subline).append((System.lineSeparator()));
-                        });
-                    });
+                        };
+                    };
                 });
                 System.out.println(sb);
             }
@@ -126,10 +122,10 @@ public class PhoneHomeDetectorCli
             {
                 DetailedResultsResponse detailedResponse = (DetailedResultsResponse) response;
                 StringBuilder sb = new StringBuilder();
-                detailedResponse.results.forEach(r ->
+                for (String r : detailedResponse.results())
                 {
                     sb.append(r).append(System.lineSeparator());
-                });
+                };
                 System.out.println(sb);
             }
         }

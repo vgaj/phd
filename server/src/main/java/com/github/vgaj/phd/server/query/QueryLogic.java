@@ -1,5 +1,6 @@
 package com.github.vgaj.phd.server.query;
 
+import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.analysis.AnalysisCache;
 import com.github.vgaj.phd.server.data.DataForAddress;
 import com.github.vgaj.phd.server.messages.MessageData;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This class is responsible for generating the model of the result of the analysis
@@ -44,8 +46,7 @@ public class QueryLogic
      */
     public DisplayContent getDisplayContent()
     {
-        DisplayContent content = new DisplayContent();
-        content.results = new ArrayList<>();
+        ArrayList<DisplayResult> results = new ArrayList<>();
 
         // The addresses
         List<RemoteAddress> addresses = analyserCache.getAddresses();
@@ -73,56 +74,66 @@ public class QueryLogic
                 AnalysisResult result = resultFromCache.get();
                 ResultCategorisation resultCategorisation = new ResultCategorisationImpl(result);
 
-                DisplayResult displayResult = new DisplayResult();
-                content.results.add(displayResult);
-                displayResult.hostName = address.getHostString();
-                displayResult.ipAddress = address.getAddressString();
-                displayResult.lastSeenEpochMinute = result.getLastSeenEpochMinute();
+                int totalBytes = 0;
+                int totalTimes = 0;
                 DataForAddress currentDataForAddress = monitorData.getDataForAddress(address);
                 if (currentDataForAddress != null)
                 {
-                    displayResult.totalBytes = currentDataForAddress.getTotalBytes();
-                    displayResult.totalTimes = currentDataForAddress.getMinuteBlockCount();
+                    totalBytes = currentDataForAddress.getTotalBytes();
+                    totalTimes = currentDataForAddress.getMinuteBlockCount();
                 }
 
-                displayResult.score = (new AnalysisScore(resultCategorisation)).getScore();
-
+                int score = (new AnalysisScore(resultCategorisation)).getScore();
+                ArrayList<DisplayResultLine> resultLines = new ArrayList<>();
                 if (resultCategorisation.areAllIntervalsTheSame_c11())
                 {
-                    displayResult.resultLines.add( new DisplayResultLine("all intervals are " + result.getRepeatedIntervals().get(0).getKey() + " minutes"));
+                    resultLines.add( new DisplayResultLine("all intervals are " + result.getRepeatedIntervals().get(0).getKey() + " minutes", new String[0]));
                 }
 
                 if (resultCategorisation.areSomeIntervalsTheSame_c12())
                 {
-                    DisplayResultLine resultLine = new DisplayResultLine("intervals between data:");
+                    ArrayList<String> subMessages = new ArrayList<>();
                     result.getRepeatedIntervals().forEach(r ->
-                            resultLine.subMessages.add(r.getKey() + " min, " + r.getValue() + " times"));
-                    displayResult.resultLines.add(resultLine);
+                            subMessages.add(r.getKey() + " min, " + r.getValue() + " times"));
+                    DisplayResultLine resultLine = new DisplayResultLine("intervals between data:", subMessages.toArray(new String[0]));
+                    resultLines.add(resultLine);
                 }
                 if (resultCategorisation.areAllTransfersTheSameSize_c21())
                 {
-                    displayResult.resultLines.add( new DisplayResultLine("all transfers are " + result.getRepeatedTransferSizes().get(0).getKey() + " bytes"));
+                    resultLines.add( new DisplayResultLine("all transfers are " + result.getRepeatedTransferSizes().get(0).getKey() + " bytes", new String[0]));
                 }
                 if (resultCategorisation.areSomeTransfersTheSameSize_c22())
                 {
-                    DisplayResultLine resultLine = new DisplayResultLine("repeated data sizes:");
+                    ArrayList<String> subMessages = new ArrayList<>();
                     result.getRepeatedTransferSizes().forEach(r ->
-                            resultLine.subMessages.add(r.getKey() + " bytes, " + r.getValue() + " times"));
-                    displayResult.resultLines.add( resultLine);
+                            subMessages.add(r.getKey() + " bytes, " + r.getValue() + " times"));
+                    DisplayResultLine resultLine = new DisplayResultLine("repeated data sizes:", subMessages.toArray(new String[0]));
+                    resultLines.add( resultLine);
                 }
                 if (maxDataToShow > 0)
                 {
                     //sb.append("- last ").append(maxDataToShow).append(" data points: ").append("<br/>");
                     //sb.append(entryForAddress.getValue().getPerMinuteDataForDisplay(maxDataToShow));
                 }
+
+                DisplayResult displayResult = new DisplayResult(
+                        address.getHostString(),
+                        address.getAddressString(),
+                        totalBytes,
+                        totalTimes,
+                        score,
+                        result.getLastSeenEpochMinute(),
+                        resultLines.toArray(new DisplayResultLine[0]));
+                results.add(displayResult);
+
             }
         });
 
         // The messages
-        content.messages = new ArrayList<>();
-        content.messages.addAll(messageData.getMessages());
+        ArrayList<String> messages = new ArrayList<>();
+        messages.addAll(messageData.getMessages());
 
-        return content;
+        return new DisplayContent(results.toArray(new DisplayResult[0]), messages.toArray(new String[0]));
     }
 
     /**
@@ -131,7 +142,18 @@ public class QueryLogic
     public ArrayList<String> getData(InetAddress address)
     {
         ArrayList<String> results = new ArrayList<>();
-        results.addAll(monitorData.getDataForAddress(new RemoteAddress(address)).getPerMinuteDataForDisplay(maxDataToShow));
+        DataForAddress dataForAddress = monitorData.getDataForAddress(new RemoteAddress(address));
+        if (dataForAddress != null)
+        {
+            var data = dataForAddress.getByteCountPerMinute().entrySet();
+            int dataLength = data.size();
+            data.stream()
+                    .sorted(Comparator.comparing(e -> ((Long) e.getKey())))
+                    .skip( maxDataToShow < dataLength ? dataLength - maxDataToShow : 0)
+                    .limit( maxDataToShow)
+                    .map(e -> EpochMinuteUtil.toString(e.getKey()) + " : " + e.getValue() + " bytes")
+                    .forEach(results::add);
+        }
         return results;
     }
 }

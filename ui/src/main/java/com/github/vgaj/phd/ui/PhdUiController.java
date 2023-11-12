@@ -46,7 +46,7 @@ public class PhdUiController
             }
             else
             {
-                model.addAttribute("content", response.getData());
+                model.addAttribute("content", response.data());
                 return "index";
             }
         }
@@ -80,7 +80,7 @@ public class PhdUiController
             else
             {
                 model.addAttribute("address", address);
-                model.addAttribute("content", response.getResults());
+                model.addAttribute("content", response.results());
                 return "data";
             }
         }

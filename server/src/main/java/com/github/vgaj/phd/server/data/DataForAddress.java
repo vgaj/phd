@@ -1,5 +1,6 @@
 package com.github.vgaj.phd.server.data;
 
+import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import lombok.Getter;
 
 import java.time.Instant;
@@ -47,25 +48,4 @@ public class DataForAddress
     {
         return new ArrayList<>(byteCountPerMinute.entrySet());
     }
-
-    // TODO Remove
-    public List<String> getPerMinuteDataForDisplay(int countToShow)
-    {
-        var data = byteCountPerMinute.entrySet();
-        int dataLength = data.size();
-        return data.stream()
-                .sorted(Comparator.comparing(e -> ((Long) e.getKey())))
-                .skip( countToShow < dataLength ? dataLength - countToShow : 0)
-                .limit( countToShow)
-                .map(e -> getDisplayTime(e.getKey()) + ':' + e.getValue())
-                .collect(Collectors.toList());
-    }
-
-    private String getDisplayTime(long epochMinute)
-    {
-        Instant instant = Instant.ofEpochSecond(epochMinute * 60);
-        LocalDateTime ldt = LocalDateTime.ofInstant(instant, ZoneOffset.systemDefault());
-        return ldt.toString();
-    }
-
 }

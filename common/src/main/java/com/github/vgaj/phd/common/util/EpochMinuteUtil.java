@@ -1,4 +1,4 @@
-package com.github.vgaj.phd.cli;
+package com.github.vgaj.phd.common.util;
 
 import java.time.Instant;
 import java.time.ZoneId;

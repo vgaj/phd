@@ -5,6 +5,7 @@ import com.github.vgaj.phd.server.result.AnalysisResultImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
@@ -27,18 +28,20 @@ public class ResultsSaveTask
     @Autowired
     private MonitorData monitorData;
 
-    // TODO make configurable
-    private Path xmlFilePath = Paths.get("/opt/phd/results.xml");
+
+    @Value("${phd.results.xml.path}")
+    private String xmlFilePath;
 
     @EventListener(ApplicationReadyEvent.class)
     public void load()
     {
-        if (Files.exists(xmlFilePath))
+        Path xmlFile = Path.of(xmlFilePath);
+        if (Files.exists(xmlFile))
         {
             try
             {
                 logger.info("Loading results from XML...");
-                String xml = new String(Files.readAllBytes(xmlFilePath));
+                String xml = new String(Files.readAllBytes(xmlFile));
                 ResultsSaveList fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, ResultsSaveList.class);
                 fromXml.getResultsForSaving().forEach(result -> {
                     analysisCache.putPreviousResult(result.getAddress(), result.getResult());
@@ -47,7 +50,7 @@ public class ResultsSaveTask
             }
             catch (Exception e)
             {
-                logger.error("Error reading xml results file: " + xmlFilePath.toString(), e);
+                logger.error("Error reading xml results file: " + xmlFilePath, e);
             }
         }
     }
@@ -57,6 +60,7 @@ public class ResultsSaveTask
     public void save()
     {
         logger.info("Saving results to XML...");
+        Path xmlFile = Path.of(xmlFilePath);
         ResultsSaveList toXml = new ResultsSaveList();
         analysisCache.getAddresses().forEach(address -> {
             toXml.getResultsForSaving().add(ResultsSaveItem.of(address, (AnalysisResultImpl) analysisCache.getResult(address).get()));
@@ -64,12 +68,12 @@ public class ResultsSaveTask
         try
         {
             String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(toXml);
-            Files.writeString(xmlFilePath, xml);
+            Files.writeString(xmlFile, xml);
             logger.info("Saved {} results to XML", toXml.getResultsForSaving().size());
         }
         catch (IOException e)
         {
-            logger.error("Error writing xml results file: " + xmlFilePath.toString(), e);
+            logger.error("Error writing xml results file: " + xmlFilePath, e);
         }
     }
 }

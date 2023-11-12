@@ -11,6 +11,7 @@ import com.lmax.disruptor.util.DaemonThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -120,9 +121,10 @@ public class NewDataProcessor
         disruptor.getRingBuffer().publishEvent(this::translate, pcapPacket);
     }
 
-    // TODO make configurable
-    private final int statsReportRate = 1 * 1000;
-    @Scheduled(fixedRate = statsReportRate, initialDelay = statsReportRate)
+    @Value("${phd.report.interval.ms}")
+    private String statsReportRate;
+
+    @Scheduled(fixedRateString = "${phd.report.interval.ms}", initialDelayString = "${phd.report.interval.ms}")
     public void reportStats()
     {
         long packetCount = packetCounter.sumThenReset();

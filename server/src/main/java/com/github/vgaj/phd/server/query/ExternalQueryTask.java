@@ -132,15 +132,13 @@ public class ExternalQueryTask  implements Runnable
                                     if (request instanceof SummaryResultsQuery)
                                     {
                                         logger.info("Received a summary request.");
-                                        SummaryResultsResponse response = new SummaryResultsResponse();
-                                        response.setData(query.getDisplayContent());
+                                        SummaryResultsResponse response = new SummaryResultsResponse(query.getDisplayContent());
                                         sockComms.writeSocketMessage(response);
                                     }
                                     else if (request instanceof DetailedResultsQuery)
                                     {
                                         logger.info("Received a detailed request.");
-                                        DetailedResultsResponse response = new DetailedResultsResponse();
-                                        response.setResults(query.getData(((DetailedResultsQuery)request).address));
+                                        DetailedResultsResponse response = new DetailedResultsResponse(query.getData(((DetailedResultsQuery)request).address).toArray(new String[0]));
                                         sockComms.writeSocketMessage(response);
                                     }
                                     else
