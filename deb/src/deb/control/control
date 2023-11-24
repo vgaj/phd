@@ -1,0 +1,12 @@
+Package: phone-home-detector
+Version: 0.1
+Section: misc
+Priority: optional
+Architecture: amd64
+Depends: libpcap-dev (>= 1.10), openjdk-17-jre (>= 17.0)
+Maintainer: Viru Gajanayake <viru.gajanayake@yahoo.com>
+Description: Detects if something is "Phoning Phone"
+ Installs a service called phone-home-detector which monitors traffic
+ to identify something that might be phoning home to check for updates etc.
+ Provides a command line interface called phone-home-detector that
+ enables the results to be queried.

@@ -1,0 +1,3 @@
+#!/bin/sh
+/usr/bin/systemctl stop phone-home-detector
+/usr/bin/systemctl disable phone-home-detector --now

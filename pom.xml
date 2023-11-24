@@ -71,6 +71,24 @@
         <version>${revision}</version>
       </dependency>
 
+      <dependency>
+        <groupId>com.github.vgaj.phd</groupId>
+        <artifactId>phd-cli</artifactId>
+        <version>${revision}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.github.vgaj.phd</groupId>
+        <artifactId>phd-server</artifactId>
+        <version>${revision}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.github.vgaj.phd</groupId>
+        <artifactId>phd-ui</artifactId>
+        <version>${revision}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -91,5 +109,6 @@
     <module>common</module>
     <module>cli</module>
     <module>ui</module>
+    <module>deb</module>
   </modules>
 </project>
