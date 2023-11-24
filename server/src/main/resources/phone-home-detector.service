@@ -3,7 +3,7 @@ Description=Phone Home Detector
 After=multi-user.target
 
 [Service]
-ExecStart=/usr/bin/java -Djava.net.preferIPv4Stack=true -jar /opt/phd/phd-server-0.0.1-SNAPSHOT.jar
+ExecStart=/usr/bin/java -Djava.net.preferIPv4Stack=true -jar /opt/phone-home-detector/phd-server-0.0.1-SNAPSHOT.jar
 
 [Install]
 WantedBy=multi-user.target
