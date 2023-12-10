@@ -21,7 +21,7 @@ import static org.pcap4j.core.PcapNetworkInterface.PromiscuousMode.PROMISCUOUS;
  * Retrieves captured data from Pcap4j
  */
 @Component
-public class MonitorTask implements Runnable
+public class MonitorTask implements Runnable, MonitorTaskFilterUpdateInterface
 {
     @Autowired
     private MessageData messageData;

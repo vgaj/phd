@@ -22,7 +22,7 @@ public class AnalysisTask
     private MessageData messageData;
 
     @Autowired
-    private Analyser analyser;
+    private AnalyserInterface analyser;
 
     @Scheduled(fixedRateString = "${phd.analysis.interval.ms}", initialDelayString = "${phd.analysis.interval.ms}")
     public void analyse()

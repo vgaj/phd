@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.util.*;
 
 @Component
-public class Analyser
+public class Analyser implements AnalyserInterface
 {
     // TODO: Analyser unit tests
 

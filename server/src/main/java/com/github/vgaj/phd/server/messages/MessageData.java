@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MessageData
+public class MessageData implements MessageDataInterface
 {
     // TODO: Log4J configuration
     Logger logger = LoggerFactory.getLogger(this.getClass());
