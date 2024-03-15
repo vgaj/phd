@@ -1,4 +1,4 @@
-package com.github.vgaj.phd.server.monitor;
+package com.github.vgaj.phd.server.monitor.pcap;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageData;
@@ -21,13 +21,13 @@ import static org.pcap4j.core.PcapNetworkInterface.PromiscuousMode.PROMISCUOUS;
  * Retrieves captured data from Pcap4j
  */
 @Component
-public class MonitorTask implements Runnable, MonitorTaskFilterUpdateInterface
+public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterface
 {
     @Autowired
     private MessageData messageData;
 
     @Autowired
-    private NewDataProcessor newDataProcessor;
+    private PcapNewDataProcessor newDataProcessor;
 
     private Thread monitorThread;
 
@@ -77,7 +77,6 @@ public class MonitorTask implements Runnable, MonitorTaskFilterUpdateInterface
             StringBuilder newFilter = new StringBuilder();
             newFilter.append("(").append(filter).append(")");
             addressesToExclude.forEach( address -> newFilter.append(" and not host ").append(address.getAddressString()));
-            // TODO: Look at rolling own JNA
             handle.setFilter(newFilter.toString(), BpfProgram.BpfCompileMode.OPTIMIZE);
             long durationMs = (System.nanoTime() - start) / 1000000;
             if (durationMs > 0)

@@ -57,8 +57,6 @@ public class Analyser implements AnalyserInterface
         // interval (minutes) -> list to lengths of data at this interval
         Map<TransferIntervalMinutes,List<TransferSizeBytes>> intervalsBetweenData = analyserUtil.getIntervalsBetweenData(dataForAddress);
 
-        // TODO: start capturing more data when it is interesting
-
         //=============
         // Pre-criteria: We are only interested in looking at hosts where every interval between
         // data is greater than the configured minimum.

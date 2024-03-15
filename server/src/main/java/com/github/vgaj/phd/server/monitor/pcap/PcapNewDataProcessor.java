@@ -1,6 +1,7 @@
-package com.github.vgaj.phd.server.monitor;
+package com.github.vgaj.phd.server.monitor.pcap;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.monitor.pcap.PcapPacketHelper;
 import lombok.Data;
 import org.pcap4j.packet.Packet;
 
@@ -24,7 +25,7 @@ import java.util.concurrent.atomic.LongAdder;
  * Consumes new captured data via a Distruptor
  */
 @Component
-public class NewDataProcessor
+public class PcapNewDataProcessor
 {
     private static final int BUFFER_SIZE = 65536;
     private static final boolean DEBUG_LOG = false;

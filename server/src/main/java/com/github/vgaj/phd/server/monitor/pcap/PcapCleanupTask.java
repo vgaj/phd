@@ -1,9 +1,8 @@
-package com.github.vgaj.phd.server.housekeeping;
+package com.github.vgaj.phd.server.monitor.pcap;
 
 import com.github.vgaj.phd.server.analysis.AnalyserInterface;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageData;
-import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -13,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class CleanupTask
+public class PcapCleanupTask
 {
     @Autowired
     private AnalyserInterface analyser;
@@ -35,8 +34,6 @@ public class CleanupTask
     @Scheduled(fixedRateString = "${phd.cleanup.interval.ms}", initialDelayString = "${phd.cleanup.interval.ms}")
     public void removeFrequentAddresses()
     {
-        // TODO Add the concept of a permanent exclude list for addresses which were removed from the ignore list and then come back
-
         // Get addresses to ignore based on currently receiving data
         Set<RemoteAddress> addressesToIgnore = analyser.getAddressesToIgnore();
 

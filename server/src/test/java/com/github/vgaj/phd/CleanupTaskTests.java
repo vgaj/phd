@@ -2,9 +2,9 @@ package com.github.vgaj.phd;
 
 import com.github.vgaj.phd.server.analysis.AnalyserInterface;
 import com.github.vgaj.phd.server.data.RemoteAddress;
-import com.github.vgaj.phd.server.housekeeping.CleanupTask;
+import com.github.vgaj.phd.server.monitor.pcap.PcapCleanupTask;
 import com.github.vgaj.phd.server.messages.MessageData;
-import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
+import com.github.vgaj.phd.server.monitor.pcap.MonitorTaskFilterUpdateInterface;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -35,7 +35,7 @@ public class CleanupTaskTests
     private MonitorTaskFilterUpdateInterface monitorTaskFilterUpdate;
 
     @InjectMocks
-    private CleanupTask cleanupTask;
+    private PcapCleanupTask cleanupTask;
 
     // Test data
     private RemoteAddress address1 = new RemoteAddress((byte) 1, (byte) 0, (byte) 0,(byte)  0);
@@ -76,7 +76,7 @@ public class CleanupTaskTests
         currentlyIgnoredAddresses.put(address5, 5L);
         currentlyIgnoredAddresses.put(address4, 4L);
         currentlyIgnoredAddresses.put(address3, 3L);
-        Field addressesField = CleanupTask.class.getDeclaredField("currentlyIgnoredAddresses");
+        Field addressesField = PcapCleanupTask.class.getDeclaredField("currentlyIgnoredAddresses");
         addressesField.setAccessible(true);
         addressesField.set(cleanupTask, currentlyIgnoredAddresses);
 
@@ -108,11 +108,11 @@ public class CleanupTaskTests
         currentlyIgnoredAddresses.put(address4, 4L);
         currentlyIgnoredAddresses.put(address2, 2L);
         currentlyIgnoredAddresses.put(address3, 3L);
-        Field addressesField = CleanupTask.class.getDeclaredField("currentlyIgnoredAddresses");
+        Field addressesField = PcapCleanupTask.class.getDeclaredField("currentlyIgnoredAddresses");
         addressesField.setAccessible(true);
         addressesField.set(cleanupTask, currentlyIgnoredAddresses);
 
-        Field maxCountField = CleanupTask.class.getDeclaredField("maxAddressesToIgnore");
+        Field maxCountField = PcapCleanupTask.class.getDeclaredField("maxAddressesToIgnore");
         maxCountField.setAccessible(true);
         maxCountField.set(cleanupTask, 6);
 
