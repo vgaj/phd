@@ -31,6 +31,7 @@ import org.pcap4j.core.*;
 import static org.pcap4j.core.PcapNetworkInterface.PromiscuousMode.PROMISCUOUS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
@@ -44,6 +45,7 @@ import java.util.Set;
  * Retrieves captured data from Pcap4j
  */
 @Component
+@ConditionalOnProperty(name = "phd.use.bpf", havingValue = "false", matchIfMissing = false)
 public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterface
 {
     @Autowired

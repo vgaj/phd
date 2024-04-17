@@ -30,6 +30,7 @@ import com.github.vgaj.phd.server.messages.MessageData;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
+@ConditionalOnProperty(name = "phd.use.bpf", havingValue = "false", matchIfMissing = false)
 public class PcapCleanupTask
 {
     @Autowired

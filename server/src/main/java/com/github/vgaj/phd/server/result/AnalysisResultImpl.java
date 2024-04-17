@@ -25,6 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.result;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.vgaj.phd.server.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 

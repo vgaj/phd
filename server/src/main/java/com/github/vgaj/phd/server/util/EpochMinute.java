@@ -22,19 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.result;
+package com.github.vgaj.phd.server.util;
 
-import com.github.vgaj.phd.server.util.Pair;
+import java.time.Instant;
 
-import java.util.List;
-
-public interface AnalysisResult
+public class EpochMinute
 {
-    long getLastSeenEpochMinute();
-
-    List<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedIntervals();
-
-    List<Pair<TransferSizeBytes, TransferCount>> getRepeatedTransferSizes();
-
-    AnalysisResult merge (AnalysisResult other);
+    public static long now()
+    {
+        return Instant.now().getEpochSecond() / 60;
+    }
 }

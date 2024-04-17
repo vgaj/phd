@@ -63,5 +63,4 @@ public class PcapPacketHelper
         return pcapPacket.length();
     }
 
-
 }

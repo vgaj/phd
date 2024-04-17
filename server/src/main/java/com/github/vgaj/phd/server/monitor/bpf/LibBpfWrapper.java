@@ -24,16 +24,18 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.bpf;
 
+import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageData;
 
+import com.github.vgaj.phd.server.util.Pair;
 import com.sun.jna.*;
 import com.sun.jna.ptr.IntByReference;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 @Component
@@ -109,7 +111,7 @@ public class LibBpfWrapper
 
     public int getMapFdByName(String name)
     {
-        int fd = -1;
+        int returnFd = -1;
         try
         {
             int id = 0;
@@ -119,28 +121,33 @@ public class LibBpfWrapper
             {
                 LibBpf.INSTANCE.bpf_map_get_next_id(id, nextId);
                 id = nextId.getValue();
-                fd = LibBpf.INSTANCE.bpf_map_get_fd_by_id(id);
-                String mapName = getMapName(fd);
+                int thisFd = LibBpf.INSTANCE.bpf_map_get_fd_by_id(id);
+                String mapName = getMapName(thisFd);
                 if (mapName.trim().equalsIgnoreCase(name.trim()))
                 {
-                    System.out.println("Found id is " + id);
-                    break;
+                    messages.addMessage("Found matching id: " + id);
+                    // If there is more than one with the same name then use the last one
+                    // TODO: delete old maps
+                    returnFd = thisFd;
                 }
             }
         }
         catch (LastErrorException e)
         {
-            messages.addError("Native error occurred when looking for map " + name, e);
-            fd = -1;
+            if (e.getErrorCode() != 2) // No such file or directory
+            {
+                messages.addError("Native error occurred when looking for map " + name, e);
+            }
         }
-        return fd;
+        return returnFd;
     }
 
-    public void printMap(String mapName)
+    public List<Pair<RemoteAddress,Integer>> getData(int mapFd)
     {
+        List<Pair<RemoteAddress,Integer>> results = new LinkedList<>();
+
         try
         {
-            System.out.println("Using fd :" + fd);
             Pointer current_key = new Memory(Integer.BYTES);
             Pointer next_key = new Memory(Integer.BYTES);
             Pointer value = new Memory(Long.BYTES);
@@ -154,23 +161,23 @@ public class LibBpfWrapper
                     current_key.setInt(0, 0);
                 }
 
-                int ret = LibBpf.INSTANCE.bpf_map_get_next_key(fd,current_key,next_key);
+                int ret = LibBpf.INSTANCE.bpf_map_get_next_key(mapFd,current_key,next_key);
                 isLast = (ret != 0);
 
                 if (!isLast)
                 {
-                    LibBpf.INSTANCE.bpf_map_lookup_elem(fd, next_key, value);
-                    long count = value.getLong(0);
+                    LibBpf.INSTANCE.bpf_map_lookup_elem(mapFd, next_key, value);
+                    int count = value.getInt(0);
                     int octet1 = next_key.getByte(0) & 0xFF;
                     int octet2 = next_key.getByte(1) & 0xFF;
                     int octet3 = next_key.getByte(2) & 0xFF;
                     int octet4 = next_key.getByte(3) & 0xFF;
-                    System.out.println(String.format("Address: %d.%d.%d.%d, Bytes: %d", octet1, octet2, octet3, octet4, count));
+                    results.add(Pair.of(new RemoteAddress((byte) octet1, (byte) octet2, (byte) octet3, (byte) octet4), count));
                 }
 
                 if (!isFirst)
                 {
-                    LibBpf.INSTANCE.bpf_map_delete_elem(fd, current_key);
+                    LibBpf.INSTANCE.bpf_map_delete_elem(mapFd, current_key);
                 }
 
                 current_key.setInt(0, next_key.getInt(0));
@@ -179,20 +186,9 @@ public class LibBpfWrapper
         }
         catch (LastErrorException e)
         {
-            messages.addError("Native error occurred when querying map " + mapName, e);
-            fd = -1;
-       }
-    }
-
-    int fd = -1;
-
-    @Scheduled(fixedRateString = "1000", initialDelayString = "1000")
-    public void doIt()
-    {
-        if (fd == -1)
-        {
-            fd = getMapFdByName("ip_to_bytes_map");
+            messages.addError("Native error occurred when querying map", e);
         }
-        printMap("ip_to_bytes_map");
+
+        return results;
     }
 }

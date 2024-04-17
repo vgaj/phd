@@ -24,6 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.pcap;
 
+import com.github.vgaj.phd.server.util.EpochMinute;
 import lombok.Data;
 import org.pcap4j.packet.Packet;
 
@@ -41,7 +42,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.time.Instant;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -85,6 +85,7 @@ public class PcapNewDataProcessor
         long startNs = System.nanoTime();
         updateMax(maxDelayToHandlerStart, startNs - newDataEvent.getQueuedTime());
 
+        //TODO: IPv6
         if (!pcapHelper.isIpv4(newDataEvent.getPcapPacket()))
         {
             messageData.addMessage("Received data that was not IPv4");
@@ -119,7 +120,7 @@ public class PcapNewDataProcessor
 
         event.setPcapPacket(pcapPacket);
         event.setQueuedTime(startNs);
-        event.setEpochMinute(Instant.now().getEpochSecond() / 60);
+        event.setEpochMinute(EpochMinute.now());
 
         updateMax(maxTimeToTranslate, System.nanoTime() - startNs);
     }

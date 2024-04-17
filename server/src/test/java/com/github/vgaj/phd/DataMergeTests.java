@@ -28,6 +28,7 @@ import com.github.vgaj.phd.server.analysis.AnalysisCache;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.result.*;
 
+import com.github.vgaj.phd.server.util.Pair;
 import org.junit.jupiter.api.Test;
 
 import java.net.UnknownHostException;
