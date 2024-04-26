@@ -1,3 +1,4 @@
+#!/bin/sh
 # MIT License
 #
 # Copyright (c) 2022-2024 Viru Gajanayake
@@ -20,13 +21,28 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-[Unit]
-Description=Phone Home Detector
-After=multi-user.target
+interfaces=$(nmcli -t dev | grep :connected: | awk -F':' '{print $1}')
 
-[Service]
-ExecStart=/opt/phone-home-detector/phone-home-detector-service-start.sh
-ExecStop=/opt/phone-home-detector/phone-home-detector-service-stop.sh
+for interface in $interfaces; do
+  echo "Checking $interface ..."
+  tc qdisc show dev $interface | grep clsact > /dev/null
+  if [ $? -eq 1 ]; then
+      tc qdisc add dev $interface clsact
+      if [ $? -eq 0 ]; then
+        tc filter add dev $interface egress bpf da obj /opt/phone-home-detector/phone_home_detector_bpf_count.o sec phone_home_detector_bpf_count
+        if [ $? -eq 0 ]; then
+          echo "Attached BPF program for $interface"
+        else
+          echo "ERROR add BPF program failed for $interface"
+        fi
+      else
+        echo "ERROR add clsact failed for $interface"
+      fi
+  else
+    echo "ERROR $interface already has a qdisc clsact, not modifying"
+  fi
+done
 
-[Install]
-WantedBy=multi-user.target
+/usr/bin/java -Djava.net.preferIPv4Stack=true -jar /opt/phone-home-detector/phd-server-0.0.1-SNAPSHOT.jar
+
+#TODO depend on nmcli and tctc qdisc add dev $interface clsact

@@ -1,3 +1,4 @@
+#!/bin/sh
 # MIT License
 #
 # Copyright (c) 2022-2024 Viru Gajanayake
@@ -20,13 +21,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-[Unit]
-Description=Phone Home Detector
-After=multi-user.target
+interfaces=$(nmcli -t dev | grep :connected: | awk -F':' '{print $1}')
 
-[Service]
-ExecStart=/opt/phone-home-detector/phone-home-detector-service-start.sh
-ExecStop=/opt/phone-home-detector/phone-home-detector-service-stop.sh
-
-[Install]
-WantedBy=multi-user.target
+for interface in $interfaces; do
+  echo "Checking $interface ..."
+  tc filter show dev $interface egress | grep phone_home_detector_bpf_count > /dev/null
+  if [ $? -eq 0 ]; then
+    tc qdisc del dev $interface clsact
+    if [ $? -eq 0 ]; then
+      echo "Removed BPF program for $interface"
+    else
+      echo "ERROR failed to remove BPF program for $interface"
+    fi
+  fi
+done

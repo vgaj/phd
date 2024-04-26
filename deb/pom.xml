@@ -54,7 +54,7 @@
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/opt/phd</prefix>
+										<prefix>/opt/phone-home-detector</prefix>
 									</mapper>
 								</data>
 								<data>
@@ -62,7 +62,15 @@
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/opt/phd</prefix>
+										<prefix>/opt/phone-home-detector</prefix>
+									</mapper>
+								</data>
+								<data>
+									<src>../server/target/phone_home_detector_bpf_count.o</src>
+									<type>file</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/opt/phone-home-detector</prefix>
 									</mapper>
 								</data>
 								<data>
@@ -82,7 +90,26 @@
 										<filemode>755</filemode>
 									</mapper>
 								</data>
+								<data>
+									<src>../server/src/main/resources/phone-home-detector-service-start.sh</src>
+									<type>file</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/opt/phone-home-detector</prefix>
+										<filemode>755</filemode>
+									</mapper>
+								</data>
+								<data>
+									<src>../server/src/main/resources/phone-home-detector-service-stop.sh</src>
+									<type>file</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/opt/phone-home-detector</prefix>
+										<filemode>755</filemode>
+									</mapper>
+								</data>
 							</dataSet>
+							<deb>${project.build.directory}/phone-home-detector-${project.version}.deb</deb>
 						</configuration>
 					</execution>
 				</executions>

@@ -76,6 +76,49 @@
 	<build>
 		<plugins>
 			<plugin>
+				<!-- Maven Exec Plugin to compile BPF program using clang -->
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>create-directory</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>mkdir</executable>
+							<arguments>
+								<argument>-p</argument>
+								<argument>${project.build.directory}</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>compile-bpf</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>clang</executable>
+							<workingDirectory>${project.basedir}</workingDirectory>
+							<arguments>
+								<argument>-O2</argument>
+								<argument>-g</argument>
+								<argument>-target</argument>
+								<argument>bpf</argument>
+								<argument>-c</argument>
+								<argument>src/main/bpf/phone_home_detector_bpf_count.c</argument>
+								<argument>-o</argument>
+								<argument>target/phone_home_detector_bpf_count.o</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<executions>

@@ -87,14 +87,10 @@ public class BpfMonitorTask
         Long epochMinute = EpochMinute.now();
         if (mapFd != -1)
         {
-            messageData.addMessage("The 59th");
             // TODO: An ignore implementation
 
             List<Pair<RemoteAddress,Integer>> dataForLastMinute =  libBpfWrapper.getData(mapFd);
-            dataForLastMinute.forEach(entry-> {
-                messageData.addMessage("BPF Received " + entry.getValue() + " bytes for " + entry.getKey().getAddressString());
-                monitorData.addData(entry.getKey(), entry.getValue(), epochMinute);
-            });
+            dataForLastMinute.forEach(entry-> monitorData.addData(entry.getKey(), entry.getValue(), epochMinute));
         }
     }
 }
