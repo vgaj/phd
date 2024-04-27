@@ -45,4 +45,3 @@ done
 
 /usr/bin/java -Djava.net.preferIPv4Stack=true -jar /opt/phone-home-detector/phd-server-0.0.1-SNAPSHOT.jar
 
-#TODO depend on nmcli and tctc qdisc add dev $interface clsact

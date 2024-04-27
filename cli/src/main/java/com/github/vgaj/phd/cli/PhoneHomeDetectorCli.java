@@ -42,6 +42,9 @@ public class PhoneHomeDetectorCli
     {
         System.out.println("Phone Home Detector Results (use -? for options)");
 
+        // TODO : option to view messages
+
+        boolean extraInfo = false;
         boolean fullResults = true;
         InetAddress inetAddress = null;
         if (args.length == 2 && args[0].equals("-h"))
@@ -57,9 +60,14 @@ public class PhoneHomeDetectorCli
                 return;
             }
         }
+        else if (args.length == 1 && args[0].equals("-x"))
+        {
+            extraInfo = true;
+        }
         else if (args.length != 0)
         {
             System.out.println("No options      Shows overall results");
+            System.out.println("-x              Shows extra information");
             System.out.println("-h <IP address> Shows history for an address");
             System.out.println("-?              Shows help");
             return;
@@ -119,6 +127,7 @@ public class PhoneHomeDetectorCli
                     }
                 });
                 StringBuilder sb = new StringBuilder();
+                boolean showExtraInfo = extraInfo;
                 results.forEach(r ->
                 {
                     sb.append(r.ipAddress());
@@ -127,18 +136,24 @@ public class PhoneHomeDetectorCli
                         sb.append(" (").append(r.hostName()).append(")");
                     }
                     sb.append(System.lineSeparator());
-                    sb.append("  Last Seen: ");
-                    sb.append(EpochMinuteUtil.toString(r.lastSeenEpochMinute()));
-                    sb.append(System.lineSeparator());
-                    // TODO: Hide score by default
-                    sb.append("  Score: ").append(r.score()).append(System.lineSeparator());
+                    if (showExtraInfo)
+                    {
+                        sb.append("  Last Seen: ");
+                        sb.append(EpochMinuteUtil.toString(r.lastSeenEpochMinute()));
+                        sb.append(System.lineSeparator());
+                        sb.append("  Score: ").append(r.score()).append(System.lineSeparator());
+                    }
                     for (DisplayResultLine line : r.resultLines())
                     {
-                        sb.append("    ").append(line.message()).append(System.lineSeparator());
-                        for (String subline : line.subMessages())
+                        String space = showExtraInfo ? "    " : "  ";
+                        sb.append(space).append(line.message()).append(System.lineSeparator());
+                        if (showExtraInfo)
                         {
-                            sb.append("      ").append(subline).append((System.lineSeparator()));
-                        };
+                            for (String subline : line.subMessages())
+                            {
+                                sb.append("      ").append(subline).append((System.lineSeparator()));
+                            };
+                        }
                     };
                 });
                 System.out.println(sb);

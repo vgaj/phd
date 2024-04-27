@@ -25,7 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.monitor.pcap;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
-import com.github.vgaj.phd.server.messages.MessageData;
+import com.github.vgaj.phd.server.messages.Messages;
 
 import org.pcap4j.core.*;
 import static org.pcap4j.core.PcapNetworkInterface.PromiscuousMode.PROMISCUOUS;
@@ -49,7 +49,7 @@ import java.util.Set;
 public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterface
 {
     @Autowired
-    private MessageData messageData;
+    private Messages messages;
 
     @Autowired
     private PcapNewDataProcessor newDataProcessor;
@@ -77,7 +77,7 @@ public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterfa
         }
         catch (NotOpenException | InterruptedException e)
         {
-            messageData.addError("Error while stopping", e);
+            messages.addError("Error while stopping", e);
         }
     }
 
@@ -106,13 +106,13 @@ public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterfa
             long durationMs = (System.nanoTime() - start) / 1000000;
             if (durationMs > 0)
             {
-                messageData.addMessage("Filter update took " + durationMs + " ms");
+                messages.addMessage("Filter update took " + durationMs + " ms");
             }
 
         }
         catch (PcapNativeException | NotOpenException e)
         {
-            messageData.addError("Failed to update libpcap filter", e);
+            messages.addError("Failed to update libpcap filter", e);
         }
     }
 
@@ -133,22 +133,22 @@ public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterfa
                         .findFirst();
                 if (optInt.isEmpty())
                 {
-                    messageData.addMessage("Could not find NIC");
+                    messages.addMessage("Could not find NIC");
                     return;
                 }
                 nif = optInt.get();
-                messageData.addMessage("Using " + nif.getName());
+                messages.addMessage("Using " + nif.getName());
             }
             catch (PcapNativeException e)
             {
-                messageData.addError("Error looking for NIC", e);
+                messages.addError("Error looking for NIC", e);
                 return;
             }
 
             // NB: Packets are getting captured from this point
             handle = nif.openLive(65536, PROMISCUOUS, 100);
 
-            messageData.addMessage("Using filter: " + filter);
+            messages.addMessage("Using filter: " + filter);
             handle.setFilter(filter, BpfProgram.BpfCompileMode.OPTIMIZE);
 
             PacketListener listener = pcapPacket -> { newDataProcessor.processNewData(pcapPacket); };
@@ -161,7 +161,7 @@ public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterfa
         }
         catch (Exception e)
         {
-            messageData.addError("Exiting monitor thread due to an error ", e);
+            messages.addError("Exiting monitor thread due to an error ", e);
         }
     }
 }

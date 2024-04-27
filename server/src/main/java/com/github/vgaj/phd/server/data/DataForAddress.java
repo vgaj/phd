@@ -32,6 +32,8 @@ import java.util.concurrent.ConcurrentMap;
 
 public class DataForAddress
 {
+    // TODO: Add unit tests
+
     private int totalBytes = 0;
 
     /**

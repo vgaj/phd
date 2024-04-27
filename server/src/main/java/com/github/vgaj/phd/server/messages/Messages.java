@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MessageData implements MessageDataInterface
+public class Messages implements MessageInterface
 {
     // TODO: Log4J configuration
     Logger logger = LoggerFactory.getLogger(this.getClass());

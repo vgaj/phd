@@ -26,7 +26,7 @@ package com.github.vgaj.phd.server.monitor.pcap;
 
 import com.github.vgaj.phd.server.analysis.AnalyserInterface;
 import com.github.vgaj.phd.server.data.RemoteAddress;
-import com.github.vgaj.phd.server.messages.MessageData;
+import com.github.vgaj.phd.server.messages.Messages;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,7 +48,7 @@ public class PcapCleanupTask
     private MonitorTaskFilterUpdateInterface monitor;
 
     @Autowired
-    private MessageData messages;
+    private Messages messages;
 
     private Map<RemoteAddress,Long> currentlyIgnoredAddresses = new HashMap<>();
 

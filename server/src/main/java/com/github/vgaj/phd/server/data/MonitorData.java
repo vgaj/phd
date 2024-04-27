@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.data;
 
-import com.github.vgaj.phd.server.messages.MessageData;
+import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
 import com.github.vgaj.phd.server.result.TransferTimestamp;
 
@@ -40,10 +40,11 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class MonitorData
 {
+    // TODO: Add unit tests
     // TODO: Periodic cleanup of uninteresting data
 
     @Autowired
-    MessageData messageData;
+    Messages messages;
 
     // Stats for each host
     private final ConcurrentMap<RemoteAddress, DataForAddress> data = new ConcurrentHashMap<>();
@@ -56,14 +57,15 @@ public class MonitorData
             try
             {
                 hostname = host.lookupHost();
-                messageData.addMessage("New host: " + hostname);
+                messages.addMessage("New host: " + hostname);
                 data.put(host, new DataForAddress());
             }
             catch (UnknownHostException e)
             {
-                messageData.addError("Failed to lookup address", e);
+                messages.addError("Failed to lookup address", e);
             }
         }
+        //messages.addMessage("Monitor data Received " + length + " bytes for " + host.getAddressString());
         data.get(host).addBytes(length, epochMinute);
     }
 

@@ -24,16 +24,16 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.analysis;
 
+import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.result.*;
 
-import com.github.vgaj.phd.server.util.EpochMinute;
+import com.github.vgaj.phd.common.util.EpochMinute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.*;
 
 @Component
@@ -138,7 +138,7 @@ public class Analyser implements AnalyserInterface
     {
         HashSet<RemoteAddress> addressesToIgnore = new HashSet<>();
 
-        long now = EpochMinute.now();
+        long now = EpochMinuteUtil.now();
         monitorData.getAddresses().forEach(address ->
         {
             boolean receivedDataInLastInterval = false;

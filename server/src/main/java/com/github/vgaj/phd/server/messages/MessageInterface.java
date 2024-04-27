@@ -22,14 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.util;
+package com.github.vgaj.phd.server.messages;
 
-import java.time.Instant;
+import java.util.List;
 
-public class EpochMinute
+public interface MessageInterface
 {
-    public static long now()
-    {
-        return Instant.now().getEpochSecond() / 60;
-    }
+    void addError(String msg, Throwable t);
+
+    void addMessage(String msg);
+
+    List<String> getMessages();
 }

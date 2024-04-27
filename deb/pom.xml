@@ -26,7 +26,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.3.0</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
@@ -40,7 +39,6 @@
 			<plugin>
 				<artifactId>jdeb</artifactId>
 				<groupId>org.vafer</groupId>
-				<version>1.10</version>
 				<executions>
 					<execution>
 						<phase>package</phase>

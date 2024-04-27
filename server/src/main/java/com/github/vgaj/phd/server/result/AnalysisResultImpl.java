@@ -25,14 +25,19 @@ SOFTWARE.
 package com.github.vgaj.phd.server.result;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.github.vgaj.phd.server.util.Pair;
+import com.github.vgaj.phd.common.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
 
+/**
+ * Store the results from analysing the data
+ */
 public class AnalysisResultImpl implements AnalysisResult
 {
+    // TODO: Add unit test for merge
+
     @Setter
     @Getter
     long lastSeenEpochMinute;

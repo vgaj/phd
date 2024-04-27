@@ -31,38 +31,30 @@ import lombok.Getter;
  */
 public class AnalysisScore
 {
+    // TODO: Add unit tests
+
     @Getter
     private int score = 0;
     public AnalysisScore( ResultCategorisation resultCategorisation)
     {
+        // TODO: Last seen time, taking interval into account should affect score
         if (resultCategorisation.areAllIntervalsTheSame_c11())
         {
-            score += 3;
+            score += 5;
         }
-        if (resultCategorisation.areSomeTransfersTheSameSize_c22())
+        else if (resultCategorisation.areSomeIntervalsTheSame_c12())
         {
             score += 2;
         }
-        if (resultCategorisation.areAllIntervalsTheSame_c11() && resultCategorisation.areSomeTransfersTheSameSize_c22())
+
+        if (resultCategorisation.areAllTransfersTheSameSize_c21())
         {
-            // in addition to the above
+            score += 5;
+        }
+        else if (resultCategorisation.areSomeTransfersTheSameSize_c22())
+        {
             score += 2;
         }
-
-        if (resultCategorisation.areSomeIntervalsTheSame_c12())
-        {
-            score += 1;
-        }
-        if (resultCategorisation.areSomeIntervalsTheSame_c12())
-        {
-            score += 1;
-        }
-        if (resultCategorisation.areSomeIntervalsTheSame_c12() && resultCategorisation.areSomeIntervalsTheSame_c12())
-        {
-            // in addition to the above
-            score += 1;
-        }
-
     }
 
     public String toString()

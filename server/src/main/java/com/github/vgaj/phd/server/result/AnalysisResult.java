@@ -24,10 +24,13 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.result;
 
-import com.github.vgaj.phd.server.util.Pair;
+import com.github.vgaj.phd.common.util.Pair;
 
 import java.util.List;
 
+/**
+ * Interface to access the results from analysing the data
+ */
 public interface AnalysisResult
 {
     long getLastSeenEpochMinute();

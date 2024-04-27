@@ -24,12 +24,13 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.pcap;
 
-import com.github.vgaj.phd.server.util.EpochMinute;
+import com.github.vgaj.phd.common.util.EpochMinute;
+import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import lombok.Data;
 import org.pcap4j.packet.Packet;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
-import com.github.vgaj.phd.server.messages.MessageData;
+import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.data.MonitorData;
 
 import com.lmax.disruptor.dsl.Disruptor;
@@ -58,7 +59,7 @@ public class PcapNewDataProcessor
     private Disruptor<NewDataEvent> disruptor;
 
     @Autowired
-    private MessageData messageData;
+    private Messages messages;
 
     @Autowired
     private MonitorData monitorData;
@@ -88,7 +89,7 @@ public class PcapNewDataProcessor
         //TODO: IPv6
         if (!pcapHelper.isIpv4(newDataEvent.getPcapPacket()))
         {
-            messageData.addMessage("Received data that was not IPv4");
+            messages.addMessage("Received data that was not IPv4");
         }
         else
         {
@@ -97,7 +98,7 @@ public class PcapNewDataProcessor
 
             if (DEBUG_LOG)
             {
-                messageData.addMessage(pcapHelper.getSourceHost(newDataEvent.getPcapPacket()).getAddressString() + " -> " + host.getAddressString() + " (" + length + " bytes)");
+                messages.addMessage(pcapHelper.getSourceHost(newDataEvent.getPcapPacket()).getAddressString() + " -> " + host.getAddressString() + " (" + length + " bytes)");
             }
 
             monitorData.addData(host, length, newDataEvent.getEpochMinute());
@@ -120,7 +121,7 @@ public class PcapNewDataProcessor
 
         event.setPcapPacket(pcapPacket);
         event.setQueuedTime(startNs);
-        event.setEpochMinute(EpochMinute.now());
+        event.setEpochMinute(EpochMinuteUtil.now());
 
         updateMax(maxTimeToTranslate, System.nanoTime() - startNs);
     }
@@ -134,7 +135,7 @@ public class PcapNewDataProcessor
         disruptor = new Disruptor<>(NewDataEvent::new, BUFFER_SIZE, DaemonThreadFactory.INSTANCE);
         disruptor.handleEventsWith(this::onEvent);
         disruptor.start();
-        messageData.addMessage("Started new data processor");
+        messages.addMessage("Started new data processor");
     }
 
     /**

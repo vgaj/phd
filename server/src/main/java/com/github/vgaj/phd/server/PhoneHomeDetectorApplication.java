@@ -32,7 +32,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class PhoneHomeDetectorApplication
 {
-	// TODO: Update all plugins
 	public static void main(String[] args)
 	{
 		SpringApplication.run(PhoneHomeDetectorApplication.class, args);

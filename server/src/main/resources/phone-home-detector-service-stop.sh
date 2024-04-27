@@ -35,3 +35,5 @@ for interface in $interfaces; do
     fi
   fi
 done
+
+#TODO: Ensure results are saved on restart

@@ -3,7 +3,7 @@ Version: 0.1
 Section: misc
 Priority: optional
 Architecture: amd64
-Depends: libpcap-dev (>= 1.10), openjdk-17-jre (>= 17.0)
+Depends: network-manager (>= 1.36.6-0ubuntu2), iproute2 (>= 5.15.0-1ubuntu2), openjdk-17-jre (>= 17.0)
 Maintainer: Viru Gajanayake <viru.gajanayake@yahoo.com>
 Description: Detects if something is "Phoning Phone"
  Installs a service called phone-home-detector which monitors traffic

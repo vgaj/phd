@@ -27,7 +27,7 @@ package com.github.vgaj.phd.server.query;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.analysis.AnalysisCache;
 import com.github.vgaj.phd.server.data.DataForAddress;
-import com.github.vgaj.phd.server.messages.MessageData;
+import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.common.query.DisplayContent;
@@ -53,11 +53,13 @@ import java.util.*;
 @Component
 public class QueryLogic
 {
+    // TODO: Add unit tests
+
     @Autowired
     private MonitorData monitorData;
 
     @Autowired
-    private MessageData messageData;
+    private Messages messages;
 
     @Autowired
     private AnalysisCache analyserCache;
@@ -113,25 +115,24 @@ public class QueryLogic
                 {
                     resultLines.add( new DisplayResultLine("all intervals are " + result.getRepeatedIntervals().get(0).getKey() + " minutes", new String[0]));
                 }
-
-                if (resultCategorisation.areSomeIntervalsTheSame_c12())
+                else if (resultCategorisation.areSomeIntervalsTheSame_c12())
                 {
                     ArrayList<String> subMessages = new ArrayList<>();
                     result.getRepeatedIntervals().forEach(r ->
                             subMessages.add(r.getKey() + " min, " + r.getValue() + " times"));
-                    DisplayResultLine resultLine = new DisplayResultLine("intervals between data:", subMessages.toArray(new String[0]));
+                    DisplayResultLine resultLine = new DisplayResultLine("some intervals are the same", subMessages.toArray(new String[0]));
                     resultLines.add(resultLine);
                 }
                 if (resultCategorisation.areAllTransfersTheSameSize_c21())
                 {
                     resultLines.add( new DisplayResultLine("all transfers are " + result.getRepeatedTransferSizes().get(0).getKey() + " bytes", new String[0]));
                 }
-                if (resultCategorisation.areSomeTransfersTheSameSize_c22())
+                else if (resultCategorisation.areSomeTransfersTheSameSize_c22())
                 {
                     ArrayList<String> subMessages = new ArrayList<>();
                     result.getRepeatedTransferSizes().forEach(r ->
                             subMessages.add(r.getKey() + " bytes, " + r.getValue() + " times"));
-                    DisplayResultLine resultLine = new DisplayResultLine("repeated data sizes:", subMessages.toArray(new String[0]));
+                    DisplayResultLine resultLine = new DisplayResultLine("some data sizes are repeated", subMessages.toArray(new String[0]));
                     resultLines.add( resultLine);
                 }
                 if (maxDataToShow > 0)
@@ -140,22 +141,25 @@ public class QueryLogic
                     //sb.append(entryForAddress.getValue().getPerMinuteDataForDisplay(maxDataToShow));
                 }
 
-                DisplayResult displayResult = new DisplayResult(
-                        address.getHostString(),
-                        address.getAddressString(),
-                        totalBytes,
-                        totalTimes,
-                        score,
-                        result.getLastSeenEpochMinute(),
-                        resultLines.toArray(new DisplayResultLine[0]));
-                results.add(displayResult);
+                if (score > 0)
+                {
+                    DisplayResult displayResult = new DisplayResult(
+                            address.getHostString(),
+                            address.getAddressString(),
+                            totalBytes,
+                            totalTimes,
+                            score,
+                            result.getLastSeenEpochMinute(),
+                            resultLines.toArray(new DisplayResultLine[0]));
+                    results.add(displayResult);
+                }
 
             }
         });
 
         // The messages
         ArrayList<String> messages = new ArrayList<>();
-        messages.addAll(messageData.getMessages());
+        messages.addAll(this.messages.getMessages());
 
         return new DisplayContent(results.toArray(new DisplayResult[0]), messages.toArray(new String[0]));
     }

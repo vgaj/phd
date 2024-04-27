@@ -25,7 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.server.data.MonitorData;
-import com.github.vgaj.phd.server.messages.MessageData;
+import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class AnalysisTask
     private MonitorData monitorData;
 
     @Autowired
-    private MessageData messageData;
+    private Messages messages;
 
     @Autowired
     private AnalyserInterface analyser;

@@ -30,6 +30,10 @@ import java.time.format.DateTimeFormatter;
 
 public class EpochMinuteUtil
 {
+    public static long now()
+    {
+        return Instant.now().getEpochSecond() / 60;
+    }
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm").withZone(ZoneId.systemDefault());
     public static String toString(long epochMinute)
     {

@@ -24,11 +24,12 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.bpf;
 
+import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
-import com.github.vgaj.phd.server.messages.MessageData;
-import com.github.vgaj.phd.server.util.EpochMinute;
-import com.github.vgaj.phd.server.util.Pair;
+import com.github.vgaj.phd.server.messages.Messages;
+import com.github.vgaj.phd.common.util.EpochMinute;
+import com.github.vgaj.phd.common.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -44,9 +45,8 @@ import java.util.List;
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "true", matchIfMissing = true)
 public class BpfMonitorTask
 {
-    //TODO rename
     @Autowired
-    private MessageData messageData;
+    private Messages messages;
 
     @Autowired
     private MonitorData monitorData;
@@ -63,14 +63,10 @@ public class BpfMonitorTask
     @EventListener(ApplicationReadyEvent.class)
     public void load()
     {
-        // TODO: Load BPF Program
-
         mapFd = libBpfWrapper.getMapFdByName(bpf_map_name);
         if (mapFd == -1)
         {
-            messageData.addMessage("Map " + bpf_map_name + " was not loaded");
-
-            // TODO: Manually load Pcap implementation if BPF program can't be loaded
+            messages.addError("Map " + bpf_map_name + " was not loaded", new Throwable());
         }
     }
 
@@ -78,13 +74,12 @@ public class BpfMonitorTask
     @EventListener(ContextClosedEvent.class)
     public void unload()
     {
-        // TODO: Unload
     }
 
     @Scheduled(cron = "59 * * * * *")
     public void collectData()
     {
-        Long epochMinute = EpochMinute.now();
+        Long epochMinute = EpochMinuteUtil.now();
         if (mapFd != -1)
         {
             // TODO: An ignore implementation

@@ -27,7 +27,7 @@ package com.github.vgaj.phd;
 import com.github.vgaj.phd.server.analysis.AnalyserInterface;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.monitor.pcap.PcapCleanupTask;
-import com.github.vgaj.phd.server.messages.MessageData;
+import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.monitor.pcap.MonitorTaskFilterUpdateInterface;
 
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,7 @@ public class CleanupTaskTests
     private AnalyserInterface analyser;
 
     @Mock
-    private MessageData messageData;
+    private Messages messages;
 
     @Spy
     private MonitorTaskFilterUpdateInterface monitorTaskFilterUpdate;

@@ -48,15 +48,15 @@ int phone_home_detector_bpf_count_func(struct __sk_buff *skb)
     {
         struct ethhdr *eth = data;
     
-        // Is it an IP packet?
+        // Only looking at IP
         if (eth->h_proto == __constant_htons(ETH_P_IP)) 
         {
             struct iphdr *ip = data + sizeof(struct ethhdr);
             
             __u32 daddr = ip->daddr;
             
-            // TODO exclude UDP or TCP header
-            __u32 length = data_end - data - sizeof(struct ethhdr);// - sizeof(struct iphdr);
+            // Note this is including the UDP/TCP header but that doesn't matter for what we are doing
+            __u32 length = data_end - data - sizeof(struct ethhdr) - sizeof(struct iphdr);
             
             __u32 *value = bpf_map_lookup_elem(&MAP_NAME, &daddr);
             if (value)

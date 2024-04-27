@@ -25,9 +25,9 @@ SOFTWARE.
 package com.github.vgaj.phd.server.monitor.bpf;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
-import com.github.vgaj.phd.server.messages.MessageData;
+import com.github.vgaj.phd.server.messages.Messages;
 
-import com.github.vgaj.phd.server.util.Pair;
+import com.github.vgaj.phd.common.util.Pair;
 import com.sun.jna.*;
 import com.sun.jna.ptr.IntByReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ import java.util.List;
 public class LibBpfWrapper
 {
     @Autowired
-    private MessageData messages;
+    private Messages messages;
 
     public interface LibBpf extends Library {
         LibBpf INSTANCE = Native.load("bpf", LibBpf.class);
@@ -172,6 +172,7 @@ public class LibBpfWrapper
                     int octet2 = next_key.getByte(1) & 0xFF;
                     int octet3 = next_key.getByte(2) & 0xFF;
                     int octet4 = next_key.getByte(3) & 0xFF;
+                    //TODO: IPv6
                     results.add(Pair.of(new RemoteAddress((byte) octet1, (byte) octet2, (byte) octet3, (byte) octet4), count));
                 }
 
