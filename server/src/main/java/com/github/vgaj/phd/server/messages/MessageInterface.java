@@ -30,7 +30,11 @@ public interface MessageInterface
 {
     void addError(String msg, Throwable t);
 
+    void addError(String msg);
+
     void addMessage(String msg);
+
+    void addDebug(String msg);
 
     List<String> getMessages();
 }

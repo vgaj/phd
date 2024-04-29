@@ -27,8 +27,8 @@ package com.github.vgaj.phd.server.query;
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
 import com.github.vgaj.phd.common.query.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.vgaj.phd.server.messages.MessageInterface;
+import com.github.vgaj.phd.server.messages.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.ContextClosedEvent;
@@ -48,7 +48,7 @@ import java.util.Set;
 @Component
 public class ExternalQueryTask  implements Runnable
 {
-    Logger logger = LoggerFactory.getLogger(this.getClass());
+    private MessageInterface messages = Messages.getLogger(this.getClass());
 
     private Thread queryThread;
     private boolean isShuttingDown = false;
@@ -90,7 +90,7 @@ public class ExternalQueryTask  implements Runnable
         }
         catch (IOException e)
         {
-            logger.error("Failed to delete " + DomainSocketComms.SOCKET_PATH, e);
+            messages.addError("Failed to delete " + DomainSocketComms.SOCKET_PATH, e);
             return;
         }
 
@@ -106,7 +106,7 @@ public class ExternalQueryTask  implements Runnable
                 {
                     if (!isShuttingDown)
                     {
-                        logger.error("Failed to bind to " + DomainSocketComms.SOCKET_PATH, e);
+                        messages.addError("Failed to bind to " + DomainSocketComms.SOCKET_PATH, e);
                     }
                     return;
                 }
@@ -125,7 +125,7 @@ public class ExternalQueryTask  implements Runnable
                 }
                 catch (IOException e)
                 {
-                    logger.error("Failed to change permissions for " + DomainSocketComms.SOCKET_PATH, e);
+                    messages.addError("Failed to change permissions for " + DomainSocketComms.SOCKET_PATH, e);
                     return;
                 }
 
@@ -135,13 +135,13 @@ public class ExternalQueryTask  implements Runnable
                     try
                     {
                         channel = serverChannel.accept();
-                        logger.info("New client connected.");
+                        messages.addMessage("New client connected.");
                     }
                     catch (IOException e)
                     {
                         if (!isShuttingDown)
                         {
-                            logger.error("Failed accept connection on " + DomainSocketComms.SOCKET_PATH, e);
+                            messages.addError("Failed accept connection on " + DomainSocketComms.SOCKET_PATH, e);
                         }
                         return;
                     }
@@ -156,32 +156,32 @@ public class ExternalQueryTask  implements Runnable
                                 {
                                     if (request instanceof SummaryResultsQuery)
                                     {
-                                        logger.info("Received a summary request.");
+                                        messages.addMessage("Received a summary request.");
                                         SummaryResultsResponse response = new SummaryResultsResponse(query.getDisplayContent());
                                         sockComms.writeSocketMessage(response);
                                     }
                                     else if (request instanceof DetailedResultsQuery)
                                     {
-                                        logger.info("Received a detailed request.");
+                                        messages.addMessage("Received a detailed request.");
                                         DetailedResultsResponse response = new DetailedResultsResponse(query.getData(((DetailedResultsQuery)request).address).toArray(new String[0]));
                                         sockComms.writeSocketMessage(response);
                                     }
                                     else
                                     {
-                                        logger.error( "Received unexpected request type " + request.getClass().getCanonicalName());
+                                        messages.addError( "Received unexpected request type " + request.getClass().getCanonicalName());
                                     }
-                                    logger.info("Sent response.");
+                                    messages.addDebug("Sent response.");
                                 }
                                 else
                                 {
                                     // Connection was closed
-                                    logger.info("Client disconnected.");
+                                    messages.addDebug("Client disconnected.");
                                     break;
                                 }
                             }
                             catch (IOException connectionException)
                             {
-                                logger.error("Error communicating with client", connectionException);
+                                messages.addError("Error communicating with client", connectionException);
                                 break;
                             }
                         }
@@ -190,7 +190,7 @@ public class ExternalQueryTask  implements Runnable
             }
             catch (IOException e)
             {
-                logger.error("Failed to open " + DomainSocketComms.SOCKET_PATH, e);
+                messages.addError("Failed to open " + DomainSocketComms.SOCKET_PATH, e);
             }
         }
         finally
@@ -201,7 +201,7 @@ public class ExternalQueryTask  implements Runnable
             }
             catch (IOException e)
             {
-                logger.error("Failed to delete " + DomainSocketComms.SOCKET_PATH, e);
+                messages.addError("Failed to delete " + DomainSocketComms.SOCKET_PATH, e);
             }
         }
     }

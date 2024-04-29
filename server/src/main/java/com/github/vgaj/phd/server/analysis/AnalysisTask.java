@@ -25,6 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.server.data.MonitorData;
+import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 
@@ -43,8 +44,7 @@ public class AnalysisTask
     @Autowired
     private MonitorData monitorData;
 
-    @Autowired
-    private Messages messages;
+    private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
     private AnalyserInterface analyser;

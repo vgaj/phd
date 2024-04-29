@@ -27,20 +27,26 @@ package com.github.vgaj.phd.server.messages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class Messages implements MessageInterface
 {
-    // TODO: Log4J configuration
-    Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger;
+
+    public static Messages getLogger(Class<?> clazz)
+    {
+        return new Messages(clazz);
+    }
+
+    private Messages(Class<?> clazz)
+    {
+        logger = LoggerFactory.getLogger(clazz);
+    }
 
     // Maximum number of messages to store
-    @Value("${phd.display.message.count}")
-    private Integer maxMessagesToShow;
+    private Integer maxMessagesToShow = 100;
 
     // Where the next message will go
     private int msgIndex = 0;
@@ -62,9 +68,22 @@ public class Messages implements MessageInterface
         add(msg);
     }
 
+    public void addError(String msg)
+    {
+        logger.error(msg);
+        add(msg);
+    }
+
     public void addMessage(String msg)
     {
         logger.info(msg);
+        add(msg);
+    }
+
+    @Override
+    public void addDebug(String msg)
+    {
+        logger.debug(msg);
         add(msg);
     }
 

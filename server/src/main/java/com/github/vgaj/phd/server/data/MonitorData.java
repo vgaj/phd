@@ -24,6 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.data;
 
+import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
 import com.github.vgaj.phd.server.result.TransferTimestamp;
@@ -43,8 +44,7 @@ public class MonitorData
     // TODO: Add unit tests
     // TODO: Periodic cleanup of uninteresting data
 
-    @Autowired
-    Messages messages;
+    private MessageInterface messages = Messages.getLogger(this.getClass());
 
     // Stats for each host
     private final ConcurrentMap<RemoteAddress, DataForAddress> data = new ConcurrentHashMap<>();
@@ -57,7 +57,7 @@ public class MonitorData
             try
             {
                 hostname = host.lookupHost();
-                messages.addMessage("New host: " + hostname);
+                messages.addDebug("New host: " + hostname);
                 data.put(host, new DataForAddress());
             }
             catch (UnknownHostException e)

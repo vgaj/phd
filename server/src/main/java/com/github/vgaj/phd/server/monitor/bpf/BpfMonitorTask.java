@@ -27,6 +27,7 @@ package com.github.vgaj.phd.server.monitor.bpf;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.common.util.EpochMinute;
 import com.github.vgaj.phd.common.util.Pair;
@@ -45,8 +46,7 @@ import java.util.List;
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "true", matchIfMissing = true)
 public class BpfMonitorTask
 {
-    @Autowired
-    private Messages messages;
+    private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
     private MonitorData monitorData;
@@ -66,7 +66,7 @@ public class BpfMonitorTask
         mapFd = libBpfWrapper.getMapFdByName(bpf_map_name);
         if (mapFd == -1)
         {
-            messages.addError("Map " + bpf_map_name + " was not loaded", new Throwable());
+            messages.addError("Map " + bpf_map_name + " was not loaded");
         }
     }
 

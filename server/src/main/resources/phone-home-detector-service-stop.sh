@@ -21,6 +21,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+/bin/kill -TERM $MAINPID
+
 interfaces=$(nmcli -t dev | grep :connected: | awk -F':' '{print $1}')
 
 for interface in $interfaces; do
@@ -35,5 +37,3 @@ for interface in $interfaces; do
     fi
   fi
 done
-
-#TODO: Ensure results are saved on restart

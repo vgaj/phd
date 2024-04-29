@@ -27,6 +27,7 @@ package com.github.vgaj.phd.server.query;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.analysis.AnalysisCache;
 import com.github.vgaj.phd.server.data.DataForAddress;
+import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
@@ -58,8 +59,7 @@ public class QueryLogic
     @Autowired
     private MonitorData monitorData;
 
-    @Autowired
-    private Messages messages;
+    private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
     private AnalysisCache analyserCache;

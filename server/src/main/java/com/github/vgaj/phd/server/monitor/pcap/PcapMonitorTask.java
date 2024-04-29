@@ -25,6 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.monitor.pcap;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 
 import org.pcap4j.core.*;
@@ -48,8 +49,7 @@ import java.util.Set;
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "false", matchIfMissing = false)
 public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterface
 {
-    @Autowired
-    private Messages messages;
+    private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
     private PcapNewDataProcessor newDataProcessor;
@@ -106,7 +106,7 @@ public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterfa
             long durationMs = (System.nanoTime() - start) / 1000000;
             if (durationMs > 0)
             {
-                messages.addMessage("Filter update took " + durationMs + " ms");
+                messages.addDebug("Filter update took " + durationMs + " ms");
             }
 
         }
@@ -133,7 +133,7 @@ public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterfa
                         .findFirst();
                 if (optInt.isEmpty())
                 {
-                    messages.addMessage("Could not find NIC");
+                    messages.addError("Could not find NIC");
                     return;
                 }
                 nif = optInt.get();

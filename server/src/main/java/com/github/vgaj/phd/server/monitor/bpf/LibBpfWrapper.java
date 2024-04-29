@@ -25,6 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.monitor.bpf;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 
 import com.github.vgaj.phd.common.util.Pair;
@@ -41,8 +42,7 @@ import java.util.List;
 @Component
 public class LibBpfWrapper
 {
-    @Autowired
-    private Messages messages;
+    private MessageInterface messages = Messages.getLogger(this.getClass());
 
     public interface LibBpf extends Library {
         LibBpf INSTANCE = Native.load("bpf", LibBpf.class);
@@ -125,7 +125,7 @@ public class LibBpfWrapper
                 String mapName = getMapName(thisFd);
                 if (mapName.trim().equalsIgnoreCase(name.trim()))
                 {
-                    messages.addMessage("Found matching id: " + id);
+                    messages.addDebug("Found matching map id: " + id);
                     // If there is more than one with the same name then use the last one
                     // TODO: delete old maps
                     returnFd = thisFd;

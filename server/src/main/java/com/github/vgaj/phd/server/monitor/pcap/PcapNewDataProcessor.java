@@ -24,8 +24,8 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.pcap;
 
-import com.github.vgaj.phd.common.util.EpochMinute;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
+import com.github.vgaj.phd.server.messages.MessageInterface;
 import lombok.Data;
 import org.pcap4j.packet.Packet;
 
@@ -35,8 +35,6 @@ import com.github.vgaj.phd.server.data.MonitorData;
 
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -54,12 +52,10 @@ public class PcapNewDataProcessor
 {
     private static final int BUFFER_SIZE = 65536;
     private static final boolean DEBUG_LOG = false;
-    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private Disruptor<NewDataEvent> disruptor;
 
-    @Autowired
-    private Messages messages;
+    private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
     private MonitorData monitorData;
@@ -89,7 +85,7 @@ public class PcapNewDataProcessor
         //TODO: IPv6
         if (!pcapHelper.isIpv4(newDataEvent.getPcapPacket()))
         {
-            messages.addMessage("Received data that was not IPv4");
+            messages.addDebug("Received data that was not IPv4");
         }
         else
         {
@@ -98,7 +94,7 @@ public class PcapNewDataProcessor
 
             if (DEBUG_LOG)
             {
-                messages.addMessage(pcapHelper.getSourceHost(newDataEvent.getPcapPacket()).getAddressString() + " -> " + host.getAddressString() + " (" + length + " bytes)");
+                messages.addDebug(pcapHelper.getSourceHost(newDataEvent.getPcapPacket()).getAddressString() + " -> " + host.getAddressString() + " (" + length + " bytes)");
             }
 
             monitorData.addData(host, length, newDataEvent.getEpochMinute());
@@ -162,8 +158,7 @@ public class PcapNewDataProcessor
         {
             if (DEBUG_LOG || startHandleMax > 1000000)
             {
-                logger.info("\n{} packets in last {} second(s)\n maximum time to START handling {}\n maximum time to PERFORM translation/handling {}/ {}",
-                        packetCount, statsReportRate, formatNs(startHandleMax), formatNs(translateMax), formatNs(handleMax));
+                messages.addDebug("\n"+packetCount+" packets in last "+statsReportRate+" second(s)\n maximum time to START handling "+formatNs(startHandleMax)+"\n maximum time to PERFORM translation/handling "+formatNs(translateMax)+"/ "+formatNs(handleMax));
             }
         }
     }
