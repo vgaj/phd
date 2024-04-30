@@ -22,17 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.messages;
+package com.github.vgaj.phd.common.query;
 
-import java.util.List;
-
-public interface MessageInterface
+public class DebugLogQuery extends ResultsQueryBase
 {
-    void addError(String msg, Throwable t);
-
-    void addError(String msg);
-
-    void addMessage(String msg);
-
-    void addDebug(String msg);
 }

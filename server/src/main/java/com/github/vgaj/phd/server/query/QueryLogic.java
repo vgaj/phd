@@ -159,7 +159,7 @@ public class QueryLogic
 
         // The messages
         ArrayList<String> messages = new ArrayList<>();
-        messages.addAll(this.messages.getMessages());
+        messages.addAll(Messages.getMessages());
 
         return new DisplayContent(results.toArray(new DisplayResult[0]), messages.toArray(new String[0]));
     }

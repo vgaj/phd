@@ -42,11 +42,10 @@ public class PhoneHomeDetectorCli
     {
         System.out.println("Phone Home Detector Results (use -? for options)");
 
-        // TODO : option to view messages
-
         boolean extraInfo = false;
         boolean fullResults = true;
         InetAddress inetAddress = null;
+        boolean debugLog = false;
         if (args.length == 2 && args[0].equals("-h"))
         {
             fullResults = false;
@@ -64,12 +63,17 @@ public class PhoneHomeDetectorCli
         {
             extraInfo = true;
         }
+        else if (args.length == 1 && args[0].equals("-d"))
+        {
+            debugLog = true;
+        }
         else if (args.length != 0)
         {
-            System.out.println("No options      Shows overall results");
-            System.out.println("-x              Shows extra information");
-            System.out.println("-h <IP address> Shows history for an address");
-            System.out.println("-?              Shows help");
+            System.out.println("No options      Overall results");
+            System.out.println("-x              Results with extra information");
+            System.out.println("-h <IP address> History for an address");
+            System.out.println("-d              View rolling debug log");
+            System.out.println("-?              View this help");
             return;
         }
 
@@ -89,7 +93,14 @@ public class PhoneHomeDetectorCli
         DomainSocketComms sockComms = new DomainSocketComms(channel);
         try
         {
-            sockComms.writeSocketMessage(fullResults ? new SummaryResultsQuery() : new DetailedResultsQuery(inetAddress));
+            if (debugLog)
+            {
+                sockComms.writeSocketMessage(new DebugLogQuery());
+            }
+            else
+            {
+                sockComms.writeSocketMessage(fullResults ? new SummaryResultsQuery() : new DetailedResultsQuery(inetAddress));
+            }
         }
         catch (IOException e)
         {
@@ -100,7 +111,14 @@ public class PhoneHomeDetectorCli
         Object response = null;
         try
         {
-            response = sockComms.readSocketMessage(fullResults ? SummaryResultsResponse.class : DetailedResultsResponse.class);
+            if (debugLog)
+            {
+                response = sockComms.readSocketMessage(DebugLogResponse.class);
+            }
+            else
+            {
+                response = sockComms.readSocketMessage(fullResults ? SummaryResultsResponse.class : DetailedResultsResponse.class);
+            }
         }
         catch (IOException e)
         {
@@ -113,7 +131,16 @@ public class PhoneHomeDetectorCli
         }
         else
         {
-            if (fullResults)
+            if (debugLog)
+            {
+                DebugLogResponse logResponse = (DebugLogResponse)  response;
+                StringBuilder sb = new StringBuilder();
+                Arrays.asList(logResponse.log()).forEach(entry -> {
+                    sb.append(entry).append(System.lineSeparator());
+                });
+                System.out.println(sb);
+            }
+            else if (fullResults)
             {
                 SummaryResultsResponse summaryResponse = (SummaryResultsResponse) response;
                 List<DisplayResult> results = Arrays.asList((summaryResponse.data().results()));

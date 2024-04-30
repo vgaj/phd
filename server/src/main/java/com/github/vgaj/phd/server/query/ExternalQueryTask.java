@@ -135,7 +135,7 @@ public class ExternalQueryTask  implements Runnable
                     try
                     {
                         channel = serverChannel.accept();
-                        messages.addMessage("New client connected.");
+                        messages.addDebug("New client connected.");
                     }
                     catch (IOException e)
                     {
@@ -164,6 +164,12 @@ public class ExternalQueryTask  implements Runnable
                                     {
                                         messages.addMessage("Received a detailed request.");
                                         DetailedResultsResponse response = new DetailedResultsResponse(query.getData(((DetailedResultsQuery)request).address).toArray(new String[0]));
+                                        sockComms.writeSocketMessage(response);
+                                    }
+                                    else if (request instanceof DebugLogQuery)
+                                    {
+                                        messages.addMessage("Received a debug log request.");
+                                        DebugLogResponse response = new DebugLogResponse(Messages.getMessages().toArray(new String[0]));
                                         sockComms.writeSocketMessage(response);
                                     }
                                     else

@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,21 +48,13 @@ public class Messages implements MessageInterface
     }
 
     // Maximum number of messages to store
-    private Integer maxMessagesToShow = 100;
+    private static int maxMessagesToShow = 100;
 
     // Where the next message will go
-    private int msgIndex = 0;
+    private static int msgIndex = 0;
 
     // The ring buffer of messages
-    private String[] messages = null;
-
-    public void ensureBufferInitialised()
-    {
-        if (messages == null)
-        {
-            messages = new String[maxMessagesToShow];
-        }
-    }
+    private static String[] messages = new String[maxMessagesToShow];
     
     public void addError(String msg, Throwable t)
     {
@@ -87,21 +81,22 @@ public class Messages implements MessageInterface
         add(msg);
     }
 
-    private void add(String msg)
+    private static void add(String msg)
     {
-        ensureBufferInitialised();
-        messages[msgIndex] = msg;
-        msgIndex = getNext(msgIndex);
+        synchronized (messages)
+        {
+            messages[msgIndex] = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss ")) + msg;
+            msgIndex = getNext(msgIndex);
+        }
     }
 
-    private int getNext(int i)
+    private static int getNext(int i)
     {
         return (i == (maxMessagesToShow - 1) ? 0 : i+1);
     }
 
-    public List<String> getMessages()
+    public static List<String> getMessages()
     {
-        ensureBufferInitialised();
         ArrayList<String> results = new ArrayList<>(maxMessagesToShow);
         int i = msgIndex;
         for (int x = 0; x < maxMessagesToShow; x++)

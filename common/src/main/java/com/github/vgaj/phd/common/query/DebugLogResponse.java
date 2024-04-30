@@ -22,17 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.messages;
+package com.github.vgaj.phd.common.query;
 
-import java.util.List;
+import java.io.Serializable;
 
-public interface MessageInterface
+public record DebugLogResponse(String[] log) implements Serializable
 {
-    void addError(String msg, Throwable t);
-
-    void addError(String msg);
-
-    void addMessage(String msg);
-
-    void addDebug(String msg);
 }
