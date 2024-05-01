@@ -24,8 +24,12 @@ SOFTWARE.
 
 package com.github.vgaj.phd.common.query;
 
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-public abstract class ResultsQueryBase implements Serializable
+import java.net.InetAddress;
+
+public record HostHistoryQuery(InetAddress address) implements RequestInterface
 {
 }

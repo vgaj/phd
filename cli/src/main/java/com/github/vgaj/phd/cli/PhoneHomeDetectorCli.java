@@ -29,10 +29,9 @@ import com.github.vgaj.phd.common.query.*;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.io.Serializable;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
-import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 import java.util.*;
 
@@ -40,40 +39,9 @@ public class PhoneHomeDetectorCli
 {
     public static void main(String[] args)
     {
-        System.out.println("Phone Home Detector Results (use -? for options)");
-
-        boolean extraInfo = false;
-        boolean fullResults = true;
-        InetAddress inetAddress = null;
-        boolean debugLog = false;
-        if (args.length == 2 && args[0].equals("-h"))
+        RequestResponseDetails queryDetails = CliArgumentParser.parse(args);
+        if (queryDetails == null)
         {
-            fullResults = false;
-            try
-            {
-                inetAddress = InetAddress.getByName(args[1]);
-            }
-            catch (UnknownHostException e)
-            {
-                System.out.println(args[1] + " is not a valid IP address");;
-                return;
-            }
-        }
-        else if (args.length == 1 && args[0].equals("-x"))
-        {
-            extraInfo = true;
-        }
-        else if (args.length == 1 && args[0].equals("-d"))
-        {
-            debugLog = true;
-        }
-        else if (args.length != 0)
-        {
-            System.out.println("No options      Overall results");
-            System.out.println("-x              Results with extra information");
-            System.out.println("-h <IP address> History for an address");
-            System.out.println("-d              View rolling debug log");
-            System.out.println("-?              View this help");
             return;
         }
 
@@ -93,14 +61,7 @@ public class PhoneHomeDetectorCli
         DomainSocketComms sockComms = new DomainSocketComms(channel);
         try
         {
-            if (debugLog)
-            {
-                sockComms.writeSocketMessage(new DebugLogQuery());
-            }
-            else
-            {
-                sockComms.writeSocketMessage(fullResults ? new SummaryResultsQuery() : new DetailedResultsQuery(inetAddress));
-            }
+            sockComms.writeSocketMessage(queryDetails.request());
         }
         catch (IOException e)
         {
@@ -108,17 +69,10 @@ public class PhoneHomeDetectorCli
             return;
         }
 
-        Object response = null;
+        ResponseInterface response = null;
         try
         {
-            if (debugLog)
-            {
-                response = sockComms.readSocketMessage(DebugLogResponse.class);
-            }
-            else
-            {
-                response = sockComms.readSocketMessage(fullResults ? SummaryResultsResponse.class : DetailedResultsResponse.class);
-            }
+            response = sockComms.readSocketMessage(queryDetails.responseType());
         }
         catch (IOException e)
         {
@@ -131,7 +85,7 @@ public class PhoneHomeDetectorCli
         }
         else
         {
-            if (debugLog)
+            if (queryDetails.request() instanceof DebugLogQuery)
             {
                 DebugLogResponse logResponse = (DebugLogResponse)  response;
                 StringBuilder sb = new StringBuilder();
@@ -140,7 +94,7 @@ public class PhoneHomeDetectorCli
                 });
                 System.out.println(sb);
             }
-            else if (fullResults)
+            else if (queryDetails.request() instanceof SummaryResultsQuery)
             {
                 SummaryResultsResponse summaryResponse = (SummaryResultsResponse) response;
                 List<DisplayResult> results = Arrays.asList((summaryResponse.data().results()));
@@ -154,7 +108,7 @@ public class PhoneHomeDetectorCli
                     }
                 });
                 StringBuilder sb = new StringBuilder();
-                boolean showExtraInfo = extraInfo;
+                boolean showExtraInfo = queryDetails.showExtraDetail();
                 results.forEach(r ->
                 {
                     sb.append(r.ipAddress());
@@ -185,9 +139,9 @@ public class PhoneHomeDetectorCli
                 });
                 System.out.println(sb);
             }
-            else
+            else if (queryDetails.request() instanceof HostHistoryQuery)
             {
-                DetailedResultsResponse detailedResponse = (DetailedResultsResponse) response;
+                HostHistoryResponse detailedResponse = (HostHistoryResponse) response;
                 StringBuilder sb = new StringBuilder();
                 for (String r : detailedResponse.results())
                 {

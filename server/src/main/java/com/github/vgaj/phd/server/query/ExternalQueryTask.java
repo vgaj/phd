@@ -151,7 +151,7 @@ public class ExternalQueryTask  implements Runnable
                         {
                             try
                             {
-                                ResultsQueryBase request = (ResultsQueryBase) sockComms.readSocketMessage(ResultsQueryBase.class);
+                                RequestInterface request = sockComms.readSocketMessage(RequestInterface.class);
                                 if (request != null)
                                 {
                                     if (request instanceof SummaryResultsQuery)
@@ -160,10 +160,10 @@ public class ExternalQueryTask  implements Runnable
                                         SummaryResultsResponse response = new SummaryResultsResponse(query.getDisplayContent());
                                         sockComms.writeSocketMessage(response);
                                     }
-                                    else if (request instanceof DetailedResultsQuery)
+                                    else if (request instanceof HostHistoryQuery)
                                     {
                                         messages.addMessage("Received a detailed request.");
-                                        DetailedResultsResponse response = new DetailedResultsResponse(query.getData(((DetailedResultsQuery)request).address).toArray(new String[0]));
+                                        HostHistoryResponse response = new HostHistoryResponse(query.getData(((HostHistoryQuery)request).address()).toArray(new String[0]));
                                         sockComms.writeSocketMessage(response);
                                     }
                                     else if (request instanceof DebugLogQuery)

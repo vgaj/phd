@@ -22,8 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.common.query;
+package com.github.vgaj.phd.cli;
 
-public record DebugLogQuery() implements RequestInterface
+import com.github.vgaj.phd.common.query.RequestInterface;
+import com.github.vgaj.phd.common.query.ResponseInterface;
+
+public record RequestResponseDetails(
+        RequestInterface request,
+        Class<? extends ResponseInterface> responseType,
+        boolean showExtraDetail)
 {
 }

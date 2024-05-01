@@ -25,8 +25,8 @@ SOFTWARE.
 package com.github.vgaj.phd.ui;
 
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
-import com.github.vgaj.phd.common.query.DetailedResultsQuery;
-import com.github.vgaj.phd.common.query.DetailedResultsResponse;
+import com.github.vgaj.phd.common.query.HostHistoryQuery;
+import com.github.vgaj.phd.common.query.HostHistoryResponse;
 import com.github.vgaj.phd.common.query.SummaryResultsQuery;
 import com.github.vgaj.phd.common.query.SummaryResultsResponse;
 
@@ -64,7 +64,7 @@ public class PhdUiController
         try (DomainSocketComms sockComms = makeSocketComms())
         {
             sockComms.writeSocketMessage(new SummaryResultsQuery());
-            SummaryResultsResponse response = (SummaryResultsResponse) sockComms.readSocketMessage(SummaryResultsResponse.class);
+            SummaryResultsResponse response = sockComms.readSocketMessage(SummaryResultsResponse.class);
             if (response == null)
             {
                 return "No valid response";
@@ -96,8 +96,8 @@ public class PhdUiController
 
         try (DomainSocketComms sockComms = makeSocketComms())
         {
-            sockComms.writeSocketMessage(new DetailedResultsQuery(inetAddress));
-            DetailedResultsResponse response = (DetailedResultsResponse) sockComms.readSocketMessage(DetailedResultsResponse.class);
+            sockComms.writeSocketMessage(new HostHistoryQuery(inetAddress));
+            HostHistoryResponse response = sockComms.readSocketMessage(HostHistoryResponse.class);
             if (response == null)
             {
                 return "No valid response";

@@ -24,6 +24,9 @@ SOFTWARE.
 
 package com.github.vgaj.phd.common.ipc;
 
+import com.github.vgaj.phd.common.query.IpcMessage;
+import com.github.vgaj.phd.common.query.ResponseInterface;
+
 import java.io.*;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -43,7 +46,7 @@ public class DomainSocketComms implements AutoCloseable
     {
         this.channel = channel;
     }
-    public void writeSocketMessage(Serializable message) throws IOException
+    public void writeSocketMessage(IpcMessage message) throws IOException
     {
         // Serialize to Buffer
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -60,8 +63,8 @@ public class DomainSocketComms implements AutoCloseable
         }
     }
 
-    public Object readSocketMessage(
-            Class<? extends Serializable> READ_TYPE) throws IOException
+    public <T extends IpcMessage> T readSocketMessage(
+            Class<T> READ_TYPE) throws IOException
     {
         // Read from domain socket
         ByteBuffer buffer = ByteBuffer.allocate(MAX_MESSAGE_SIZE);

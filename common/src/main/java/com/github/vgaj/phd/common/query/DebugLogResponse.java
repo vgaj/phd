@@ -24,8 +24,6 @@ SOFTWARE.
 
 package com.github.vgaj.phd.common.query;
 
-import java.io.Serializable;
-
-public record DebugLogResponse(String[] log) implements Serializable
+public record DebugLogResponse(String[] log) implements ResponseInterface
 {
 }

@@ -24,6 +24,6 @@ SOFTWARE.
 
 package com.github.vgaj.phd.common.query;
 
-public record DebugLogQuery() implements RequestInterface
+public interface ResponseInterface extends IpcMessage
 {
 }

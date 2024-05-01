@@ -24,6 +24,6 @@ SOFTWARE.
 
 package com.github.vgaj.phd.common.query;
 
-public class SummaryResultsQuery extends ResultsQueryBase
+public record SummaryResultsQuery() implements RequestInterface
 {
 }
