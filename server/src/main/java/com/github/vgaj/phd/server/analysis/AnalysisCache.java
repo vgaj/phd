@@ -58,7 +58,6 @@ public class AnalysisCache
 
     public Optional<AnalysisResult> getResult(RemoteAddress address)
     {
-        // TODO add unit test
         AnalysisResult currentResult = currentResults.get(address);
         AnalysisResult previousResult = previousResults.get(address);
         if (currentResult != null && previousResult != null)
@@ -73,7 +72,6 @@ public class AnalysisCache
 
     public List<RemoteAddress> getAddresses()
     {
-        // TODO add unit test
         ArrayList<RemoteAddress> addresses = new ArrayList<>(2*(currentResults.keySet().size()+previousResults.keySet().size()));
         currentResults.keySet().forEach(address -> addresses.add(address));
         previousResults.keySet().forEach(address -> { if (!addresses.contains(address)) addresses.add(address);} );

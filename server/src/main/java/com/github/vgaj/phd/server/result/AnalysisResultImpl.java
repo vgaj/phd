@@ -36,8 +36,6 @@ import java.util.*;
  */
 public class AnalysisResultImpl implements AnalysisResult
 {
-    // TODO: Add unit test for merge
-
     @Setter
     @Getter
     long lastSeenEpochMinute;

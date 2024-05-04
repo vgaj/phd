@@ -101,9 +101,8 @@ public class Analyser implements AnalyserInterface
                     })
                     .forEach(entry -> result.addRepeatedInterval(entry.getKey(), TransferCount.of(entry.getValue().size())));
 
-            // TODO: Check if most are at same interval
-            // TODO: Check if average interval is roughly (total run time / number of times)
-            // TODO: Check if all sizes are similar - look at Std Dev
+            // TODO: Check if most are at same interval (80%)
+            // TODO: Check if most sizes are the same (80%)
 
             //=============
             // Repeated transfers of the same size
