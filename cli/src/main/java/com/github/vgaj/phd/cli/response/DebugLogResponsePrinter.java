@@ -22,15 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.cli;
+package com.github.vgaj.phd.cli.response;
 
-import com.github.vgaj.phd.common.query.RequestInterface;
+import com.github.vgaj.phd.common.query.DebugLogResponse;
 import com.github.vgaj.phd.common.query.ResponseInterface;
 
-public record RequestResponseDetails(
-        RequestInterface request,
-        Class<? extends ResponseInterface> responseType,
-        boolean showExtraDetail,
-        boolean onlyShowCurrent)
+import java.util.Arrays;
+
+public class DebugLogResponsePrinter implements ResponsePrinter
 {
+    private ResponseInterface response;
+    public DebugLogResponsePrinter(ResponseInterface response)
+    {
+        this.response = response;
+    }
+    @Override
+    public void print()
+    {
+        DebugLogResponse logResponse = (DebugLogResponse)  response;
+        StringBuilder sb = new StringBuilder();
+        Arrays.asList(logResponse.log()).forEach(entry -> {
+            sb.append(entry).append(System.lineSeparator());
+        });
+        System.out.println(sb);
+    }
 }

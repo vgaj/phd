@@ -24,12 +24,13 @@ SOFTWARE.
 
 package com.github.vgaj.phd.cli;
 
+import com.github.vgaj.phd.cli.response.ResponsePrinter;
+import com.github.vgaj.phd.cli.response.ResponsePrinterFactory;
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
 import com.github.vgaj.phd.common.query.*;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.nio.channels.SocketChannel;
@@ -69,7 +70,7 @@ public class PhoneHomeDetectorCli
             return;
         }
 
-        ResponseInterface response = null;
+        ResponseInterface response;
         try
         {
             response = sockComms.readSocketMessage(queryDetails.responseType());
@@ -85,70 +86,7 @@ public class PhoneHomeDetectorCli
         }
         else
         {
-            if (queryDetails.request() instanceof DebugLogQuery)
-            {
-                DebugLogResponse logResponse = (DebugLogResponse)  response;
-                StringBuilder sb = new StringBuilder();
-                Arrays.asList(logResponse.log()).forEach(entry -> {
-                    sb.append(entry).append(System.lineSeparator());
-                });
-                System.out.println(sb);
-            }
-            else if (queryDetails.request() instanceof SummaryResultsQuery)
-            {
-                SummaryResultsResponse summaryResponse = (SummaryResultsResponse) response;
-                List<DisplayResult> results = Arrays.asList((summaryResponse.data().results()));
-
-                Collections.sort(results, new Comparator<DisplayResult>() {
-                    @Override
-                    public int compare(DisplayResult e1, DisplayResult e2)
-                    {
-                        // Want reverse order which highest score on top
-                        return e2.score() - e1.score();
-                    }
-                });
-                StringBuilder sb = new StringBuilder();
-                boolean showExtraInfo = queryDetails.showExtraDetail();
-                results.forEach(r ->
-                {
-                    sb.append(r.ipAddress());
-                    if (!r.ipAddress().equals(r.hostName()))
-                    {
-                        sb.append(" (").append(r.hostName()).append(")");
-                    }
-                    sb.append(System.lineSeparator());
-                    if (showExtraInfo)
-                    {
-                        sb.append("  Last Seen: ");
-                        sb.append(EpochMinuteUtil.toString(r.lastSeenEpochMinute()));
-                        sb.append(System.lineSeparator());
-                        sb.append("  Score: ").append(r.score()).append(System.lineSeparator());
-                    }
-                    for (DisplayResultLine line : r.resultLines())
-                    {
-                        String space = showExtraInfo ? "    " : "  ";
-                        sb.append(space).append(line.message()).append(System.lineSeparator());
-                        if (showExtraInfo)
-                        {
-                            for (String subline : line.subMessages())
-                            {
-                                sb.append("      ").append(subline).append((System.lineSeparator()));
-                            };
-                        }
-                    };
-                });
-                System.out.println(sb);
-            }
-            else if (queryDetails.request() instanceof HostHistoryQuery)
-            {
-                HostHistoryResponse detailedResponse = (HostHistoryResponse) response;
-                StringBuilder sb = new StringBuilder();
-                for (String r : detailedResponse.results())
-                {
-                    sb.append(r).append(System.lineSeparator());
-                };
-                System.out.println(sb);
-            }
+            ResponsePrinterFactory.get(queryDetails, response).print();
         }
   }
 }

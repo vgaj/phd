@@ -22,15 +22,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.cli;
+package com.github.vgaj.phd.cli.response;
 
-import com.github.vgaj.phd.common.query.RequestInterface;
-import com.github.vgaj.phd.common.query.ResponseInterface;
+import com.github.vgaj.phd.common.query.*;
 
-public record RequestResponseDetails(
-        RequestInterface request,
-        Class<? extends ResponseInterface> responseType,
-        boolean showExtraDetail,
-        boolean onlyShowCurrent)
+public class HostHistoryResponsePrinter implements ResponsePrinter
 {
+    private ResponseInterface response;
+    public HostHistoryResponsePrinter(ResponseInterface response)
+    {
+        this.response = response;
+    }
+    @Override
+    public void print()
+    {
+        HostHistoryResponse detailedResponse = (HostHistoryResponse) response;
+        StringBuilder sb = new StringBuilder();
+        for (String r : detailedResponse.results())
+        {
+            sb.append(r).append(System.lineSeparator());
+        };
+        System.out.println(sb);
+    }
 }

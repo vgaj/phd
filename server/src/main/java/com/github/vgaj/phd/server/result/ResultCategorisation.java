@@ -30,4 +30,6 @@ public interface ResultCategorisation
     boolean areSomeIntervalsTheSame_c12();
     boolean areAllTransfersTheSameSize_c21();
     boolean areSomeTransfersTheSameSize_c22();
+    boolean isRuntimeLongEnoughToDecideIfResultIsCurrent();
+    boolean isResultCurrent();
 }

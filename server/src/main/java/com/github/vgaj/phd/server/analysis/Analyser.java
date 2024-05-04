@@ -29,7 +29,6 @@ import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.result.*;
 
-import com.github.vgaj.phd.common.util.EpochMinute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -104,7 +103,6 @@ public class Analyser implements AnalyserInterface
 
             // TODO: Check if most are at same interval
             // TODO: Check if average interval is roughly (total run time / number of times)
-            // TODO: Check if last reading is less than 2 x Average interval ago
             // TODO: Check if all sizes are similar - look at Std Dev
 
             //=============

@@ -31,13 +31,10 @@ import lombok.Getter;
  */
 public class AnalysisScore
 {
-    // TODO: Add unit tests
-
     @Getter
     private int score = 0;
     public AnalysisScore( ResultCategorisation resultCategorisation)
     {
-        // TODO: Last seen time, taking interval into account should affect score
         if (resultCategorisation.areAllIntervalsTheSame_c11())
         {
             score += 5;
@@ -54,6 +51,11 @@ public class AnalysisScore
         else if (resultCategorisation.areSomeTransfersTheSameSize_c22())
         {
             score += 2;
+        }
+
+        if (resultCategorisation.isRuntimeLongEnoughToDecideIfResultIsCurrent() && !resultCategorisation.isResultCurrent())
+        {
+            score = score / 2;
         }
     }
 

@@ -64,8 +64,8 @@ public class QueryLogic
     @Autowired
     private AnalysisCache analyserCache;
 
-    @Value("${phd.display.maximum.data}")
-    private Integer maxDataToShow;
+    @Value("${phd.display.maximum.data.for.host}")
+    private Integer maxDataToShowForHost;
 
     /**
     Generate the content for the main page
@@ -135,11 +135,6 @@ public class QueryLogic
                     DisplayResultLine resultLine = new DisplayResultLine("some data sizes are repeated", subMessages.toArray(new String[0]));
                     resultLines.add( resultLine);
                 }
-                if (maxDataToShow > 0)
-                {
-                    //sb.append("- last ").append(maxDataToShow).append(" data points: ").append("<br/>");
-                    //sb.append(entryForAddress.getValue().getPerMinuteDataForDisplay(maxDataToShow));
-                }
 
                 if (score > 0)
                 {
@@ -149,6 +144,7 @@ public class QueryLogic
                             totalBytes,
                             totalTimes,
                             score,
+                            resultCategorisation.isResultCurrent(),
                             result.getLastSeenEpochMinute(),
                             resultLines.toArray(new DisplayResultLine[0]));
                     results.add(displayResult);
@@ -177,8 +173,8 @@ public class QueryLogic
             int dataLength = data.size();
             data.stream()
                     .sorted(Comparator.comparing(e -> ((Long) e.getKey())))
-                    .skip( maxDataToShow < dataLength ? dataLength - maxDataToShow : 0)
-                    .limit( maxDataToShow)
+                    .skip( maxDataToShowForHost < dataLength ? dataLength - maxDataToShowForHost : 0)
+                    .limit(maxDataToShowForHost)
                     .map(e -> EpochMinuteUtil.toString(e.getKey()) + " : " + e.getValue() + " bytes")
                     .forEach(results::add);
         }

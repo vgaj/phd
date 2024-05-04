@@ -24,6 +24,14 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.result;
 
+import com.github.vgaj.phd.common.util.EpochMinuteUtil;
+import com.github.vgaj.phd.common.util.Pair;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.util.Comparator;
+import java.util.Optional;
+
 public class ResultCategorisationImpl implements ResultCategorisation
 {
     private AnalysisResult result;
@@ -53,6 +61,56 @@ public class ResultCategorisationImpl implements ResultCategorisation
     public boolean areSomeTransfersTheSameSize_c22()
     {
         return result.getRepeatedTransferSizes().size() > 0;
+    }
+
+    private Optional<Integer> getMostCommonInterval()
+    {
+        return result.getRepeatedIntervals().stream()
+                .sorted((interval1,interval2) -> {
+                    if (interval1.getValue().getCount() == interval2.getValue().getCount())
+                    {
+                        // If a number of frequencies have the same count then return the longest
+                        return interval2.getKey().getInterval() - interval1.getKey().getInterval();
+                    }
+                    else
+                    {
+                        return interval2.getValue().getCount() - interval1.getValue().getCount();
+                    }
+                        } )
+                .map(x -> x.getKey().getInterval())
+                .findFirst();
+    }
+
+    /**
+     * Determines whether the application has been running for long enough that the
+     * address for the result should have been seen
+     */
+    @Override
+    public boolean isRuntimeLongEnoughToDecideIfResultIsCurrent()
+    {
+        Optional<Integer> mostCommonInterval = getMostCommonInterval();
+
+        long uptimeMinutes = ManagementFactory.getRuntimeMXBean().getUptime() / 60000;
+
+        // After starting we wait for the interval and a buffer to allow for processing
+        // delays before we check if a previously identified pattern is current
+        // The buffer includes the delay for information from the BPF program to be read,
+        // to be processed, and the analysis to be performed
+        return  (mostCommonInterval.isEmpty() || uptimeMinutes > (mostCommonInterval.get() + 2));
+    }
+
+    /**
+     * Determines whether the result is current by looking at when it was last seen
+     * and the interval it is usually seen at
+     */
+    @Override
+    public boolean isResultCurrent()
+    {
+        Optional<Integer> mostCommonInterval = getMostCommonInterval();
+
+        long minutesSinceLastSeen = EpochMinuteUtil.now() - result.getLastSeenEpochMinute();
+
+        return mostCommonInterval.isPresent() && (minutesSinceLastSeen < (mostCommonInterval.get() + 2));
     }
 
 }

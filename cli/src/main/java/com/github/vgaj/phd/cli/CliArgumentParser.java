@@ -35,7 +35,23 @@ public class CliArgumentParser
     {
         System.out.println("Phone Home Detector Results (use -? for options)");
 
-        if (args.length == 2 && args[0].equals("-h"))
+        if (args.length == 0)
+        {
+            return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, false, false);
+        }
+        else if (args.length == 1 && args[0].equals("-c"))
+        {
+            return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, false, true);
+        }
+        else if (args.length == 1 && args[0].equals("-x"))
+        {
+            return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, true, false);
+        }
+        else if (args.length == 2 && (args[0].equals("-c") && args[1].equals("-x") || args[0].equals("-x") && args[1].equals("-c")))
+        {
+            return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, true, true);
+        }
+        else if (args.length == 2 && args[0].equals("-h"))
         {
             InetAddress inetAddress;
             try
@@ -47,25 +63,18 @@ public class CliArgumentParser
                 System.out.println(args[1] + " is not a valid IP address");;
                 return null;
             }
-            return new RequestResponseDetails( new HostHistoryQuery(inetAddress), HostHistoryResponse.class, false);
-        }
-        else if (args.length == 1 && args[0].equals("-x"))
-        {
-            return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, true);
+            return new RequestResponseDetails( new HostHistoryQuery(inetAddress), HostHistoryResponse.class, false,false);
         }
         else if (args.length == 1 && args[0].equals("-d"))
         {
-            return new RequestResponseDetails( new DebugLogQuery(), DebugLogResponse.class, false);
+            return new RequestResponseDetails( new DebugLogQuery(), DebugLogResponse.class, false, false);
         }
-        else if (args.length != 0)
-        {
-            System.out.println("No options      Overall results");
-            System.out.println("-x              Results with extra information");
-            System.out.println("-h <IP address> History for an address");
-            System.out.println("-d              View rolling debug log");
-            System.out.println("-?              View this help");
-            return null;
-        }
-        return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, false);
+        System.out.println("No options      Overall results");
+        System.out.println("-c              Only show current results (exclude past patterns that are no longer seen");
+        System.out.println("-x              Results with extra information");
+        System.out.println("-h <IP address> History for an address");
+        System.out.println("-d              View rolling debug log");
+        System.out.println("-?              View this help");
+        return null;
     }
 }

@@ -22,15 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.cli;
+package com.github.vgaj.phd.cli.response;
 
-import com.github.vgaj.phd.common.query.RequestInterface;
 import com.github.vgaj.phd.common.query.ResponseInterface;
 
-public record RequestResponseDetails(
-        RequestInterface request,
-        Class<? extends ResponseInterface> responseType,
-        boolean showExtraDetail,
-        boolean onlyShowCurrent)
+public interface ResponsePrinter
 {
+    void print();
 }

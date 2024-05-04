@@ -22,14 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.common.util;
+package com.github.vgaj.phd.cli.response;
 
-import java.time.Instant;
+import com.github.vgaj.phd.cli.RequestResponseDetails;
+import com.github.vgaj.phd.common.query.*;
 
-public class EpochMinute
+public class ResponsePrinterFactory
 {
-    public static long now()
+    public static ResponsePrinter get(RequestResponseDetails queryDetails, ResponseInterface response)
     {
-        return Instant.now().getEpochSecond() / 60;
+        if (response instanceof DebugLogResponse)
+        {
+            return new DebugLogResponsePrinter(response);
+        }
+        else if (response instanceof SummaryResultsResponse)
+        {
+            return new SummaryResultsResponsePrinter(queryDetails, response);
+        }
+        else if (response instanceof HostHistoryResponse)
+        {
+            return new HostHistoryResponsePrinter(response);
+        }
+        return null;
     }
 }
