@@ -37,8 +37,6 @@ import java.util.List;
 @NoArgsConstructor
 public class RemoteAddress
 {
-    // TODO: Add unit tests
-
     private final byte[] octets = new byte[4];
 
     private String hostname = null;

@@ -41,7 +41,6 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class MonitorData
 {
-    // TODO: Add unit tests
     // TODO: Periodic cleanup of uninteresting data
 
     private MessageInterface messages = Messages.getLogger(this.getClass());

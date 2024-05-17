@@ -24,17 +24,14 @@ SOFTWARE.
 
 package com.github.vgaj.phd.cli;
 
-import com.github.vgaj.phd.cli.response.ResponsePrinter;
 import com.github.vgaj.phd.cli.response.ResponsePrinterFactory;
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
 import com.github.vgaj.phd.common.query.*;
-import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 
 import java.io.IOException;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.nio.channels.SocketChannel;
-import java.util.*;
 
 public class PhoneHomeDetectorCli
 {
