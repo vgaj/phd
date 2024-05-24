@@ -30,7 +30,7 @@ import com.github.vgaj.phd.server.result.AnalysisResult;
 import java.util.Optional;
 import java.util.Set;
 
-public interface AnalyserInterface
+public interface RawDataProcessorInterface
 {
     Optional<AnalysisResult> processRawData(RemoteAddress address);
     Set<RemoteAddress> getAddressesToIgnore();

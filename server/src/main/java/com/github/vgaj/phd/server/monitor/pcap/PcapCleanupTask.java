@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.pcap;
 
-import com.github.vgaj.phd.server.analysis.AnalyserInterface;
+import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 public class PcapCleanupTask
 {
     @Autowired
-    private AnalyserInterface analyser;
+    private RawDataProcessorInterface analyser;
 
     @Autowired
     private MonitorTaskFilterUpdateInterface monitor;

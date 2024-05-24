@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class Analyser implements AnalyserInterface
+public class RawDataProcessor implements RawDataProcessorInterface
 {
     @Autowired
     private MonitorData monitorData;
@@ -47,7 +47,7 @@ public class Analyser implements AnalyserInterface
     @Value("${phd.minimum.interval.minutes}")
     private Integer minIntervalMinutes;
 
-    private final AnalyserUtil analyserUtil = new AnalyserUtil();
+    private final RawDataProcessorUtil rawDataProcessorUtil = new RawDataProcessorUtil();
 
     /**
      * This is the logic which process the data for a given host
@@ -66,7 +66,7 @@ public class Analyser implements AnalyserInterface
 
         // Map of:
         // interval (minutes) -> list to lengths of data at this interval
-        Map<TransferIntervalMinutes,List<TransferSizeBytes>> intervalsBetweenData = analyserUtil.getIntervalsBetweenData(dataForAddress);
+        Map<TransferIntervalMinutes,List<TransferSizeBytes>> intervalsBetweenData = rawDataProcessorUtil.getIntervalsBetweenData(dataForAddress);
 
         //=============
         // Pre-criteria: We are only interested in looking at hosts where every interval between
@@ -89,7 +89,7 @@ public class Analyser implements AnalyserInterface
             //=============
             // Repeated transfers of the same size
             // Map of transfer size in bytes -> number of transfers
-            Map<TransferSizeBytes, TransferCount> dataFrequencies = analyserUtil.getDataSizeFrequenciesFromRaw(dataForAddress);
+            Map<TransferSizeBytes, TransferCount> dataFrequencies = rawDataProcessorUtil.getDataSizeFrequenciesFromRaw(dataForAddress);
             dataFrequencies.forEach(result::addTransferSizeCount);
 
             // Set the last set time

@@ -47,7 +47,7 @@ public class AnalysisTask
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
-    private AnalyserInterface analyser;
+    private RawDataProcessorInterface analyser;
 
     @Scheduled(fixedRateString = "${phd.analysis.interval.ms}", initialDelayString = "${phd.analysis.interval.ms}")
     public void processRawData()

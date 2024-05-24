@@ -24,6 +24,8 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.result;
 
+import java.util.Optional;
+
 public interface ResultCategorisation
 {
     boolean areAllIntervalsTheSame_c11();
@@ -32,6 +34,12 @@ public interface ResultCategorisation
     boolean areAllTransfersTheSameSize_c21();
     boolean areMostTransfersTheSameSize_c22();
     boolean areSomeTransfersTheSameSize_c23();
+
     boolean isRuntimeLongEnoughToDecideIfResultIsCurrent();
     boolean isResultCurrent();
+
+    Optional<Integer> getMostCommonInterval();
+    Optional<Integer> getCountForMostCommonInterval();
+    Optional<Integer> getMostCommonSize();
+    Optional<Integer> getCountForMostCommonSize();
 }

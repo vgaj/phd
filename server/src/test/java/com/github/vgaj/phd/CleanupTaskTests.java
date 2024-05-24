@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.server.analysis.AnalyserInterface;
+import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.monitor.pcap.PcapCleanupTask;
 import com.github.vgaj.phd.server.messages.Messages;
@@ -51,7 +51,7 @@ import static org.mockito.Mockito.when;
 public class CleanupTaskTests
 {
     @Mock
-    private AnalyserInterface analyser;
+    private RawDataProcessorInterface analyser;
 
     @Mock
     private Messages messages;

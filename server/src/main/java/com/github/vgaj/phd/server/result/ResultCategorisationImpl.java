@@ -152,28 +152,32 @@ public class ResultCategorisationImpl implements ResultCategorisation
                 });
     }
 
-    private Optional<Integer> getMostCommonInterval()
+    @Override
+    public Optional<Integer> getMostCommonInterval()
     {
         return getIntervalsSorted()
                 .map(x -> x.getKey().getInterval())
                 .findFirst();
     }
 
-    private Optional<Integer> getCountForMostCommonInterval()
+    @Override
+    public Optional<Integer> getCountForMostCommonInterval()
     {
         return getIntervalsSorted()
                 .map(x -> x.getValue().getCount())
                 .findFirst();
     }
 
-    private Optional<Integer> getMostCommonSize()
+    @Override
+    public Optional<Integer> getMostCommonSize()
     {
         return getSizesSorted()
                 .map(x -> x.getKey().getSize())
                 .findFirst();
     }
 
-    private Optional<Integer> getCountForMostCommonSize()
+    @Override
+    public Optional<Integer> getCountForMostCommonSize()
     {
         return getSizesSorted()
                 .map(x -> x.getValue().getCount())

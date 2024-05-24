@@ -32,7 +32,7 @@ import com.github.vgaj.phd.server.result.TransferTimestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AnalyserUtil
+public class RawDataProcessorUtil
 {
     /**
      * Helper to get a map of interval (minutes) to list to lengths of data at this interval

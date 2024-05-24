@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.server.analysis.AnalyserUtil;
+import com.github.vgaj.phd.server.analysis.RawDataProcessorUtil;
 import com.github.vgaj.phd.server.result.TransferCount;
 import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
@@ -53,7 +53,7 @@ class DataAnalyserTests
 		data.add(new AbstractMap.SimpleEntry<>(new TransferTimestamp(time++),size2));
 
 		// Act
-		Map<TransferSizeBytes, TransferCount> result = new AnalyserUtil().getDataSizeFrequenciesFromRaw(data);
+		Map<TransferSizeBytes, TransferCount> result = new RawDataProcessorUtil().getDataSizeFrequenciesFromRaw(data);
 
 		// Assert
 		assert result.size() == 3;
@@ -75,7 +75,7 @@ class DataAnalyserTests
 		data.add(new AbstractMap.SimpleEntry<>(new TransferTimestamp(36L),size1)); // gap = 10
 
 		// Act
-		Map<TransferIntervalMinutes, List<TransferSizeBytes>> result = new AnalyserUtil().getIntervalsBetweenData(data);
+		Map<TransferIntervalMinutes, List<TransferSizeBytes>> result = new RawDataProcessorUtil().getIntervalsBetweenData(data);
 
 		// Assert
 		assert result.size() == 2;
@@ -92,7 +92,7 @@ class DataAnalyserTests
 		data.add(new AbstractMap.SimpleEntry<>(new TransferTimestamp(1L),size1));
 
 		// Act
-		Map<TransferIntervalMinutes, List<TransferSizeBytes>> result = new AnalyserUtil().getIntervalsBetweenData(data);
+		Map<TransferIntervalMinutes, List<TransferSizeBytes>> result = new RawDataProcessorUtil().getIntervalsBetweenData(data);
 
 		// Assert
 		assert result.isEmpty();
