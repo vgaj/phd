@@ -54,8 +54,6 @@ import java.util.*;
 @Component
 public class QueryLogic
 {
-    // TODO: Add unit tests
-
     @Autowired
     private MonitorData monitorData;
 
@@ -113,24 +111,32 @@ public class QueryLogic
                 ArrayList<DisplayResultLine> resultLines = new ArrayList<>();
                 if (resultCategorisation.areAllIntervalsTheSame_c11())
                 {
-                    resultLines.add( new DisplayResultLine("all intervals are " + result.getRepeatedIntervals().get(0).getKey() + " minutes", new String[0]));
+                    resultLines.add( new DisplayResultLine("all intervals are " + result.getIntervalCount().get(0).getKey() + " minutes", new String[0]));
                 }
-                else if (resultCategorisation.areSomeIntervalsTheSame_c12())
+                else if (resultCategorisation.areMostIntervalsTheSame_c12())
+                {
+                    resultLines.add( new DisplayResultLine("most intervals are " + result.getIntervalCount().get(0).getKey() + " minutes", new String[0]));
+                }
+                else if (resultCategorisation.areSomeIntervalsTheSame_c13())
                 {
                     ArrayList<String> subMessages = new ArrayList<>();
-                    result.getRepeatedIntervals().forEach(r ->
+                    result.getIntervalCount().forEach(r ->
                             subMessages.add(r.getKey() + " min, " + r.getValue() + " times"));
                     DisplayResultLine resultLine = new DisplayResultLine("some intervals are the same", subMessages.toArray(new String[0]));
                     resultLines.add(resultLine);
                 }
                 if (resultCategorisation.areAllTransfersTheSameSize_c21())
                 {
-                    resultLines.add( new DisplayResultLine("all transfers are " + result.getRepeatedTransferSizes().get(0).getKey() + " bytes", new String[0]));
+                    resultLines.add( new DisplayResultLine("all transfers are " + result.getTransferSizeCount().get(0).getKey() + " bytes", new String[0]));
                 }
-                else if (resultCategorisation.areSomeTransfersTheSameSize_c22())
+                else if (resultCategorisation.areMostTransfersTheSameSize_c22())
+                {
+                    resultLines.add( new DisplayResultLine("most transfers are " + result.getTransferSizeCount().get(0).getKey() + " bytes", new String[0]));
+                }
+                else if (resultCategorisation.areSomeTransfersTheSameSize_c23())
                 {
                     ArrayList<String> subMessages = new ArrayList<>();
-                    result.getRepeatedTransferSizes().forEach(r ->
+                    result.getTransferSizeCount().forEach(r ->
                             subMessages.add(r.getKey() + " bytes, " + r.getValue() + " times"));
                     DisplayResultLine resultLine = new DisplayResultLine("some data sizes are repeated", subMessages.toArray(new String[0]));
                     resultLines.add( resultLine);

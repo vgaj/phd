@@ -30,7 +30,6 @@ import com.github.vgaj.phd.server.result.TransferSizeBytes;
 import com.github.vgaj.phd.server.result.TransferTimestamp;
 
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.UnknownHostException;

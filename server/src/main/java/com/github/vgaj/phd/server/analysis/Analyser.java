@@ -38,8 +38,6 @@ import java.util.*;
 @Component
 public class Analyser implements AnalyserInterface
 {
-    // TODO: Analyser unit tests
-
     @Autowired
     private MonitorData monitorData;
 
@@ -49,26 +47,14 @@ public class Analyser implements AnalyserInterface
     @Value("${phd.minimum.interval.minutes}")
     private Integer minIntervalMinutes;
 
-    /**
-     * The minimum number of pairs of transmissions at an interval that is of interest
-     */
-    @Value("${phd.minimum.count.at.interval}")
-    private Integer minCountAtInterval;
+    private final AnalyserUtil analyserUtil = new AnalyserUtil();
 
     /**
-     * The minimum number of transmissions of the same size that are considered interesting
-     */
-    @Value("${phd.minimum.count.of.size}")
-    private Integer minCountOfSameSize;
-
-    private AnalyserUtil analyserUtil = new AnalyserUtil();
-
-    /**
-     * This is the logic which analyses the data for a given host
-     * @param address The address to do the analysis for
+     * This is the logic which process the data for a given host
+     * @param address The address to do the processing for
      * @return Structure containing the results of the analysis if the minimal criteria is met
      */
-    public Optional<AnalysisResult> analyse(RemoteAddress address)
+    public Optional<AnalysisResult> processRawData(RemoteAddress address)
     {
         AnalysisResultImpl result = new AnalysisResultImpl();
 
@@ -86,30 +72,25 @@ public class Analyser implements AnalyserInterface
         // Pre-criteria: We are only interested in looking at hosts where every interval between
         // data is greater than the configured minimum.
         // This should reduce web browsing traffic getting captured.
-        if (intervalsBetweenData.size() > 0 &&
+        if (!intervalsBetweenData.isEmpty() &&
                 intervalsBetweenData.entrySet().stream().allMatch(entryForFrequency -> entryForFrequency.getKey().getInterval() >= minIntervalMinutes))
         {
             //=============
             // Repeated transfers at the same interval
             intervalsBetweenData.entrySet().stream()
-                    .filter(e -> e.getValue().size() >= minCountAtInterval)
                     .sorted((entry1, entry2) ->
                     {
                         Integer size1 = entry1.getValue().size();
                         Integer size2 = entry2.getValue().size();
                         return size1.compareTo(size2);
                     })
-                    .forEach(entry -> result.addRepeatedInterval(entry.getKey(), TransferCount.of(entry.getValue().size())));
-
-            // TODO: Check if most are at same interval (80%)
-            // TODO: Check if most sizes are the same (80%)
+                    .forEach(entry -> result.addIntervalCount(entry.getKey(), TransferCount.of(entry.getValue().size())));
 
             //=============
             // Repeated transfers of the same size
             // Map of transfer size in bytes -> number of transfers
             Map<TransferSizeBytes, TransferCount> dataFrequencies = analyserUtil.getDataSizeFrequenciesFromRaw(dataForAddress);
-            dataFrequencies.entrySet().stream().filter(e -> e.getValue().getCount() >= minCountOfSameSize)
-                    .forEach(e -> result.addRepeatedTransferSize(e.getKey(),e.getValue()));
+            dataFrequencies.forEach(result::addTransferSizeCount);
 
             // Set the last set time
             result.setLastSeenEpochMinute(monitorData.getDataForAddress(address).getLatestEpochMinute());
@@ -131,6 +112,12 @@ public class Analyser implements AnalyserInterface
         }
     }
 
+    /**
+     * Identifies addresses which can be ignored.
+     * If data was sent to the address in more than once over the previous
+     * minimum duration then it will be ignored
+     * @return addresses to ignore
+     */
     public Set<RemoteAddress> getAddressesToIgnore()
     {
         HashSet<RemoteAddress> addressesToIgnore = new HashSet<>();

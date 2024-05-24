@@ -32,6 +32,6 @@ import java.util.Set;
 
 public interface AnalyserInterface
 {
-    Optional<AnalysisResult> analyse(RemoteAddress address);
+    Optional<AnalysisResult> processRawData(RemoteAddress address);
     Set<RemoteAddress> getAddressesToIgnore();
 }

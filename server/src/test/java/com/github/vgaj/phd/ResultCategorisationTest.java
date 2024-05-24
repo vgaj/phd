@@ -24,10 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.server.result.AnalysisResultImpl;
-import com.github.vgaj.phd.server.result.ResultCategorisationImpl;
-import com.github.vgaj.phd.server.result.TransferCount;
-import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
+import com.github.vgaj.phd.server.result.*;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
@@ -36,28 +33,206 @@ import java.util.Optional;
 
 public class ResultCategorisationTest
 {
+    private static ResultCategorisationImpl setupForMostCommonTests()
+    {
+        AnalysisResultImpl result = new AnalysisResultImpl();
+        result.addIntervalCount(TransferIntervalMinutes.of(1), TransferCount.of(1));
+        result.addIntervalCount(TransferIntervalMinutes.of(2), TransferCount.of(9));
+        result.addIntervalCount(TransferIntervalMinutes.of(3), TransferCount.of(5));
+        result.addIntervalCount(TransferIntervalMinutes.of(4), TransferCount.of(8));
+        result.addIntervalCount(TransferIntervalMinutes.of(5), TransferCount.of(9));
+        result.addIntervalCount(TransferIntervalMinutes.of(6), TransferCount.of(1));
+        result.addTransferSizeCount(TransferSizeBytes.of(10), TransferCount.of(10));
+        result.addTransferSizeCount(TransferSizeBytes.of(20), TransferCount.of(90));
+        result.addTransferSizeCount(TransferSizeBytes.of(30), TransferCount.of(50));
+        result.addTransferSizeCount(TransferSizeBytes.of(40), TransferCount.of(80));
+        result.addTransferSizeCount(TransferSizeBytes.of(50), TransferCount.of(90));
+        result.addTransferSizeCount(TransferSizeBytes.of(60), TransferCount.of(10));
+        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+        return categorisation;
+    }
+
     @Test
     public void testGetMostCommonInterval() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
     {
         // Arrange
-        AnalysisResultImpl result = new AnalysisResultImpl();
-        result.addRepeatedInterval(TransferIntervalMinutes.of(1), TransferCount.of(1));
-        result.addRepeatedInterval(TransferIntervalMinutes.of(2), TransferCount.of(9));
-        result.addRepeatedInterval(TransferIntervalMinutes.of(3), TransferCount.of(5));
-        result.addRepeatedInterval(TransferIntervalMinutes.of(4), TransferCount.of(8));
-        result.addRepeatedInterval(TransferIntervalMinutes.of(5), TransferCount.of(9));
-        result.addRepeatedInterval(TransferIntervalMinutes.of(6), TransferCount.of(1));
-        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+        ResultCategorisationImpl categorisation = setupForMostCommonTests();
 
         // Act
         Method method = ResultCategorisationImpl.class.getDeclaredMethod("getMostCommonInterval");
         method.setAccessible(true);
         Optional<Integer> mostCommonInterval = (Optional<Integer>) method.invoke(categorisation);
 
-
         // Assert
         assert mostCommonInterval.isPresent();
         assert mostCommonInterval.get() == 5;
+    }
 
+    @Test
+    public void testGetCountForMostCommonInterval() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
+    {
+        // Arrange
+        ResultCategorisationImpl categorisation = setupForMostCommonTests();
+
+        // Act
+        Method method = ResultCategorisationImpl.class.getDeclaredMethod("getCountForMostCommonInterval");
+        method.setAccessible(true);
+        Optional<Integer> countForMostCommonInterval = (Optional<Integer>) method.invoke(categorisation);
+
+        // Assert
+        assert countForMostCommonInterval.isPresent();
+        assert countForMostCommonInterval.get() == 9;
+    }
+
+    @Test
+    public void testGetMostCommonSize() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
+    {
+        // Arrange
+        ResultCategorisationImpl categorisation = setupForMostCommonTests();
+
+        // Act
+        Method method = ResultCategorisationImpl.class.getDeclaredMethod("getMostCommonSize");
+        method.setAccessible(true);
+        Optional<Integer> mostCommonSize = (Optional<Integer>) method.invoke(categorisation);
+
+        // Assert
+        assert mostCommonSize.isPresent();
+        assert mostCommonSize.get() == 50;
+    }
+
+    @Test
+    public void testGetCountForMostCommonSize() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
+    {
+        // Arrange
+        ResultCategorisationImpl categorisation = setupForMostCommonTests();
+
+        // Act
+        Method method = ResultCategorisationImpl.class.getDeclaredMethod("getCountForMostCommonSize");
+        method.setAccessible(true);
+        Optional<Integer> countForMostCommonSize = (Optional<Integer>) method.invoke(categorisation);
+
+        // Assert
+        assert countForMostCommonSize.isPresent();
+        assert countForMostCommonSize.get() == 90;
+    }
+
+    @Test
+    public void testAllIntervalsTheSame()
+    {
+        // Arrange
+        AnalysisResultImpl result = new AnalysisResultImpl();
+        result.addIntervalCount(TransferIntervalMinutes.of(10), TransferCount.of(2));
+        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+
+        // Assert
+        assert categorisation.areAllIntervalsTheSame_c11();
+        assert categorisation.areMostIntervalsTheSame_c12();
+        assert categorisation.areSomeIntervalsTheSame_c13();
+    }
+
+    @Test
+    public void testMostIntervalsTheSame()
+    {
+        // Arrange
+        AnalysisResultImpl result = new AnalysisResultImpl();
+        result.addIntervalCount(TransferIntervalMinutes.of(3), TransferCount.of(9));
+        result.addIntervalCount(TransferIntervalMinutes.of(4), TransferCount.of(10));
+        result.addIntervalCount(TransferIntervalMinutes.of(5), TransferCount.of(80));
+        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+
+        // Assert
+        assert !categorisation.areAllIntervalsTheSame_c11();
+        assert categorisation.areMostIntervalsTheSame_c12();
+        assert categorisation.areSomeIntervalsTheSame_c13();
+    }
+
+    @Test
+    public void testSomeIntervalsTheSame()
+    {
+        // Arrange
+        AnalysisResultImpl result = new AnalysisResultImpl();
+        result.addIntervalCount(TransferIntervalMinutes.of(1), TransferCount.of(1));
+        result.addIntervalCount(TransferIntervalMinutes.of(2), TransferCount.of(2));
+        result.addIntervalCount(TransferIntervalMinutes.of(3), TransferCount.of(3));
+        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+
+        // Assert
+        assert !categorisation.areAllIntervalsTheSame_c11();
+        assert !categorisation.areMostIntervalsTheSame_c12();
+        assert categorisation.areSomeIntervalsTheSame_c13();
+    }
+
+    @Test
+    public void testNoIntervalsTheSame()
+    {
+        // Arrange
+        AnalysisResultImpl result = new AnalysisResultImpl();
+        result.addIntervalCount(TransferIntervalMinutes.of(10), TransferCount.of(1));
+        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+
+        // Assert
+        assert !categorisation.areAllIntervalsTheSame_c11();
+        assert !categorisation.areMostIntervalsTheSame_c12();
+        assert !categorisation.areSomeIntervalsTheSame_c13();
+    }
+
+    @Test
+    public void testAllSizesTheSame()
+    {
+        // Arrange
+        AnalysisResultImpl result = new AnalysisResultImpl();
+        result.addTransferSizeCount(TransferSizeBytes.of(10), TransferCount.of(2));
+        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+
+        // Assert
+        assert categorisation.areAllTransfersTheSameSize_c21();
+        assert categorisation.areMostTransfersTheSameSize_c22();
+        assert categorisation.areSomeTransfersTheSameSize_c23();
+    }
+
+    @Test
+    public void testMostSizesTheSame()
+    {
+        // Arrange
+        AnalysisResultImpl result = new AnalysisResultImpl();
+        result.addTransferSizeCount(TransferSizeBytes.of(3), TransferCount.of(9));
+        result.addTransferSizeCount(TransferSizeBytes.of(4), TransferCount.of(10));
+        result.addTransferSizeCount(TransferSizeBytes.of(5), TransferCount.of(80));
+        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+
+        // Assert
+        assert !categorisation.areAllTransfersTheSameSize_c21();
+        assert categorisation.areMostTransfersTheSameSize_c22();
+        assert categorisation.areSomeTransfersTheSameSize_c23();
+    }
+
+    @Test
+    public void testSomeSizesTheSame()
+    {
+        // Arrange
+        AnalysisResultImpl result = new AnalysisResultImpl();
+        result.addTransferSizeCount(TransferSizeBytes.of(1), TransferCount.of(1));
+        result.addTransferSizeCount(TransferSizeBytes.of(2), TransferCount.of(2));
+        result.addTransferSizeCount(TransferSizeBytes.of(3), TransferCount.of(3));
+        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+
+        // Assert
+        assert !categorisation.areAllTransfersTheSameSize_c21();
+        assert !categorisation.areMostTransfersTheSameSize_c22();
+        assert categorisation.areSomeTransfersTheSameSize_c23();
+    }
+
+    @Test
+    public void testNoSizesTheSame()
+    {
+        // Arrange
+        AnalysisResultImpl result = new AnalysisResultImpl();
+        result.addTransferSizeCount(TransferSizeBytes.of(10), TransferCount.of(1));
+        ResultCategorisationImpl categorisation = new ResultCategorisationImpl(result);
+
+        // Assert
+        assert !categorisation.areAllTransfersTheSameSize_c21();
+        assert !categorisation.areMostTransfersTheSameSize_c22();
+        assert !categorisation.areSomeTransfersTheSameSize_c23();
     }
 }

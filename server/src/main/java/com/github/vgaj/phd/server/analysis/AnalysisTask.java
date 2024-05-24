@@ -50,11 +50,11 @@ public class AnalysisTask
     private AnalyserInterface analyser;
 
     @Scheduled(fixedRateString = "${phd.analysis.interval.ms}", initialDelayString = "${phd.analysis.interval.ms}")
-    public void analyse()
+    public void processRawData()
     {
         monitorData.getAddresses().forEach(address ->
         {
-            Optional<AnalysisResult> result =analyser.analyse(address);
+            Optional<AnalysisResult> result = analyser.processRawData(address);
             if (result.isPresent())
             {
                 analysisCache.putCurrentResult(address, result.get());

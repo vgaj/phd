@@ -42,10 +42,10 @@ public class ResultXmlSerialisationTest
     public static AnalysisResultImpl makeAnalysisResult(int interval1, int intervalCount1, int interval2, int intervalCount2, int size1, int sizeCount1, int size2, int sizeCount2, long lastSeen)
     {
         AnalysisResultImpl result = new AnalysisResultImpl();
-        result.addRepeatedInterval( TransferIntervalMinutes.of(interval1), TransferCount.of(intervalCount1));
-        result.addRepeatedInterval( TransferIntervalMinutes.of(interval2), TransferCount.of(intervalCount2));
-        result.addRepeatedTransferSize( TransferSizeBytes.of(size1), TransferCount.of(sizeCount1));
-        result.addRepeatedTransferSize( TransferSizeBytes.of(size2), TransferCount.of(sizeCount2));
+        result.addIntervalCount( TransferIntervalMinutes.of(interval1), TransferCount.of(intervalCount1));
+        result.addIntervalCount( TransferIntervalMinutes.of(interval2), TransferCount.of(intervalCount2));
+        result.addTransferSizeCount( TransferSizeBytes.of(size1), TransferCount.of(sizeCount1));
+        result.addTransferSizeCount( TransferSizeBytes.of(size2), TransferCount.of(sizeCount2));
         result.setLastSeenEpochMinute(lastSeen);
         return result;
     }
@@ -71,16 +71,16 @@ public class ResultXmlSerialisationTest
 
         // Assert
         assert fromXml.getLastSeenEpochMinute() == lastSeen;
-        assert fromXml.getRepeatedIntervals().size() == 2;
-        assert fromXml.getRepeatedTransferSizes().size() == 2;
-        assert fromXml.getRepeatedIntervals().get(0).getKey().getInterval() == interval1;
-        assert fromXml.getRepeatedIntervals().get(0).getValue().getCount() == intervalCount1;
-        assert fromXml.getRepeatedIntervals().get(1).getKey().getInterval() == interval2;
-        assert fromXml.getRepeatedIntervals().get(1).getValue().getCount() == intervalCount2;
-        assert fromXml.getRepeatedTransferSizes().get(0).getKey().getSize() == size1;
-        assert fromXml.getRepeatedTransferSizes().get(0).getValue().getCount() == sizeCount1;
-        assert fromXml.getRepeatedTransferSizes().get(1).getKey().getSize() == size2;
-        assert fromXml.getRepeatedTransferSizes().get(1).getValue().getCount() == sizeCount2;
+        assert fromXml.getIntervalCount().size() == 2;
+        assert fromXml.getTransferSizeCount().size() == 2;
+        assert fromXml.getIntervalCount().get(0).getKey().getInterval() == interval1;
+        assert fromXml.getIntervalCount().get(0).getValue().getCount() == intervalCount1;
+        assert fromXml.getIntervalCount().get(1).getKey().getInterval() == interval2;
+        assert fromXml.getIntervalCount().get(1).getValue().getCount() == intervalCount2;
+        assert fromXml.getTransferSizeCount().get(0).getKey().getSize() == size1;
+        assert fromXml.getTransferSizeCount().get(0).getValue().getCount() == sizeCount1;
+        assert fromXml.getTransferSizeCount().get(1).getKey().getSize() == size2;
+        assert fromXml.getTransferSizeCount().get(1).getValue().getCount() == sizeCount2;
     }
 
     @Test
@@ -88,17 +88,17 @@ public class ResultXmlSerialisationTest
     {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
-        result.addRepeatedInterval( TransferIntervalMinutes.of(1), TransferCount.of(2));
+        result.addIntervalCount( TransferIntervalMinutes.of(1), TransferCount.of(2));
 
         // Act
         String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(result);
         AnalysisResultImpl fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, AnalysisResultImpl.class);
 
         // Assert
-        assert fromXml.getRepeatedIntervals().size() == 1;
-        assert fromXml.getRepeatedIntervals().get(0).getKey().getInterval() == 1;
-        assert fromXml.getRepeatedIntervals().get(0).getValue().getCount() == 2;
-        assert fromXml.getRepeatedTransferSizes().size() == 0;
+        assert fromXml.getIntervalCount().size() == 1;
+        assert fromXml.getIntervalCount().get(0).getKey().getInterval() == 1;
+        assert fromXml.getIntervalCount().get(0).getValue().getCount() == 2;
+        assert fromXml.getTransferSizeCount().size() == 0;
     }
 
     @Test
@@ -160,11 +160,11 @@ public class ResultXmlSerialisationTest
         // Assert
         assert fromXml.getResultsForSaving().get(0).getAddress().getReverseHostname().equals(address.getReverseHostname());
         assert fromXml.getResultsForSaving().get(0).getResult().getLastSeenEpochMinute() == lastSeen;
-        assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedIntervals().get(0).getKey().getInterval() == 1;
-        assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedIntervals().get(0).getValue().getCount() == 2;
-        assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedIntervals().get(1).getKey().getInterval() == 3;
-        assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedIntervals().get(1).getValue().getCount() == 4;
-        assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedTransferSizes().get(0).getKey().getSize() == 5;
-        assert fromXml.getResultsForSaving().get(0).getResult().getRepeatedTransferSizes().get(0).getValue().getCount() == 6;
+        assert fromXml.getResultsForSaving().get(0).getResult().getIntervalCount().get(0).getKey().getInterval() == 1;
+        assert fromXml.getResultsForSaving().get(0).getResult().getIntervalCount().get(0).getValue().getCount() == 2;
+        assert fromXml.getResultsForSaving().get(0).getResult().getIntervalCount().get(1).getKey().getInterval() == 3;
+        assert fromXml.getResultsForSaving().get(0).getResult().getIntervalCount().get(1).getValue().getCount() == 4;
+        assert fromXml.getResultsForSaving().get(0).getResult().getTransferSizeCount().get(0).getKey().getSize() == 5;
+        assert fromXml.getResultsForSaving().get(0).getResult().getTransferSizeCount().get(0).getValue().getCount() == 6;
     }
 }

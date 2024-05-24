@@ -27,9 +27,11 @@ package com.github.vgaj.phd.server.result;
 public interface ResultCategorisation
 {
     boolean areAllIntervalsTheSame_c11();
-    boolean areSomeIntervalsTheSame_c12();
+    boolean areMostIntervalsTheSame_c12();
+    boolean areSomeIntervalsTheSame_c13();
     boolean areAllTransfersTheSameSize_c21();
-    boolean areSomeTransfersTheSameSize_c22();
+    boolean areMostTransfersTheSameSize_c22();
+    boolean areSomeTransfersTheSameSize_c23();
     boolean isRuntimeLongEnoughToDecideIfResultIsCurrent();
     boolean isResultCurrent();
 }

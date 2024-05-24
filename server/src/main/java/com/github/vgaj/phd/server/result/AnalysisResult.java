@@ -35,9 +35,9 @@ public interface AnalysisResult
 {
     long getLastSeenEpochMinute();
 
-    List<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedIntervals();
+    List<Pair<TransferIntervalMinutes, TransferCount>> getIntervalCount();
 
-    List<Pair<TransferSizeBytes, TransferCount>> getRepeatedTransferSizes();
+    List<Pair<TransferSizeBytes, TransferCount>> getTransferSizeCount();
 
     AnalysisResult merge (AnalysisResult other);
 }

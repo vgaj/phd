@@ -52,8 +52,8 @@ public class DataMergeTests
 
         // Assert
         assert combined.getLastSeenEpochMinute() == 999;
-        List<Pair<TransferIntervalMinutes, TransferCount>> intervals = combined.getRepeatedIntervals();
-        List<Pair<TransferSizeBytes, TransferCount>> sizes = combined.getRepeatedTransferSizes();
+        List<Pair<TransferIntervalMinutes, TransferCount>> intervals = combined.getIntervalCount();
+        List<Pair<TransferSizeBytes, TransferCount>> sizes = combined.getTransferSizeCount();
         assert intervals.get(0).getKey().getInterval() == 1  && intervals.get(0).getValue().getCount() == 21; // 11 + 10
         assert intervals.get(1).getKey().getInterval() == 2  && intervals.get(1).getValue().getCount() == 22;
         assert intervals.get(2).getKey().getInterval() == 3  && intervals.get(2).getValue().getCount() == 10;

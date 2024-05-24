@@ -26,58 +26,157 @@ package com.github.vgaj.phd.server.result;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.common.util.Pair;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.util.Comparator;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ResultCategorisationImpl implements ResultCategorisation
 {
+    /**
+     * The minimum number of pairs of transmissions at an interval that is of interest
+     */
+    @Value("${phd.minimum.count.at.interval}")
+    private Integer minCountAtInterval = 2;
+
+    /**
+     * The minimum number of transmissions of the same size that are considered interesting
+     */
+    @Value("${phd.minimum.count.of.size}")
+    private Integer minCountOfSameSize = 2;
+
     private AnalysisResult result;
     public ResultCategorisationImpl(AnalysisResult result)
     {
         this.result = result;
     }
 
+    ////////////////////
+    // Interval Rules
+    ////////////////////
+
     @Override
     public boolean areAllIntervalsTheSame_c11()
     {
-        return result.getRepeatedIntervals().size() == 1;
+        return getRepeatedTransferIntervalsStream().count() == 1;
     }
 
     @Override
-    public boolean areSomeIntervalsTheSame_c12()
+    public boolean areMostIntervalsTheSame_c12()
     {
-        return result.getRepeatedIntervals().size() > 0;
+        int count = result.getIntervalCount().stream().mapToInt(pair -> pair.getValue().getCount()).sum();
+        Optional<Integer> countForMostCommonInterval = getCountForMostCommonInterval();
+        if (count > 0 && countForMostCommonInterval.isPresent())
+        {
+            // Check if 80% are the same interval - note 80% is based on observations
+            return ((double) countForMostCommonInterval.get() / count) > 0.8;
+        }
+        return false;
     }
+
+    @Override
+    public boolean areSomeIntervalsTheSame_c13()
+    {
+        return getRepeatedTransferIntervalsStream().count() > 0;
+    }
+
+    private Stream<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedTransferIntervalsStream()
+    {
+        return result.getIntervalCount().stream().filter(pair -> pair.getValue().getCount() >= minCountAtInterval);
+    }
+
+    /////////////////
+    // Size Rules
+    /////////////////
 
     @Override
     public boolean areAllTransfersTheSameSize_c21()
     {
-        return result.getRepeatedTransferSizes().size() == 1;
-    }
-    @Override
-    public boolean areSomeTransfersTheSameSize_c22()
-    {
-        return result.getRepeatedTransferSizes().size() > 0;
+        return getRepeatedTransferSizeStream().count() == 1;
     }
 
-    private Optional<Integer> getMostCommonInterval()
+    @Override
+    public boolean areMostTransfersTheSameSize_c22()
     {
-        return result.getRepeatedIntervals().stream()
-                .sorted((interval1,interval2) -> {
+        int count = result.getTransferSizeCount().stream().mapToInt(pair -> pair.getValue().getCount()).sum();
+        Optional<Integer> countForMostCommonSize = getCountForMostCommonSize();
+        if (count > 0 && countForMostCommonSize.isPresent())
+        {
+            // Check if 80% are the same size - note 80% is based on observations
+            return ((double) countForMostCommonSize.get() / count) > 0.8;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean areSomeTransfersTheSameSize_c23()
+    {
+        return getRepeatedTransferSizeStream().count() > 0;
+    }
+
+    private Stream<Pair<TransferSizeBytes, TransferCount>> getRepeatedTransferSizeStream()
+    {
+        return result.getTransferSizeCount().stream().filter(pair -> pair.getValue().getCount() >= minCountOfSameSize);
+    }
+
+    private Stream<Pair<TransferIntervalMinutes, TransferCount>> getIntervalsSorted()
+    {
+        return getRepeatedTransferIntervalsStream()
+                .sorted((interval1, interval2) -> {
                     if (interval1.getValue().getCount() == interval2.getValue().getCount())
                     {
-                        // If a number of frequencies have the same count then return the longest
+                        // If two frequencies have the same count then return the longest
                         return interval2.getKey().getInterval() - interval1.getKey().getInterval();
                     }
                     else
                     {
                         return interval2.getValue().getCount() - interval1.getValue().getCount();
                     }
-                        } )
+                });
+    }
+
+    private Stream<Pair<TransferSizeBytes, TransferCount>> getSizesSorted()
+    {
+        return getRepeatedTransferSizeStream()
+                .sorted((size1, size2) -> {
+                    if (size1.getValue().getCount() == size2.getValue().getCount())
+                    {
+                        // If two sizes have the same count then return the largest
+                        return size2.getKey().getSize() - size1.getKey().getSize();
+                    }
+                    else
+                    {
+                        return size2.getValue().getCount() - size1.getValue().getCount();
+                    }
+                });
+    }
+
+    private Optional<Integer> getMostCommonInterval()
+    {
+        return getIntervalsSorted()
                 .map(x -> x.getKey().getInterval())
+                .findFirst();
+    }
+
+    private Optional<Integer> getCountForMostCommonInterval()
+    {
+        return getIntervalsSorted()
+                .map(x -> x.getValue().getCount())
+                .findFirst();
+    }
+
+    private Optional<Integer> getMostCommonSize()
+    {
+        return getSizesSorted()
+                .map(x -> x.getKey().getSize())
+                .findFirst();
+    }
+
+    private Optional<Integer> getCountForMostCommonSize()
+    {
+        return getSizesSorted()
+                .map(x -> x.getValue().getCount())
                 .findFirst();
     }
 

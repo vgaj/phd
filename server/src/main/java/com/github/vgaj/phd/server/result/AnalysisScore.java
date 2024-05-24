@@ -39,7 +39,11 @@ public class AnalysisScore
         {
             score += 5;
         }
-        else if (resultCategorisation.areSomeIntervalsTheSame_c12())
+        else if (resultCategorisation.areMostIntervalsTheSame_c12())
+        {
+            score += 4;
+        }
+        else if (resultCategorisation.areSomeIntervalsTheSame_c13())
         {
             score += 2;
         }
@@ -48,7 +52,11 @@ public class AnalysisScore
         {
             score += 5;
         }
-        else if (resultCategorisation.areSomeTransfersTheSameSize_c22())
+        else if (resultCategorisation.areMostTransfersTheSameSize_c22())
+        {
+            score += 4;
+        }
+        else if (resultCategorisation.areSomeTransfersTheSameSize_c23())
         {
             score += 2;
         }

@@ -70,10 +70,10 @@ public class CliArgumentParser
             return new RequestResponseDetails( new DebugLogQuery(), DebugLogResponse.class, false, false);
         }
         System.out.println("No options      Overall results");
-        System.out.println("-c              Only show current results (exclude past patterns that are no longer seen");
+        System.out.println("-c              Only show current results (exclude past patterns that are no longer seen)");
         System.out.println("-x              Results with extra information");
         System.out.println("-h <IP address> History for an address");
-        System.out.println("-d              View rolling debug log");
+        System.out.println("-d              View tail of debug log");
         System.out.println("-?              View this help");
         return null;
     }
