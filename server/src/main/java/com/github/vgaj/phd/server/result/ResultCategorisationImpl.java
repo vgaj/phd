@@ -103,6 +103,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
         Optional<Integer> countForMostCommonSize = getCountForMostCommonSize();
         if (count > 0 && countForMostCommonSize.isPresent())
         {
+            // TODO Make the 80% configurable
             // Check if 80% are the same size - note 80% is based on observations
             return ((double) countForMostCommonSize.get() / count) > 0.8;
         }

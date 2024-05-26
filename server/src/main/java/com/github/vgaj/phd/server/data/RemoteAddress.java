@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.List;
 
 @NoArgsConstructor
-public class RemoteAddress
+public class RemoteAddress implements Comparable<RemoteAddress>
 {
     private final byte[] octets = new byte[4];
 
@@ -120,4 +120,15 @@ public class RemoteAddress
         return Arrays.hashCode(octets);
     }
 
+    @Override
+    public int compareTo(RemoteAddress other)
+    {
+        for (int i = 0; i < 4; i++) {
+            int diff = Byte.compare(this.octets[i], other.octets[i]);
+            if (diff != 0) {
+                return diff;
+            }
+        }
+        return 0;
+    }
 }

@@ -126,7 +126,13 @@ public class RawDataProcessor implements RawDataProcessorInterface
         monitorData.getAddresses().forEach(address ->
         {
             boolean receivedDataInLastInterval = false;
-            for (long minute = now; minute > now - minIntervalMinutes; minute--)
+
+            // We might not have received data for the current minute yet,
+            // so we look back from the previous minute to the minute that
+            // was the minimum duration ago.
+            // For example if this is minute 100 and the minimum interval is 2
+            // then we look at minute 99 and 98
+            for (long minute = now - 1; minute >= now - minIntervalMinutes; minute--)
             {
                 if (monitorData.getDataForAddress(address).getByteCountPerMinute().getOrDefault(minute, 0) > 0)
                 {

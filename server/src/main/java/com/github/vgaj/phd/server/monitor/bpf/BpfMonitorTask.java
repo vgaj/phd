@@ -30,6 +30,7 @@ import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.common.util.Pair;
+import com.github.vgaj.phd.server.monitor.pcap.MonitorTaskFilterUpdateInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -40,10 +41,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Component
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "true", matchIfMissing = true)
-public class BpfMonitorTask
+public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
 {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
@@ -55,6 +58,8 @@ public class BpfMonitorTask
 
     @Value("${phd.bpf.map.name}")
     private String bpf_map_name;
+
+    private Set<RemoteAddress> addressesToIgnore = new ConcurrentSkipListSet<RemoteAddress>();
 
     int mapFd;
 
@@ -81,10 +86,40 @@ public class BpfMonitorTask
         Long epochMinute = EpochMinuteUtil.now();
         if (mapFd != -1)
         {
-            // TODO: An ignore implementation
-
             List<Pair<RemoteAddress,Integer>> dataForLastMinute =  libBpfWrapper.getData(mapFd);
-            dataForLastMinute.forEach(entry-> monitorData.addData(entry.getKey(), entry.getValue(), epochMinute));
+            dataForLastMinute.forEach(entry->
+            {
+                if (!addressesToIgnore.contains(entry.getKey()))
+                {
+                    monitorData.addData(entry.getKey(), entry.getValue(), epochMinute);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void updateFilter(Set<RemoteAddress> addressesToExclude)
+    {
+        int sizeBefore = addressesToIgnore.size();
+        addressesToExclude.forEach(a ->
+        {
+            try
+            {
+                if (addressesToIgnore.add(a))
+                {
+                    messages.addDebug("Not monitoring " + a.getAddressString());
+                }
+            }
+            catch (Throwable t)
+            {
+                messages.addError("Failed to add address to ignore", t);
+            }
+        });
+        int sizeAfter = addressesToIgnore.size();
+
+        if (sizeAfter > sizeBefore)
+        {
+            messages.addDebug("Total ignored addresses now is " + sizeAfter);
         }
     }
 }
