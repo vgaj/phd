@@ -24,15 +24,14 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.pcap;
 
-import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 
+import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -40,13 +39,10 @@ import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "false", matchIfMissing = false)
-public class PcapCleanupTask
+public class PcapCleanup implements MonitorTaskFilterUpdateInterface
 {
     @Autowired
-    private RawDataProcessorInterface analyser;
-
-    @Autowired
-    private MonitorTaskFilterUpdateInterface monitor;
+    private PcapMonitorTaskFilterUpdateInterface monitor;
 
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
@@ -58,21 +54,18 @@ public class PcapCleanupTask
     @Value("${phd.maximum.addresses.to.ignore}")
     private int maxAddressesToIgnore = 250;
 
-    @Scheduled(fixedRateString = "${phd.cleanup.interval.ms}", initialDelayString = "${phd.cleanup.interval.ms}")
-    public void removeFrequentAddresses()
+    @Override
+    public void updateFilter(Set<RemoteAddress> addressesToExclude)
     {
-        // Get addresses to ignore based on currently receiving data
-        Set<RemoteAddress> addressesToIgnore = analyser.getAddressesToIgnore();
-
         // Get the new addresses that should be ignored
-        List<RemoteAddress> newAddressesToIgnore = addressesToIgnore.stream().filter(a -> !currentlyIgnoredAddresses.containsKey(a)).collect(Collectors.toList());
+        List<RemoteAddress> newAddressesToIgnore = addressesToExclude.stream().filter(a -> !currentlyIgnoredAddresses.containsKey(a)).collect(Collectors.toList());
 
         // There is a maximum number of addresses that will be ignored
         if (currentlyIgnoredAddresses.size() + newAddressesToIgnore.size() > maxAddressesToIgnore)
         {
             int numberToRemove = currentlyIgnoredAddresses.size() + newAddressesToIgnore.size() - maxAddressesToIgnore;
             List<RemoteAddress> addressesToRemove = currentlyIgnoredAddresses.entrySet().stream()
-                    .filter(entry -> !addressesToIgnore.contains(entry.getKey()))
+                    .filter(entry -> !addressesToExclude.contains(entry.getKey()))
                     .sorted(Map.Entry.comparingByValue())
                     .limit(numberToRemove)
                     .map(Map.Entry::getKey)
@@ -87,5 +80,6 @@ public class PcapCleanupTask
         });
 
         monitor.updateFilter(currentlyIgnoredAddresses.keySet());
+
     }
 }

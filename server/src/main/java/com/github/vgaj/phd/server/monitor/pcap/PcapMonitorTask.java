@@ -47,7 +47,7 @@ import java.util.Set;
  */
 @Component
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "false", matchIfMissing = false)
-public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterface
+public class PcapMonitorTask implements Runnable, PcapMonitorTaskFilterUpdateInterface
 {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
@@ -93,11 +93,11 @@ public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterfa
      * - and you get a Segmentation fault with 10000
      * @param addressesToExclude Addresses to exclude
      */
+    @Override
     public void updateFilter(Set<RemoteAddress> addressesToExclude)
     {
         try
         {
-
             long start = System.nanoTime();
             StringBuilder newFilter = new StringBuilder();
             newFilter.append("(").append(filter).append(")");
@@ -108,7 +108,6 @@ public class PcapMonitorTask implements Runnable, MonitorTaskFilterUpdateInterfa
             {
                 messages.addDebug("Filter update took " + durationMs + " ms");
             }
-
         }
         catch (PcapNativeException | NotOpenException e)
         {

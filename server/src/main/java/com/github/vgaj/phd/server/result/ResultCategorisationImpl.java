@@ -46,6 +46,18 @@ public class ResultCategorisationImpl implements ResultCategorisation
     @Value("${phd.minimum.count.of.size}")
     private Integer minCountOfSameSize = 2;
 
+    /**
+     * If this percentage of intervals are the same then most are considered to be the same
+     */
+    @Value("${phd.percent.interval.same.for.most}")
+    private Integer percentageOfIntervalsNeededForMostToBeSame = 80;
+
+    /**
+     * If this percentage of sizes are the same then most are considered to be the same
+     */
+    @Value("${phd.percent.size.same.for.most}")
+    private Integer percentageOfSizesNeededForMostToBeSame = 80;
+
     private AnalysisResult result;
     public ResultCategorisationImpl(AnalysisResult result)
     {
@@ -70,7 +82,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
         if (count > 0 && countForMostCommonInterval.isPresent())
         {
             // Check if 80% are the same interval - note 80% is based on observations
-            return ((double) countForMostCommonInterval.get() / count) > 0.8;
+            return ((double) countForMostCommonInterval.get() / count) > (percentageOfIntervalsNeededForMostToBeSame / 100);
         }
         return false;
     }
@@ -103,9 +115,8 @@ public class ResultCategorisationImpl implements ResultCategorisation
         Optional<Integer> countForMostCommonSize = getCountForMostCommonSize();
         if (count > 0 && countForMostCommonSize.isPresent())
         {
-            // TODO Make the 80% configurable
             // Check if 80% are the same size - note 80% is based on observations
-            return ((double) countForMostCommonSize.get() / count) > 0.8;
+            return ((double) countForMostCommonSize.get() / count) > (percentageOfSizesNeededForMostToBeSame / 100);
         }
         return false;
     }

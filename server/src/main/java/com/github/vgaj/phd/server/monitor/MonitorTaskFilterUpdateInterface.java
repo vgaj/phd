@@ -22,12 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.monitor.pcap;
+package com.github.vgaj.phd.server.monitor;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
 
 import java.util.Set;
 
+/**
+ * General interface to update the filter list for either BPF or PCAP
+ */
 public interface MonitorTaskFilterUpdateInterface
 {
     void updateFilter(Set<RemoteAddress> addressesToExclude);

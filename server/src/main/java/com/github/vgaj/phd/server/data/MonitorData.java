@@ -40,8 +40,6 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class MonitorData
 {
-    // TODO: Periodic cleanup of uninteresting data
-
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     // Stats for each host
@@ -87,4 +85,9 @@ public class MonitorData
         return addresses;
     }
 
+    public void cleanupIgnoredAddresses(Set<RemoteAddress> addressesToExclude)
+    {
+        addressesToExclude.forEach(address -> data.remove(address));
+        messages.addDebug("Size of Monitor Data is now " + data.size());
+    }
 }

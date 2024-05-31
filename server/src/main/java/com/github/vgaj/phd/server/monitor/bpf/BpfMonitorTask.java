@@ -30,7 +30,7 @@ import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.common.util.Pair;
-import com.github.vgaj.phd.server.monitor.pcap.MonitorTaskFilterUpdateInterface;
+import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

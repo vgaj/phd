@@ -24,12 +24,10 @@ SOFTWARE.
 
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
 import com.github.vgaj.phd.server.data.RemoteAddress;
-import com.github.vgaj.phd.server.monitor.pcap.PcapCleanupTask;
+import com.github.vgaj.phd.server.monitor.pcap.PcapCleanup;
 import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.server.monitor.pcap.MonitorTaskFilterUpdateInterface;
-
+import com.github.vgaj.phd.server.monitor.pcap.PcapMonitorTaskFilterUpdateInterface;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -45,22 +43,18 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CleanupTaskTests
 {
     @Mock
-    private RawDataProcessorInterface analyser;
-
-    @Mock
     private Messages messages;
 
     @Spy
-    private MonitorTaskFilterUpdateInterface monitorTaskFilterUpdate;
+    private PcapMonitorTaskFilterUpdateInterface monitorTaskFilterUpdate;
 
     @InjectMocks
-    private PcapCleanupTask cleanupTask;
+    private PcapCleanup cleanup;
 
     // Test data
     private RemoteAddress address1 = new RemoteAddress((byte) 1, (byte) 0, (byte) 0,(byte)  0);
@@ -80,10 +74,9 @@ public class CleanupTaskTests
         Set<RemoteAddress> addresses = new HashSet<>();
         addresses.add(address3);
         addresses.add(address1);
-        when(analyser.getAddressesToIgnore()).thenReturn(addresses);
 
         // Act
-        cleanupTask.removeFrequentAddresses();
+        cleanup.updateFilter(addresses);
 
         // Assert
         ArgumentCaptor<Set<RemoteAddress>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
@@ -101,17 +94,16 @@ public class CleanupTaskTests
         currentlyIgnoredAddresses.put(address5, 5L);
         currentlyIgnoredAddresses.put(address4, 4L);
         currentlyIgnoredAddresses.put(address3, 3L);
-        Field addressesField = PcapCleanupTask.class.getDeclaredField("currentlyIgnoredAddresses");
+        Field addressesField = PcapCleanup.class.getDeclaredField("currentlyIgnoredAddresses");
         addressesField.setAccessible(true);
-        addressesField.set(cleanupTask, currentlyIgnoredAddresses);
+        addressesField.set(cleanup, currentlyIgnoredAddresses);
 
         Set<RemoteAddress> addresses = new HashSet<>();
         addresses.add(address2);
         addresses.add(address3);
-        when(analyser.getAddressesToIgnore()).thenReturn(addresses);
 
         // Act
-        cleanupTask.removeFrequentAddresses();
+        cleanup.updateFilter(addresses);
 
         // Assert
         ArgumentCaptor<Set<RemoteAddress>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
@@ -133,25 +125,22 @@ public class CleanupTaskTests
         currentlyIgnoredAddresses.put(address4, 4L);
         currentlyIgnoredAddresses.put(address2, 2L);
         currentlyIgnoredAddresses.put(address3, 3L);
-        Field addressesField = PcapCleanupTask.class.getDeclaredField("currentlyIgnoredAddresses");
+        Field addressesField = PcapCleanup.class.getDeclaredField("currentlyIgnoredAddresses");
         addressesField.setAccessible(true);
-        addressesField.set(cleanupTask, currentlyIgnoredAddresses);
+        addressesField.set(cleanup, currentlyIgnoredAddresses);
 
-        Field maxCountField = PcapCleanupTask.class.getDeclaredField("maxAddressesToIgnore");
+        Field maxCountField = PcapCleanup.class.getDeclaredField("maxAddressesToIgnore");
         maxCountField.setAccessible(true);
-        maxCountField.set(cleanupTask, 6);
-
-
+        maxCountField.set(cleanup, 6);
 
         Set<RemoteAddress> addresses = new HashSet<>();
         addresses.add(address1); // 1 is the oldest in the current list, so it will be 2 and 3 to be removed
         addresses.add(address6); // 6 to 8 are 3 new ones
         addresses.add(address7);
         addresses.add(address8);
-        when(analyser.getAddressesToIgnore()).thenReturn(addresses);
 
         // Act
-        cleanupTask.removeFrequentAddresses();
+        cleanup.updateFilter(addresses);
 
         // Assert
         // 5 existing, adding 3, with max of 6 so 2 oldest should get removed

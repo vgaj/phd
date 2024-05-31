@@ -22,29 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.monitor.bpf;
+package com.github.vgaj.phd.server.cleanup;
 
 import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
+import com.github.vgaj.phd.server.data.MonitorData;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.server.monitor.pcap.MonitorTaskFilterUpdateInterface;
+import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 @Component
-@ConditionalOnProperty(name = "phd.use.bpf", havingValue = "true", matchIfMissing = true)
-public class BpfCleanupTask
+public class CleanupTask
 {
     @Autowired
-    private RawDataProcessorInterface analyser;
+    private RawDataProcessorInterface rawDataProcessor;
 
     @Autowired
     private MonitorTaskFilterUpdateInterface monitor;
+
+    @Autowired
+    private MonitorData data;
 
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
@@ -52,11 +54,12 @@ public class BpfCleanupTask
     public void removeFrequentAddresses()
     {
         // Get addresses to ignore based on currently receiving data
-        Set<RemoteAddress> addressesToIgnore = analyser.getAddressesToIgnore();
+        Set<RemoteAddress> addressesToIgnore = rawDataProcessor.getAddressesToIgnore();
 
-        // TODO: Do we want to ignore straight away?
-
-        // Add to list to ignore
+        // Add to list to ignore when monitoring
         monitor.updateFilter(addressesToIgnore);
+
+        // Remove addressees from stored data
+        data.cleanupIgnoredAddresses(addressesToIgnore);
     }
 }
