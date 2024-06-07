@@ -102,7 +102,7 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>compile-bpf</id>
+						<id>compile-bpf-count</id>
 						<phase>compile</phase>
 						<goals>
 							<goal>exec</goal>
@@ -119,6 +119,27 @@
 								<argument>src/main/bpf/phone_home_detector_bpf_count.c</argument>
 								<argument>-o</argument>
 								<argument>target/phone_home_detector_bpf_count.o</argument>
+							</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>compile-bpf-time</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>clang</executable>
+							<workingDirectory>${project.basedir}</workingDirectory>
+							<arguments>
+								<argument>-O2</argument>
+								<argument>-g</argument>
+								<argument>-target</argument>
+								<argument>bpf</argument>
+								<argument>-c</argument>
+								<argument>src/main/bpf/phone_home_detector_bpf_time.c</argument>
+								<argument>-o</argument>
+								<argument>target/phone_home_detector_bpf_time.o</argument>
 							</arguments>
 						</configuration>
 					</execution>

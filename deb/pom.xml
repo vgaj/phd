@@ -72,6 +72,14 @@
 									</mapper>
 								</data>
 								<data>
+									<src>../server/target/phone_home_detector_bpf_time.o</src>
+									<type>file</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/opt/phone-home-detector</prefix>
+									</mapper>
+								</data>
+								<data>
 									<src>../server/src/main/resources/phone-home-detector.service</src>
 									<type>file</type>
 									<mapper>

@@ -37,3 +37,11 @@ for interface in $interfaces; do
     fi
   fi
 done
+
+/usr/bin/rm /sys/fs/bpf/phd_connect_time
+if [ $? -eq 0 ]; then
+  echo "Removed BPF program for PID to connection time tracking"
+else
+  echo "ERROR failed to remove BPF program for PID to connection time tracking"
+fi
+
