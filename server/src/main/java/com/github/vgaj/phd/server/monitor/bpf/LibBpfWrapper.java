@@ -31,13 +31,14 @@ import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.common.util.Pair;
 import com.sun.jna.*;
 import com.sun.jna.ptr.IntByReference;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @Component
 public class LibBpfWrapper
@@ -142,9 +143,39 @@ public class LibBpfWrapper
         return returnFd;
     }
 
-    public List<Pair<RemoteAddress,Integer>> getData(int mapFd)
+    public List<Pair<RemoteAddress,Integer>> getAddressToCountData(int mapFd)
     {
-        List<Pair<RemoteAddress,Integer>> results = new LinkedList<>();
+        List<Pair<RemoteAddress,Integer>> results = new ArrayList<>();
+        BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
+                results.add(Pair.of(makeRemoteAddress(key), value.getInt(0)));
+        getData(mapFd, resultAdder);
+        return results;
+    }
+
+    public List<Pair<RemoteAddress,Long>> getAddressToTimeData(int mapFd)
+    {
+        List<Pair<RemoteAddress,Long>> results = new ArrayList<>();
+        BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
+                results.add(Pair.of(makeRemoteAddress(key), value.getLong(0)));
+        getData(mapFd, resultAdder);
+        return results;
+    }
+
+    public List<Pair<Integer,Long>> getPidToTimeData(int mapFd)
+    {
+        List<Pair<Integer,Long>> results = new ArrayList<>();
+        BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
+                results.add(Pair.of(key.getInt(0), value.getLong(0)));
+        getData(mapFd, resultAdder);
+        return results;
+    }
+
+    private void getData(int mapFd, BiConsumer<Pointer, Pointer> resultAdder)
+    {
+        if (mapFd == -1)
+        {
+            return;
+        }
 
         try
         {
@@ -167,13 +198,7 @@ public class LibBpfWrapper
                 if (!isLast)
                 {
                     LibBpf.INSTANCE.bpf_map_lookup_elem(mapFd, next_key, value);
-                    int count = value.getInt(0);
-                    int octet1 = next_key.getByte(0) & 0xFF;
-                    int octet2 = next_key.getByte(1) & 0xFF;
-                    int octet3 = next_key.getByte(2) & 0xFF;
-                    int octet4 = next_key.getByte(3) & 0xFF;
-                    //TODO: IPv6
-                    results.add(Pair.of(new RemoteAddress((byte) octet1, (byte) octet2, (byte) octet3, (byte) octet4), count));
+                    resultAdder.accept(next_key,value);
                 }
 
                 if (!isFirst)
@@ -189,7 +214,15 @@ public class LibBpfWrapper
         {
             messages.addError("Native error occurred when querying map", e);
         }
+    }
 
-        return results;
+    private RemoteAddress makeRemoteAddress(Pointer address)
+    {
+        //TODO: IPv6
+        int octet1 = address.getByte(0) & 0xFF;
+        int octet2 = address.getByte(1) & 0xFF;
+        int octet3 = address.getByte(2) & 0xFF;
+        int octet4 = address.getByte(3) & 0xFF;
+        return new RemoteAddress((byte) octet1, (byte) octet2, (byte) octet3, (byte) octet4);
     }
 }

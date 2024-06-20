@@ -18,4 +18,5 @@ sudo ln -s $cwd/server/src/main/resources/phone-home-detector.service /usr/lib/s
 
 echo "*** Starting..."
 sudo systemctl daemon-reload
+sudo systemctl enable phone-home-detector --now
 sudo systemctl start phone-home-detector.service
