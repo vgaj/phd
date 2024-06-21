@@ -43,11 +43,11 @@ for interface in $interfaces; do
   fi
 done
 
-/usr/sbin/bpftool prog load /opt/phone-home-detector/phone_home_detector_bpf_time.o /sys/fs/bpf/phd_connect_time autoattach
+/usr/sbin/bpftool prog load /opt/phone-home-detector/phone_home_detector_bpf_pid.o /sys/fs/bpf/phd_connect_pid autoattach
 if [ $? -eq 0 ]; then
-  echo "Attached BPF program for PID to connection time tracking"
+  echo "Attached BPF program for IP to PID tracking"
 else
-  echo "ERROR failed to add BPF program for PID to connection time tracking"
+  echo "ERROR failed to add BPF program for IP to PID tracking"
 fi
 
 /usr/bin/java -Djava.net.preferIPv4Stack=true -jar /opt/phone-home-detector/phd-server-0.0.1-SNAPSHOT.jar

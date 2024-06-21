@@ -72,7 +72,7 @@
 									</mapper>
 								</data>
 								<data>
-									<src>../server/target/phone_home_detector_bpf_time.o</src>
+									<src>../server/target/phone_home_detector_bpf_pid.o</src>
 									<type>file</type>
 									<mapper>
 										<type>perm</type>

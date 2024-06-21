@@ -61,17 +61,13 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
     @Value("${phd.bpf.map.ip.bytes}")
     private String bpf_map_ip_bytes;
 
-    @Value("${phd.bpf.map.ip.time}")
-    private String bpf_map_ip_time;
-
-    @Value("${phd.bpf.map.pid.time}")
-    private String bpf_map_pid_time;
+    @Value("${phd.bpf.map.ip.pid}")
+    private String bpf_map_ip_pid;
 
     private Set<RemoteAddress> addressesToIgnore = new ConcurrentSkipListSet<RemoteAddress>();
 
     int mapFdIpBytes;
-    int mapFdIpTime;
-    int mapFdPidTime;
+    int mapFdIpPid;
 
     // Occurs after @PostConstruct
     @EventListener(ApplicationReadyEvent.class)
@@ -82,15 +78,10 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
         {
             messages.addError("Map " + bpf_map_ip_bytes + " was not loaded");
         }
-        mapFdIpTime = libBpfWrapper.getMapFdByName(bpf_map_ip_time);
-        if (mapFdIpTime == -1)
+        mapFdIpPid = libBpfWrapper.getMapFdByName(bpf_map_ip_pid);
+        if (mapFdIpPid == -1)
         {
-            messages.addError("Map " + bpf_map_ip_time + " was not loaded");
-        }
-        mapFdPidTime = libBpfWrapper.getMapFdByName(bpf_map_pid_time);
-        if (mapFdPidTime == -1)
-        {
-            messages.addError("Map " + bpf_map_pid_time + " was not loaded");
+            messages.addError("Map " + bpf_map_ip_pid + " was not loaded");
         }
     }
 
@@ -107,8 +98,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
         Long epochMinute = EpochMinuteUtil.now();
 
         List<Pair<RemoteAddress,Integer>> ipToBytesForLastMinute =  libBpfWrapper.getAddressToCountData(mapFdIpBytes);
-        List<Pair<RemoteAddress,Long>> ipToTimeForLastMinute =  libBpfWrapper.getAddressToTimeData(mapFdIpTime);
-        List<Pair<Integer,Long>> pidToTimeForLastMinute =  libBpfWrapper.getPidToTimeData(mapFdPidTime);
+        List<Pair<RemoteAddress,Integer>> ipToPidForLastMinute =  libBpfWrapper.getAddressToPidData(mapFdIpPid);
         messages.addMessage("Total time (ms) to get data: " + (System.currentTimeMillis() - start));
 
         // Process count data
@@ -120,30 +110,9 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
             }
         });
 
-        ipToTimeForLastMinute.forEach(entry ->
+        ipToPidForLastMinute.forEach(entry ->
         {
-            messages.addMessage("ADDR->TIME " + entry.getKey().getAddressString() + "   " + entry.getValue());
-        });
-        pidToTimeForLastMinute.forEach( entry ->
-        {
-            messages.addMessage("PID->TIME " + entry.getKey() + "   " + entry.getValue());
-        });
-
-        RemoteAddress ignore1 = new RemoteAddress((byte)192,(byte)168,(byte)1,(byte)1);
-        RemoteAddress ignore2 = new RemoteAddress((byte)255,(byte)255,(byte)255,(byte)255);
-
-        // Work out PID for address
-        pidToTimeForLastMinute.forEach( pidToTime ->
-        {
-            long rangeStart = pidToTime.getValue();
-            long rangeEnd = pidToTime.getValue() + 500_000_000;
-            List<Pair<RemoteAddress,Long>> candidates = ipToTimeForLastMinute.stream()
-                    .filter(ipToTime -> !ipToTime.getKey().equals(ignore1) && !ipToTime.getKey().equals(ignore2))
-                    .filter(ipToTime -> ipToTime.getValue() > rangeStart && ipToTime.getValue() < rangeEnd)
-                    .collect(Collectors.toList());
-
-            candidates.forEach( x -> messages.addMessage("PID " + pidToTime.getKey() + " time ns " + pidToTime.getValue() + " delay ns " + (x.getValue() - rangeStart) + " address: " + x.getKey().getAddressString()));
-
+            messages.addMessage("IP->PID " + entry.getKey().getAddressString() + "   " + entry.getValue());
         });
 
         messages.addMessage("Total time (ms) to process: " + (System.currentTimeMillis() - start));

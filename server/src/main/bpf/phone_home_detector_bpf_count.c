@@ -38,15 +38,6 @@ struct
         __uint(max_entries, 1000000);
 } IP_TO_COUNT_MAP SEC(".maps");
 
-#define IP_TO_TIME_MAP phd_ip_to_time
-struct
-{
-        __uint(type, BPF_MAP_TYPE_HASH);
-        __type(key, __u32);   // ip
-        __type(value, __u64); // time
-        __uint(max_entries, 1000000);
-} IP_TO_TIME_MAP SEC(".maps");
-
 SEC("phone_home_detector_bpf_count")
 int phone_home_detector_bpf_count_func(struct __sk_buff *skb)
 {
@@ -66,20 +57,19 @@ int phone_home_detector_bpf_count_func(struct __sk_buff *skb)
             
             // Note this is including the UDP/TCP header but that doesn't matter for what we are doing
             __u32 length = data_end - data - sizeof(struct ethhdr) - sizeof(struct iphdr);
-            
-            __u32 *value = bpf_map_lookup_elem(&IP_TO_COUNT_MAP, &daddr);
-            if (value)
-            {
-                *value += length;
-            }
-            else
-            {
-                bpf_map_update_elem(&IP_TO_COUNT_MAP, &daddr, &length, BPF_NOEXIST);
-            }
 
-            // Now add to IP to Time map
-            __u64 sent_time = bpf_ktime_get_ns();
-            bpf_map_update_elem(&IP_TO_TIME_MAP, &daddr, &sent_time, BPF_NOEXIST);
+            if (daddr > 0)
+            {
+                __u32 *value = bpf_map_lookup_elem(&IP_TO_COUNT_MAP, &daddr);
+                if (value)
+                {
+                    *value += length;
+                }
+                else
+                {
+                    bpf_map_update_elem(&IP_TO_COUNT_MAP, &daddr, &length, BPF_NOEXIST);
+                }
+            }
         }
     }
     return TC_ACT_UNSPEC;

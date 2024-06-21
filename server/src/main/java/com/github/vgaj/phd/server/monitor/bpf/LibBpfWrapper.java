@@ -152,20 +152,11 @@ public class LibBpfWrapper
         return results;
     }
 
-    public List<Pair<RemoteAddress,Long>> getAddressToTimeData(int mapFd)
+    public List<Pair<RemoteAddress,Integer>> getAddressToPidData(int mapFd)
     {
-        List<Pair<RemoteAddress,Long>> results = new ArrayList<>();
+        List<Pair<RemoteAddress,Integer>> results = new ArrayList<>();
         BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
-                results.add(Pair.of(makeRemoteAddress(key), value.getLong(0)));
-        getData(mapFd, resultAdder);
-        return results;
-    }
-
-    public List<Pair<Integer,Long>> getPidToTimeData(int mapFd)
-    {
-        List<Pair<Integer,Long>> results = new ArrayList<>();
-        BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
-                results.add(Pair.of(key.getInt(0), value.getLong(0)));
+                results.add(Pair.of(makeRemoteAddress(key), value.getInt(0)));
         getData(mapFd, resultAdder);
         return results;
     }
