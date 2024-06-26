@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.analysis;
 
-import com.github.vgaj.phd.server.data.MonitorData;
+import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.AnalysisResultImpl;
@@ -50,7 +50,7 @@ public class ResultsSaveTask
     AnalysisCache analysisCache;
 
     @Autowired
-    private MonitorData monitorData;
+    private TrafficDataStore trafficDataStore;
 
 
     @Value("${phd.results.xml.path}")

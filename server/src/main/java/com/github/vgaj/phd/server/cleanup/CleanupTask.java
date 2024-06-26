@@ -25,7 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.cleanup;
 
 import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
-import com.github.vgaj.phd.server.data.MonitorData;
+import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
@@ -46,7 +46,7 @@ public class CleanupTask
     private MonitorTaskFilterUpdateInterface monitor;
 
     @Autowired
-    private MonitorData data;
+    private TrafficDataStore data;
 
     private MessageInterface messages = Messages.getLogger(this.getClass());
 

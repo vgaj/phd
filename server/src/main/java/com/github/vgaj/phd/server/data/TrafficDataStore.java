@@ -37,8 +37,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * Store of traffic data for each host
+ */
 @Component
-public class MonitorData
+public class TrafficDataStore
 {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
@@ -61,7 +64,7 @@ public class MonitorData
                 messages.addError("Failed to lookup address", e);
             }
         }
-        //messages.addMessage("Monitor data Received " + length + " bytes for " + host.getAddressString());
+        //messages.addMessage("Received " + length + " bytes for " + host.getAddressString());
         data.get(host).addBytes(length, epochMinute);
     }
 

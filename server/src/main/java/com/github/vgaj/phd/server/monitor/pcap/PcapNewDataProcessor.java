@@ -31,7 +31,7 @@ import org.pcap4j.packet.Packet;
 
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.server.data.MonitorData;
+import com.github.vgaj.phd.server.data.TrafficDataStore;
 
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
@@ -58,7 +58,7 @@ public class PcapNewDataProcessor
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
-    private MonitorData monitorData;
+    private TrafficDataStore trafficDataStore;
 
     @Autowired
     private PcapPacketHelper pcapHelper;
@@ -97,7 +97,7 @@ public class PcapNewDataProcessor
                 messages.addDebug(pcapHelper.getSourceHost(newDataEvent.getPcapPacket()).getAddressString() + " -> " + host.getAddressString() + " (" + length + " bytes)");
             }
 
-            monitorData.addData(host, length, newDataEvent.getEpochMinute());
+            trafficDataStore.addData(host, length, newDataEvent.getEpochMinute());
         }
 
         updateMax(maxTimeToHandle, System.nanoTime() - startNs);

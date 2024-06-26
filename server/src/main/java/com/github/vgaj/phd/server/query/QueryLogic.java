@@ -29,7 +29,7 @@ import com.github.vgaj.phd.server.analysis.AnalysisCache;
 import com.github.vgaj.phd.server.data.DataForAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.server.data.MonitorData;
+import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.common.query.DisplayContent;
 import com.github.vgaj.phd.common.query.DisplayResult;
@@ -55,7 +55,7 @@ import java.util.*;
 public class QueryLogic
 {
     @Autowired
-    private MonitorData monitorData;
+    private TrafficDataStore trafficDataStore;
 
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
@@ -100,7 +100,7 @@ public class QueryLogic
 
                 int totalBytes = 0;
                 int totalTimes = 0;
-                DataForAddress currentDataForAddress = monitorData.getDataForAddress(address);
+                DataForAddress currentDataForAddress = trafficDataStore.getDataForAddress(address);
                 if (currentDataForAddress != null)
                 {
                     totalBytes = currentDataForAddress.getTotalBytes();
@@ -172,7 +172,7 @@ public class QueryLogic
     public ArrayList<String> getData(InetAddress address)
     {
         ArrayList<String> results = new ArrayList<>();
-        DataForAddress dataForAddress = monitorData.getDataForAddress(new RemoteAddress(address));
+        DataForAddress dataForAddress = trafficDataStore.getDataForAddress(new RemoteAddress(address));
         if (dataForAddress != null)
         {
             var data = dataForAddress.getByteCountPerMinute().entrySet();

@@ -22,48 +22,45 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.analysis;
+package com.github.vgaj.phd.server.data;
 
-import com.github.vgaj.phd.server.data.TrafficDataStore;
-import com.github.vgaj.phd.server.messages.MessageInterface;
-import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.server.result.AnalysisResult;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
 
 @Component
-public class AnalysisTask
+public class PidToCommandLookup
 {
-    @Autowired
-    AnalysisCache analysisCache;
+    private HashMap<Integer,String> cache;
+    long nextCacheRefresh = 0;
 
-    @Autowired
-    private TrafficDataStore trafficDataStore;
-
-    private MessageInterface messages = Messages.getLogger(this.getClass());
-
-    @Autowired
-    private RawDataProcessorInterface analyser;
-
-    @Scheduled(fixedRateString = "${phd.analysis.interval.ms}", initialDelayString = "${phd.analysis.interval.ms}")
-    public void processRawData()
+    String get(int pid)
     {
-        trafficDataStore.getAddresses().forEach(address ->
+        // Reset the cache after 30 seconds
+        if (System.currentTimeMillis() > nextCacheRefresh)
         {
-            Optional<AnalysisResult> result = analyser.processRawData(address);
-            if (result.isPresent())
-            {
-                analysisCache.putCurrentResult(address, result.get());
-            }
-            else
-            {
-                analysisCache.removeCurrentResult(address);
-            }
-        });
-    }
+            cache = new HashMap<>();
+            nextCacheRefresh = System.currentTimeMillis() + 30000;
+        }
 
+        if (!cache.containsKey(pid))
+        {
+            String command;
+            try
+            {
+                command = new String(Files.readAllBytes(Paths.get("/proc/", String.valueOf(pid), "/comm")));
+                command = command.replaceAll("\\r|\\n", "");
+            } catch (IOException e)
+            {
+                // If the process no longer exists then use the PID
+                command = "pid=" + pid;
+            }
+            cache.put(pid, command);
+        }
+
+        return cache.get(pid);
+    }
 }

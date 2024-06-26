@@ -25,7 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
-import com.github.vgaj.phd.server.data.MonitorData;
+import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.result.*;
 
@@ -39,7 +39,7 @@ import java.util.*;
 public class RawDataProcessor implements RawDataProcessorInterface
 {
     @Autowired
-    private MonitorData monitorData;
+    private TrafficDataStore trafficDataStore;
 
     /**
      * The minimum interval between data that is of interest
@@ -62,7 +62,7 @@ public class RawDataProcessor implements RawDataProcessorInterface
         //  - time
         //  - length of data at that time
         // Note that both calls below will sort this list
-        List<Map.Entry<TransferTimestamp, TransferSizeBytes>> dataForAddress = monitorData.getCopyOfPerMinuteData(address);
+        List<Map.Entry<TransferTimestamp, TransferSizeBytes>> dataForAddress = trafficDataStore.getCopyOfPerMinuteData(address);
 
         // Map of:
         // interval (minutes) -> list to lengths of data at this interval
@@ -93,7 +93,7 @@ public class RawDataProcessor implements RawDataProcessorInterface
             dataFrequencies.forEach(result::addTransferSizeCount);
 
             // Set the last set time
-            result.setLastSeenEpochMinute(monitorData.getDataForAddress(address).getLatestEpochMinute());
+            result.setLastSeenEpochMinute(trafficDataStore.getDataForAddress(address).getLatestEpochMinute());
 
             return Optional.of(result);
         }
@@ -123,7 +123,7 @@ public class RawDataProcessor implements RawDataProcessorInterface
         HashSet<RemoteAddress> addressesToIgnore = new HashSet<>();
 
         long now = EpochMinuteUtil.now();
-        monitorData.getAddresses().forEach(address ->
+        trafficDataStore.getAddresses().forEach(address ->
         {
             boolean receivedDataInLastInterval = false;
 
@@ -134,7 +134,7 @@ public class RawDataProcessor implements RawDataProcessorInterface
             // then we look at minute 99 and 98
             for (long minute = now - 1; minute >= now - minIntervalMinutes; minute--)
             {
-                if (monitorData.getDataForAddress(address).getByteCountPerMinute().getOrDefault(minute, 0) > 0)
+                if (trafficDataStore.getDataForAddress(address).getByteCountPerMinute().getOrDefault(minute, 0) > 0)
                 {
                     if (receivedDataInLastInterval)
                     {

@@ -25,7 +25,8 @@ SOFTWARE.
 package com.github.vgaj.phd.server.monitor.bpf;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
-import com.github.vgaj.phd.server.data.MonitorData;
+import com.github.vgaj.phd.server.data.ProcessDataStore;
+import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
@@ -40,11 +41,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "true", matchIfMissing = true)
@@ -53,7 +52,10 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
-    private MonitorData monitorData;
+    private TrafficDataStore trafficDataStore;
+
+    @Autowired
+    private ProcessDataStore processDataStore;
 
     @Autowired
     private LibBpfWrapper libBpfWrapper;
@@ -101,18 +103,19 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
         List<Pair<RemoteAddress,Integer>> ipToPidForLastMinute =  libBpfWrapper.getAddressToPidData(mapFdIpPid);
         messages.addMessage("Total time (ms) to get data: " + (System.currentTimeMillis() - start));
 
-        // Process count data
+        // Store count data
         ipToBytesForLastMinute.forEach(entry->
         {
             if (!addressesToIgnore.contains(entry.getKey()))
             {
-                monitorData.addData(entry.getKey(), entry.getValue(), epochMinute);
+                trafficDataStore.addData(entry.getKey(), entry.getValue(), epochMinute);
             }
         });
 
+        // Store process data
         ipToPidForLastMinute.forEach(entry ->
         {
-            messages.addMessage("IP->PID " + entry.getKey().getAddressString() + "   " + entry.getValue());
+            processDataStore.addData(entry.getKey(), entry.getValue());
         });
 
         messages.addMessage("Total time (ms) to process: " + (System.currentTimeMillis() - start));

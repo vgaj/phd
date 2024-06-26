@@ -22,48 +22,37 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.analysis;
+package com.github.vgaj.phd.server.data;
 
-import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.server.result.AnalysisResult;
-
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+/**
+ * Data about processes.  The last process associated with an address.
+ */
 @Component
-public class AnalysisTask
+public class ProcessDataStore
 {
-    @Autowired
-    AnalysisCache analysisCache;
-
-    @Autowired
-    private TrafficDataStore trafficDataStore;
-
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
-    private RawDataProcessorInterface analyser;
+    private PidToCommandLookup pidToCommandLookup;
 
-    @Scheduled(fixedRateString = "${phd.analysis.interval.ms}", initialDelayString = "${phd.analysis.interval.ms}")
-    public void processRawData()
+    // Last PID or command for each host
+    private final ConcurrentMap<RemoteAddress, String > data = new ConcurrentHashMap<>();
+
+    public void addData(@NonNull RemoteAddress host, int pid)
     {
-        trafficDataStore.getAddresses().forEach(address ->
-        {
-            Optional<AnalysisResult> result = analyser.processRawData(address);
-            if (result.isPresent())
-            {
-                analysisCache.putCurrentResult(address, result.get());
-            }
-            else
-            {
-                analysisCache.removeCurrentResult(address);
-            }
-        });
-    }
+        String command = pidToCommandLookup.get(pid);
+        String previousProcessForHost = data.put(host, command);
 
+        //if (previousProcessForHost == null) messages.addMessage("New host / process => " + host.getAddressString() + " / " + command);
+        //if (previousProcessForHost != null) messages.addMessage("Existing host / process => " + host.getAddressString() + " / " + command);
+    }
 }
