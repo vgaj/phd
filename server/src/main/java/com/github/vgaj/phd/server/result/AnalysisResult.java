@@ -35,6 +35,8 @@ public interface AnalysisResult
 {
     long getLastSeenEpochMinute();
 
+    String getProbableExecutable();
+
     List<Pair<TransferIntervalMinutes, TransferCount>> getIntervalCount();
 
     List<Pair<TransferSizeBytes, TransferCount>> getTransferSizeCount();

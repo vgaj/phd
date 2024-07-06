@@ -25,6 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
+import com.github.vgaj.phd.server.data.HostToExecutableLookup;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.result.*;
@@ -40,6 +41,9 @@ public class RawDataProcessor implements RawDataProcessorInterface
 {
     @Autowired
     private TrafficDataStore trafficDataStore;
+
+    @Autowired
+    private HostToExecutableLookup hostToExecutableLookup;
 
     /**
      * The minimum interval between data that is of interest
@@ -94,6 +98,10 @@ public class RawDataProcessor implements RawDataProcessorInterface
 
             // Set the last set time
             result.setLastSeenEpochMinute(trafficDataStore.getDataForAddress(address).getLatestEpochMinute());
+
+            // Set the probable last executable
+            // Definitely not guaranteed to be correct, it's just the last exe connecting to that host
+            result.setProbableExecutable(hostToExecutableLookup.getProcessForAddress(address));
 
             return Optional.of(result);
         }

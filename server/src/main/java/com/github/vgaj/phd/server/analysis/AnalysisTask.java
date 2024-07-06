@@ -52,6 +52,7 @@ public class AnalysisTask
     @Scheduled(fixedRateString = "${phd.analysis.interval.ms}", initialDelayString = "${phd.analysis.interval.ms}")
     public void processRawData()
     {
+        // TODO: Only process addresses with new data
         trafficDataStore.getAddresses().forEach(address ->
         {
             Optional<AnalysisResult> result = analyser.processRawData(address);

@@ -39,7 +39,7 @@ import java.net.UnknownHostException;
 public class ResultXmlSerialisationTest
 {
 
-    public static AnalysisResultImpl makeAnalysisResult(int interval1, int intervalCount1, int interval2, int intervalCount2, int size1, int sizeCount1, int size2, int sizeCount2, long lastSeen)
+    public static AnalysisResultImpl makeAnalysisResult(int interval1, int intervalCount1, int interval2, int intervalCount2, int size1, int sizeCount1, int size2, int sizeCount2, long lastSeen, String executable)
     {
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addIntervalCount( TransferIntervalMinutes.of(interval1), TransferCount.of(intervalCount1));
@@ -47,6 +47,7 @@ public class ResultXmlSerialisationTest
         result.addTransferSizeCount( TransferSizeBytes.of(size1), TransferCount.of(sizeCount1));
         result.addTransferSizeCount( TransferSizeBytes.of(size2), TransferCount.of(sizeCount2));
         result.setLastSeenEpochMinute(lastSeen);
+        result.setProbableExecutable(executable);
         return result;
     }
 
@@ -63,7 +64,8 @@ public class ResultXmlSerialisationTest
         int size2 = 7;
         int sizeCount2 = 8;
         long lastSeen = 9;
-        AnalysisResultImpl result = makeAnalysisResult(interval1, intervalCount1, interval2, intervalCount2, size1, sizeCount1, size2, sizeCount2, lastSeen);
+        String executable = "firefox";
+        AnalysisResultImpl result = makeAnalysisResult(interval1, intervalCount1, interval2, intervalCount2, size1, sizeCount1, size2, sizeCount2, lastSeen, executable);
 
         // Act
         String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(result);
@@ -71,6 +73,7 @@ public class ResultXmlSerialisationTest
 
         // Assert
         assert fromXml.getLastSeenEpochMinute() == lastSeen;
+        assert fromXml.getProbableExecutable().equals(executable);
         assert fromXml.getIntervalCount().size() == 2;
         assert fromXml.getTransferSizeCount().size() == 2;
         assert fromXml.getIntervalCount().get(0).getKey().getInterval() == interval1;
@@ -148,7 +151,8 @@ public class ResultXmlSerialisationTest
         int size2 = 7;
         int sizeCount2 = 8;
         long lastSeen = 9;
-        AnalysisResultImpl result = makeAnalysisResult(interval1, intervalCount1, interval2, intervalCount2, size1, sizeCount1, size2, sizeCount2, lastSeen);
+        String executable = "firefox";
+        AnalysisResultImpl result = makeAnalysisResult(interval1, intervalCount1, interval2, intervalCount2, size1, sizeCount1, size2, sizeCount2, lastSeen, executable);
 
         ResultsSaveList results = new ResultsSaveList();
         results.getResultsForSaving().add(ResultsSaveItem.of(address,result));
@@ -166,5 +170,6 @@ public class ResultXmlSerialisationTest
         assert fromXml.getResultsForSaving().get(0).getResult().getIntervalCount().get(1).getValue().getCount() == 4;
         assert fromXml.getResultsForSaving().get(0).getResult().getTransferSizeCount().get(0).getKey().getSize() == 5;
         assert fromXml.getResultsForSaving().get(0).getResult().getTransferSizeCount().get(0).getValue().getCount() == 6;
+        assert fromXml.getResultsForSaving().get(0).getResult().getProbableExecutable().equals(executable);
     }
 }

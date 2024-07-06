@@ -40,6 +40,10 @@ public class AnalysisResultImpl implements AnalysisResult
     @Getter
     long lastSeenEpochMinute;
 
+    @Setter
+    @Getter
+    String probableExecutable;
+
     /**
      * TRANSFER INTERVAL - List of: interval in minutes -> number of times
      */
@@ -91,6 +95,16 @@ public class AnalysisResultImpl implements AnalysisResult
 
         combinedResult.setLastSeenEpochMinute(
                 this.getLastSeenEpochMinute() > other.getLastSeenEpochMinute() ? this.getLastSeenEpochMinute() : other.getLastSeenEpochMinute());
+
+        // Use the executable from the result that was seen later
+        if (this.getLastSeenEpochMinute() > other.getLastSeenEpochMinute() && this.getProbableExecutable() != null &&  !this.getProbableExecutable().isBlank())
+        {
+            combinedResult.setProbableExecutable(this.getProbableExecutable());
+        }
+        else
+        {
+            combinedResult.setProbableExecutable(other.getProbableExecutable());
+        }
 
         return combinedResult;
     }

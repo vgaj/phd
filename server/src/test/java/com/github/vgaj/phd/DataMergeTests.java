@@ -42,16 +42,19 @@ public class DataMergeTests
         // Arrange
         RemoteAddress address1 = new RemoteAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
         RemoteAddress address2 = new RemoteAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
+        String executable1 = "firefox";
+        String executable2 = "java";
         address1.lookupHost();
         address2.lookupHost();
-        AnalysisResultImpl result1 = ResultXmlSerialisationTest.makeAnalysisResult(1, 11, 2, 22, 5, 55, 6, 666, 888);
-        AnalysisResultImpl result2 = ResultXmlSerialisationTest.makeAnalysisResult(1, 10, 3, 10, 5, 11, 7, 777, 999);
+        AnalysisResultImpl result1 = ResultXmlSerialisationTest.makeAnalysisResult(1, 11, 2, 22, 5, 55, 6, 666, 888, executable1);
+        AnalysisResultImpl result2 = ResultXmlSerialisationTest.makeAnalysisResult(1, 10, 3, 10, 5, 11, 7, 777, 999, executable2);
 
         // Act
         AnalysisResult combined = result1.merge(result2);
 
         // Assert
         assert combined.getLastSeenEpochMinute() == 999;
+        assert combined.getProbableExecutable().equals(executable2);
         List<Pair<TransferIntervalMinutes, TransferCount>> intervals = combined.getIntervalCount();
         List<Pair<TransferSizeBytes, TransferCount>> sizes = combined.getTransferSizeCount();
         assert intervals.get(0).getKey().getInterval() == 1  && intervals.get(0).getValue().getCount() == 21; // 11 + 10

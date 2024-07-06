@@ -90,6 +90,7 @@ public class QueryLogic
             }
         });
 
+        // TODO group by exe
         addresses.forEach( address ->
         {
             Optional<AnalysisResult> resultFromCache = analyserCache.getResult(address);
@@ -147,6 +148,7 @@ public class QueryLogic
                     DisplayResult displayResult = new DisplayResult(
                             address.getHostString(),
                             address.getAddressString(),
+                            result.getProbableExecutable(),
                             totalBytes,
                             totalTimes,
                             score,

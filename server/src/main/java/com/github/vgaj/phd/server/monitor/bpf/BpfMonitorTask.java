@@ -25,7 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.monitor.bpf;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
-import com.github.vgaj.phd.server.data.ProcessDataStore;
+import com.github.vgaj.phd.server.data.HostToExecutableLookup;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.data.RemoteAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
@@ -55,7 +55,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
     private TrafficDataStore trafficDataStore;
 
     @Autowired
-    private ProcessDataStore processDataStore;
+    private HostToExecutableLookup hostToExecutableLookup;
 
     @Autowired
     private LibBpfWrapper libBpfWrapper;
@@ -115,7 +115,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
         // Store process data
         ipToPidForLastMinute.forEach(entry ->
         {
-            processDataStore.addData(entry.getKey(), entry.getValue());
+            hostToExecutableLookup.addData(entry.getKey(), entry.getValue());
         });
 
         messages.addMessage("Total time (ms) to process: " + (System.currentTimeMillis() - start));

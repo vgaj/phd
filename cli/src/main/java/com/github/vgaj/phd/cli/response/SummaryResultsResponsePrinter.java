@@ -74,13 +74,22 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
                 sb.append(System.lineSeparator());
                 if (showExtraInfo)
                 {
-                    sb.append("  Last Seen: ");
-                    sb.append(EpochMinuteUtil.toString(r.lastSeenEpochMinute()));
-                    sb.append(System.lineSeparator());
-                    sb.append("  Score: ").append(r.score()).append(System.lineSeparator());
+                    sb.append("  Last Seen: ")
+                            .append(EpochMinuteUtil.toString(r.lastSeenEpochMinute()))
+                            .append(System.lineSeparator());
+                    if (r.probableExecutable() != null && !r.probableExecutable().isBlank())
+                    {
+                        sb.append("  Probable Executable: ")
+                                .append(r.probableExecutable())
+                                .append(System.lineSeparator());
+                    }
+                    sb.append("  Score: ")
+                            .append(r.score())
+                            .append(System.lineSeparator());
                     if (!r.isCurrent())
                     {
-                        sb.append("  Result is not current").append(System.lineSeparator());
+                        sb.append("  Result is not current")
+                                .append(System.lineSeparator());
                     }
                 }
                 for (DisplayResultLine line : r.resultLines())

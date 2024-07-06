@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentMap;
  * Data about processes.  The last process associated with an address.
  */
 @Component
-public class ProcessDataStore
+public class HostToExecutableLookup
 {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
@@ -52,7 +52,14 @@ public class ProcessDataStore
         String command = pidToCommandLookup.get(pid);
         String previousProcessForHost = data.put(host, command);
 
+        // TODO Test to see if multiple processes are connecting to the same host - also perhaps in the same minute
+
         //if (previousProcessForHost == null) messages.addMessage("New host / process => " + host.getAddressString() + " / " + command);
         //if (previousProcessForHost != null) messages.addMessage("Existing host / process => " + host.getAddressString() + " / " + command);
+    }
+
+    public String getProcessForAddress(RemoteAddress address)
+    {
+        return data.get(address);
     }
 }
