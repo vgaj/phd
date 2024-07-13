@@ -35,6 +35,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class SummaryResultsResponsePrinter implements ResponsePrinter
 {
@@ -55,6 +57,14 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
             @Override
             public int compare(DisplayResult e1, DisplayResult e2)
             {
+                // Group all for executable together
+                if (e1.probableExecutable() != null
+                        && e2.probableExecutable() != null
+                        && !e1.probableExecutable().equals(e2.probableExecutable()))
+                {
+                    return e1.probableExecutable().compareTo(e2.probableExecutable());
+                }
+
                 // Want reverse order which highest score on top
                 return e2.score() - e1.score();
             }
@@ -62,10 +72,21 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
         StringBuilder sb = new StringBuilder();
         boolean showExtraInfo = queryDetails.showExtraDetail();
         boolean onlyShowCurrent = queryDetails.onlyShowCurrent();
+
+        AtomicReference<String> lastExe = new AtomicReference<>();
+        AtomicBoolean first = new AtomicBoolean(true);
         results.forEach(r ->
         {
+            if (showExtraInfo || first.get() || r.probableExecutable() != null && !r.probableExecutable().equals(lastExe.get()))
+            {
+                sb.append(r.probableExecutable() != null && !r.probableExecutable().isBlank() ? r.probableExecutable() : "Unknown Source");
+                sb.append(System.lineSeparator());
+            }
+            lastExe.set(r.probableExecutable());
+            first.set(false);
             if (!onlyShowCurrent || r.isCurrent())
             {
+                sb.append("  ");
                 sb.append(r.ipAddress());
                 if (!r.ipAddress().equals(r.hostName()))
                 {
@@ -74,33 +95,27 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
                 sb.append(System.lineSeparator());
                 if (showExtraInfo)
                 {
-                    sb.append("  Last Seen: ")
+                    sb.append("    Last Seen: ")
                             .append(EpochMinuteUtil.toString(r.lastSeenEpochMinute()))
                             .append(System.lineSeparator());
-                    if (r.probableExecutable() != null && !r.probableExecutable().isBlank())
-                    {
-                        sb.append("  Probable Executable: ")
-                                .append(r.probableExecutable())
-                                .append(System.lineSeparator());
-                    }
-                    sb.append("  Score: ")
+                    sb.append("    Score: ")
                             .append(r.score())
                             .append(System.lineSeparator());
                     if (!r.isCurrent())
                     {
-                        sb.append("  Result is not current")
+                        sb.append("    Result is not current")
                                 .append(System.lineSeparator());
                     }
                 }
                 for (DisplayResultLine line : r.resultLines())
                 {
-                    String space = showExtraInfo ? "    " : "  ";
+                    String space = showExtraInfo ? "      " : "    ";
                     sb.append(space).append(line.message()).append(System.lineSeparator());
                     if (showExtraInfo)
                     {
                         for (String subline : line.subMessages())
                         {
-                            sb.append("      ").append(subline).append((System.lineSeparator()));
+                            sb.append("        ").append(subline).append((System.lineSeparator()));
                         }
                     }
                 }

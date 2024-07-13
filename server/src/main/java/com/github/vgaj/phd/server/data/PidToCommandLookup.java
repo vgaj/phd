@@ -51,7 +51,7 @@ public class PidToCommandLookup
             String command;
             try
             {
-                // TODO include cmdline
+                // TODO include cmdline, keeping in mind that it can be quite long
 
                 command = new String(Files.readAllBytes(Paths.get("/proc/", String.valueOf(pid), "/comm")));
                 command = command.replaceAll("\\r|\\n", "");

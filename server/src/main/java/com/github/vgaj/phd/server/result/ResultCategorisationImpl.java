@@ -225,7 +225,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
 
         long minutesSinceLastSeen = EpochMinuteUtil.now() - result.getLastSeenEpochMinute();
 
-        return mostCommonInterval.isPresent() && (minutesSinceLastSeen < (mostCommonInterval.get() + 2));
+        return !mostCommonInterval.isPresent() || (minutesSinceLastSeen < (mostCommonInterval.get() + 2));
     }
 
 }

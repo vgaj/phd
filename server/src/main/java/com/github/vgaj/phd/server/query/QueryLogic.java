@@ -90,7 +90,6 @@ public class QueryLogic
             }
         });
 
-        // TODO group by exe
         addresses.forEach( address ->
         {
             Optional<AnalysisResult> resultFromCache = analyserCache.getResult(address);

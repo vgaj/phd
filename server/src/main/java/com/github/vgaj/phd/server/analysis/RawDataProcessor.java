@@ -101,7 +101,8 @@ public class RawDataProcessor implements RawDataProcessorInterface
 
             // Set the probable last executable
             // Definitely not guaranteed to be correct, it's just the last exe connecting to that host
-            result.setProbableExecutable(hostToExecutableLookup.getProcessForAddress(address));
+            String executable = hostToExecutableLookup.getProcessForAddress(address);
+            result.setProbableExecutable(executable != null ? executable : " ");
 
             return Optional.of(result);
         }
