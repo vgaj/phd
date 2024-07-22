@@ -128,7 +128,6 @@ public class LibBpfWrapper
                 {
                     messages.addDebug("Found matching map id: " + id);
                     // If there is more than one with the same name then use the last one
-                    // TODO: delete old maps
                     returnFd = thisFd;
                 }
             }
@@ -209,7 +208,6 @@ public class LibBpfWrapper
 
     private RemoteAddress makeRemoteAddress(Pointer address)
     {
-        //TODO: IPv6
         int octet1 = address.getByte(0) & 0xFF;
         int octet2 = address.getByte(1) & 0xFF;
         int octet3 = address.getByte(2) & 0xFF;

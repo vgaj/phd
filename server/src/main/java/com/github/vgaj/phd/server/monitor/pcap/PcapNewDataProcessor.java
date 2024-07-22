@@ -82,7 +82,6 @@ public class PcapNewDataProcessor
         long startNs = System.nanoTime();
         updateMax(maxDelayToHandlerStart, startNs - newDataEvent.getQueuedTime());
 
-        //TODO: IPv6
         if (!pcapHelper.isIpv4(newDataEvent.getPcapPacket()))
         {
             messages.addDebug("Received data that was not IPv4");

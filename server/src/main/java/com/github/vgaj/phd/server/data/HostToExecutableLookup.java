@@ -50,12 +50,9 @@ public class HostToExecutableLookup
     public void addData(@NonNull RemoteAddress host, int pid)
     {
         String command = pidToCommandLookup.get(pid);
-        String previousProcessForHost = data.put(host, command);
+        String previousCommand = data.put(host, command);
 
-        // TODO Test to see if multiple processes are connecting to the same host - also perhaps in the same minute
-
-        //if (previousProcessForHost == null) messages.addMessage("New host / process => " + host.getAddressString() + " / " + command);
-        //if (previousProcessForHost != null) messages.addMessage("Existing host / process => " + host.getAddressString() + " / " + command);
+        //if (previousCommand != null && !command.equals(previousCommand)) messages.addMessage("Different command: " + command + " (previously " + previousCommand + ") for host " + host.getAddressString());
     }
 
     public String getProcessForAddress(RemoteAddress address)

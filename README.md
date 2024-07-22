@@ -1,16 +1,9 @@
 # Purpose
-Monitors a NIC in promiscuous mode to identify if something is "Phoning Phone" to check for updates etc.
+This application monitors the network traffic to identify if something is "Phoning Phone" to check for updates etc.  
+The source data can come from one of two source: libpcap or a BPF program.
 
-# Installation
-This requires pcap to run so:
-* On Ubuntu: apt-get install libpcap-dev
-* On Centos: yum install libpcap-devel
-* On Mac: brew install libpcap
-* On Windows: choco install winpcap
+# Design
+TODO
 
-# Building
-mvn package
-
-# Running
-sudo java -jar target/phonehomedetector-0.0.1-SNAPSHOT.jar 
-http://localhost:8080/
+# Known Issues
+* No IPv6 support

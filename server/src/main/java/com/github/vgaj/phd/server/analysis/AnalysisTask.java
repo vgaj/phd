@@ -24,12 +24,14 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.analysis;
 
+import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -49,11 +51,16 @@ public class AnalysisTask
     @Autowired
     private RawDataProcessorInterface analyser;
 
+    @Value("${phd.analysis.interval.ms}")
+    private Integer analysisIntervalMs;
+    
     @Scheduled(fixedRateString = "${phd.analysis.interval.ms}", initialDelayString = "${phd.analysis.interval.ms}")
     public void processRawData()
     {
-        // TODO: Only process addresses with new data
-        trafficDataStore.getAddresses().forEach(address ->
+        // Only process new data
+        long epochMinuteReference = EpochMinuteUtil.now() - (long) Math.ceil((double) analysisIntervalMs / 60000);
+
+        trafficDataStore.getAddressesWithDataSince(epochMinuteReference).forEach(address ->
         {
             Optional<AnalysisResult> result = analyser.processRawData(address);
             if (result.isPresent())

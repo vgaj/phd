@@ -24,11 +24,12 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.data;
 
+import com.github.vgaj.phd.common.util.ExecutableDetails;
+import com.github.vgaj.phd.server.messages.MessageInterface;
+import com.github.vgaj.phd.server.messages.Messages;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.util.HashMap;
 
 @Component
@@ -48,19 +49,7 @@ public class PidToCommandLookup
 
         if (!cache.containsKey(pid))
         {
-            String command;
-            try
-            {
-                // TODO include cmdline, keeping in mind that it can be quite long
-
-                command = new String(Files.readAllBytes(Paths.get("/proc/", String.valueOf(pid), "/comm")));
-                command = command.replaceAll("\\r|\\n", "");
-            } catch (IOException e)
-            {
-                // If the process no longer exists then use the PID
-                command = "pid=" + pid;
-            }
-            cache.put(pid, command);
+            cache.put(pid, ExecutableDetails.lookup(pid));
         }
 
         return cache.get(pid);

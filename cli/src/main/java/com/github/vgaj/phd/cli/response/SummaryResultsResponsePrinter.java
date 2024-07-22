@@ -30,6 +30,7 @@ import com.github.vgaj.phd.common.query.DisplayResultLine;
 import com.github.vgaj.phd.common.query.ResponseInterface;
 import com.github.vgaj.phd.common.query.SummaryResultsResponse;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
+import com.github.vgaj.phd.common.util.ExecutableDetails;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -58,11 +59,11 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
             public int compare(DisplayResult e1, DisplayResult e2)
             {
                 // Group all for executable together
-                if (e1.probableExecutable() != null
-                        && e2.probableExecutable() != null
-                        && !e1.probableExecutable().equals(e2.probableExecutable()))
+                if (e1.probableExecutableDetails() != null
+                        && e2.probableExecutableDetails() != null
+                        && !e1.probableExecutableDetails().equals(e2.probableExecutableDetails()))
                 {
-                    return e1.probableExecutable().compareTo(e2.probableExecutable());
+                    return e1.probableExecutableDetails().compareTo(e2.probableExecutableDetails());
                 }
 
                 // Want reverse order which highest score on top
@@ -77,12 +78,22 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
         AtomicBoolean first = new AtomicBoolean(true);
         results.forEach(r ->
         {
-            if (showExtraInfo || first.get() || r.probableExecutable() != null && !r.probableExecutable().equals(lastExe.get()))
+            String displayExeNameToUse = showExtraInfo ?
+                    ExecutableDetails.getCommandWithArguments(r.probableExecutableDetails()) :
+                    ExecutableDetails.getCommand(r.probableExecutableDetails());
+            if (showExtraInfo || first.get() || displayExeNameToUse != null && !displayExeNameToUse.equals(lastExe.get()))
             {
-                sb.append(r.probableExecutable() != null && !r.probableExecutable().isBlank() ? r.probableExecutable() : "Unknown Source");
+                if (displayExeNameToUse != null && !displayExeNameToUse.isBlank())
+                {
+                    sb.append(displayExeNameToUse);
+                }
+                else
+                {
+                    sb.append("Unknown Source");
+                }
                 sb.append(System.lineSeparator());
             }
-            lastExe.set(r.probableExecutable());
+            lastExe.set(displayExeNameToUse);
             first.set(false);
             if (!onlyShowCurrent || r.isCurrent())
             {

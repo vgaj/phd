@@ -88,6 +88,20 @@ public class TrafficDataStore
         return addresses;
     }
 
+    public List<RemoteAddress> getAddressesWithDataSince(long epochMinute)
+    {
+        List<RemoteAddress> addresses = new LinkedList<>();
+        data.keySet().forEach(address ->
+        {
+            DataForAddress addressData = data.get(address);
+            if (addressData != null && addressData.getLatestEpochMinute() >= epochMinute)
+            {
+                addresses.add(address);
+            }
+        });
+        return addresses;
+    }
+
     public void cleanupIgnoredAddresses(Set<RemoteAddress> addressesToExclude)
     {
         addressesToExclude.forEach(address -> data.remove(address));
