@@ -1,5 +1,5 @@
 # Phone Home Detector
-This application monitors network traffic to identify programs that are "Phoning Phone" to check for updates etc.
+This application monitors network traffic to identify programs that are "Phoning Home" to check for updates etc.
 
 ## Method
 The application works by looking at the data sent to IP addresses in one minute blocks.
@@ -20,11 +20,11 @@ It provides another user interface to the same information and uses the same mec
 
 ## Packing and Deployment
 This maven project builds fat jars.
-A systemd service and scripts to start the service have been provided.
+A systemd service and scripts to start the service have been created.
 These are packaged in a deb.  
  
 ## Support
-The following Distributions and kernel versions have been tested:
+The following distributions and kernel versions have been tested:
 * Ubuntu 22.04 with Kernel 6.5
 
 ## Known Issues
