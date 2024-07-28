@@ -29,54 +29,75 @@ import com.github.vgaj.phd.common.query.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import org.apache.commons.cli.*;
+
 public class CliArgumentParser
 {
     public static RequestResponseDetails parse(String[] args)
     {
-        System.out.println("Phone Home Detector Results (use -? for options)");
+        String programName = "phone-home-detector";
 
-        if (args.length == 0)
+        Options options = new Options();
+        Option optionCurrent = new Option("c", "current", false, "Only show current results (exclude past patterns that are no longer seen)");
+        Option optionVerbose = new Option("v", null, false, "Show more verbose information");
+        Option optionDebug = new Option("d", null, false, "Show debug info");
+        Option optionHelp = new Option("?", "help", false, "View this help");
+
+        Option optionAddress = new Option("a", "address", true, "Show data from the specified IP address");
+        // TODO: Option to filter by program
+//        Option optionProgram = new Option("p", "program", true, "Only show the specified program");
+//        OptionGroup hostOrProgramGroup = new OptionGroup();
+//        hostOrProgramGroup.addOption(optionAddress);
+//        hostOrProgramGroup.addOption(optionProgram);
+//        hostOrProgramGroup.setRequired(false);
+//        options.addOptionGroup(hostOrProgramGroup);
+        options.addOption(optionAddress);
+
+        options.addOption(optionCurrent);
+        options.addOption(optionVerbose);
+        options.addOption(optionDebug);
+        options.addOption(optionHelp);
+
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        CommandLine cmd = null;
+
+        boolean printHelpAndReturn = false;
+        try
         {
-            return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, false, false);
+            cmd = parser.parse(options, args);
         }
-        else if (args.length == 1 && args[0].equals("-c"))
+        catch (ParseException e)
         {
-            return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, false, true);
+            printHelpAndReturn = true;
         }
-        else if (args.length == 1 && args[0].equals("-x"))
+
+        if (printHelpAndReturn || cmd.hasOption(optionHelp))
         {
-            return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, true, false);
+            formatter.printHelp(programName, null, options, "use no options to see overall details", true);
+            return null;
         }
-        else if (args.length == 2 && (args[0].equals("-c") && args[1].equals("-x") || args[0].equals("-x") && args[1].equals("-c")))
+
+        if (cmd.hasOption(optionDebug))
         {
-            return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, true, true);
+            return new RequestResponseDetails( new DebugLogQuery(), DebugLogResponse.class, false, false);
         }
-        else if (args.length == 2 && args[0].equals("-h"))
+
+        if (cmd.hasOption(optionAddress))
         {
             InetAddress inetAddress;
             try
             {
-                inetAddress = InetAddress.getByName(args[1]);
+                inetAddress = InetAddress.getByName(cmd.getOptionValue(optionAddress));
             }
             catch (UnknownHostException e)
             {
-                System.out.println(args[1] + " is not a valid IP address");;
+                System.out.println(cmd.getOptionValue(optionAddress) + " is not a valid IP address");
                 return null;
             }
             return new RequestResponseDetails( new HostHistoryQuery(inetAddress), HostHistoryResponse.class, false,false);
         }
-        else if (args.length == 1 && args[0].equals("-d"))
-        {
-            return new RequestResponseDetails( new DebugLogQuery(), DebugLogResponse.class, false, false);
-        }
-        // TODO: Have a verbose and extra verbose option
-        System.out.println("No options      Overall results");
-        System.out.println("-c              Only show current results (exclude past patterns that are no longer seen)");
-        System.out.println("-x              Results with extra information");
-        System.out.println("-h <IP address> History for an address since the service was last started");
-        // -d is not advertised
-        //System.out.println("-d              View tail of debug log");
-        System.out.println("-?              View this help");
-        return null;
+
+        return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, cmd.hasOption(optionVerbose), cmd.hasOption(optionCurrent));
     }
 }

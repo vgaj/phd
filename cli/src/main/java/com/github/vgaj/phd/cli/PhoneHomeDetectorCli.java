@@ -43,6 +43,8 @@ public class PhoneHomeDetectorCli
             return;
         }
 
+        System.out.println("Phone Home Detector Results (use -? for options)");
+
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
         SocketChannel channel = null;
         try
