@@ -35,31 +35,20 @@ public class CliArgumentParser
 {
     public static RequestResponseDetails parse(String[] args)
     {
-        String programName = "phone-home-detector";
-
         Options options = new Options();
-        Option optionCurrent = new Option("c", "current", false, "Only show current results (exclude past patterns that are no longer seen)");
-        Option optionVerbose = new Option("v", null, false, "Show more verbose information");
-        Option optionDebug = new Option("d", null, false, "Show debug info");
+        Option optionCurrent = new Option("c", "current", false, "Restrict to current results (exclude past patterns that are no longer seen)");
+        Option optionVerbose = new Option("v", "verbose", false, "Show verbose information for results");
+        Option optionAddress = new Option("a", "address", true, "Show history for the specified IP address");
+        Option optionDebug = new Option("d", "debug", false, "View tail of debug log");
         Option optionHelp = new Option("?", "help", false, "View this help");
 
-        Option optionAddress = new Option("a", "address", true, "Show data from the specified IP address");
-        // TODO: Option to filter by program
-//        Option optionProgram = new Option("p", "program", true, "Only show the specified program");
-//        OptionGroup hostOrProgramGroup = new OptionGroup();
-//        hostOrProgramGroup.addOption(optionAddress);
-//        hostOrProgramGroup.addOption(optionProgram);
-//        hostOrProgramGroup.setRequired(false);
-//        options.addOptionGroup(hostOrProgramGroup);
         options.addOption(optionAddress);
-
         options.addOption(optionCurrent);
         options.addOption(optionVerbose);
         options.addOption(optionDebug);
         options.addOption(optionHelp);
 
         CommandLineParser parser = new DefaultParser();
-        HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd = null;
 
         boolean printHelpAndReturn = false;
@@ -74,7 +63,15 @@ public class CliArgumentParser
 
         if (printHelpAndReturn || cmd.hasOption(optionHelp))
         {
-            formatter.printHelp(programName, null, options, "use no options to see overall details", true);
+            //new HelpFormatter().printHelp("phone-home-detector", options, true);
+            System.out.println("Usage: phone-home-detector [-c] [-v]");
+            System.out.println(" No options      Show overall results");
+            System.out.println(" -c,--current    " + optionCurrent.getDescription());
+            System.out.println(" -v,--verbose    " + optionVerbose.getDescription());
+            // -h and -d are not advertised
+            //System.out.println(" -a <IP address> " + optionAddress.getDescription());
+            //System.out.println(" -d              " + optionDebug.getDescription());
+            System.out.println(" -?              " + optionHelp.getDescription());
             return null;
         }
 
