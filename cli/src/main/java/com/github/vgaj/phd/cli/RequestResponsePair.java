@@ -27,7 +27,7 @@ package com.github.vgaj.phd.cli;
 import com.github.vgaj.phd.common.query.RequestInterface;
 import com.github.vgaj.phd.common.query.ResponseInterface;
 
-public record RequestResponseDetails(
+public record RequestResponsePair(
         RequestInterface request,
         Class<? extends ResponseInterface> responseType,
         boolean showExtraDetail,

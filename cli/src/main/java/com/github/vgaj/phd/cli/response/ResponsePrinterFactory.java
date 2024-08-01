@@ -24,12 +24,12 @@ SOFTWARE.
 
 package com.github.vgaj.phd.cli.response;
 
-import com.github.vgaj.phd.cli.RequestResponseDetails;
+import com.github.vgaj.phd.cli.RequestResponsePair;
 import com.github.vgaj.phd.common.query.*;
 
 public class ResponsePrinterFactory
 {
-    public static ResponsePrinter get(RequestResponseDetails queryDetails, ResponseInterface response)
+    public static ResponsePrinter get(RequestResponsePair queryDetails, ResponseInterface response)
     {
         if (response instanceof DebugLogResponse)
         {

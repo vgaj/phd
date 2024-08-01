@@ -25,7 +25,6 @@ SOFTWARE.
 package com.github.vgaj.phd.common.ipc;
 
 import com.github.vgaj.phd.common.query.IpcMessage;
-import com.github.vgaj.phd.common.query.ResponseInterface;
 
 import java.io.*;
 import java.net.Inet4Address;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 public class DomainSocketComms implements AutoCloseable
 {
     public static final Path SOCKET_PATH = Path.of("/tmp", "phone_home_detector_ipc");
-    public static final int MAX_MESSAGE_SIZE = 64*1024;
 
     private final SocketChannel channel;
     public DomainSocketComms(SocketChannel channel)
@@ -53,9 +51,16 @@ public class DomainSocketComms implements AutoCloseable
         ObjectOutputStream oos = new ObjectOutputStream(os);
         oos.writeObject(message);
         oos.flush();
-        ByteBuffer buffer = ByteBuffer.wrap(os.toByteArray());
+        byte[] byteArray = os.toByteArray();
         oos.close();
         os.close();
+
+        int size = byteArray.length;
+        ByteBuffer buffer = ByteBuffer.allocate(4 + size);
+        buffer.putInt(size);
+        buffer.put(byteArray);
+        buffer.flip();
+
 
         while (buffer.hasRemaining())
         {
@@ -66,17 +71,27 @@ public class DomainSocketComms implements AutoCloseable
     public <T extends IpcMessage> T readSocketMessage(
             Class<T> READ_TYPE) throws IOException
     {
+        // Read the size
+        ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
+        int bytesRead = channel.read(sizeBuffer);
+        sizeBuffer.flip();
+        if (bytesRead < 0)
+        {
+            return null;
+        }
+        int messageSize = sizeBuffer.getInt();
+
         // Read from domain socket
-        ByteBuffer buffer = ByteBuffer.allocate(MAX_MESSAGE_SIZE);
-        int bytesRead = channel.read(buffer);
+        ByteBuffer messageBuffer = ByteBuffer.allocate(messageSize);
+        bytesRead = channel.read(messageBuffer);
         if (bytesRead < 0)
         {
             return null;
         }
 
         byte[] bytes = new byte[bytesRead];
-        buffer.flip();
-        buffer.get(bytes);
+        messageBuffer.flip();
+        messageBuffer.get(bytes);
 
         InputStream is = new ByteArrayInputStream(bytes);
         ObjectInputStream ois = new ObjectInputStream(is);

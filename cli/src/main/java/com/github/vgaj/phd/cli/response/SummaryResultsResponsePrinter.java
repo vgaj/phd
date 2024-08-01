@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.cli.response;
 
-import com.github.vgaj.phd.cli.RequestResponseDetails;
+import com.github.vgaj.phd.cli.RequestResponsePair;
 import com.github.vgaj.phd.common.query.DisplayResult;
 import com.github.vgaj.phd.common.query.DisplayResultLine;
 import com.github.vgaj.phd.common.query.ResponseInterface;
@@ -41,9 +41,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class SummaryResultsResponsePrinter implements ResponsePrinter
 {
-    private RequestResponseDetails queryDetails;
+    private RequestResponsePair queryDetails;
     private ResponseInterface response;
-    public SummaryResultsResponsePrinter(RequestResponseDetails queryDetails, ResponseInterface response)
+    public SummaryResultsResponsePrinter(RequestResponsePair queryDetails, ResponseInterface response)
     {
         this.queryDetails = queryDetails;
         this.response = response;

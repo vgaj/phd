@@ -33,7 +33,7 @@ import org.apache.commons.cli.*;
 
 public class CliArgumentParser
 {
-    public static RequestResponseDetails parse(String[] args)
+    public static RequestResponsePair parse(String[] args)
     {
         Options options = new Options();
         Option optionCurrent = new Option("c", "current", false, "Restrict to current results (exclude past patterns that are no longer seen)");
@@ -77,7 +77,7 @@ public class CliArgumentParser
 
         if (cmd.hasOption(optionDebug))
         {
-            return new RequestResponseDetails( new DebugLogQuery(), DebugLogResponse.class, false, false);
+            return new RequestResponsePair( new DebugLogQuery(), DebugLogResponse.class, false, false);
         }
 
         if (cmd.hasOption(optionAddress))
@@ -92,9 +92,9 @@ public class CliArgumentParser
                 System.out.println(cmd.getOptionValue(optionAddress) + " is not a valid IP address");
                 return null;
             }
-            return new RequestResponseDetails( new HostHistoryQuery(inetAddress), HostHistoryResponse.class, false,false);
+            return new RequestResponsePair( new HostHistoryQuery(inetAddress), HostHistoryResponse.class, false,false);
         }
 
-        return new RequestResponseDetails( new SummaryResultsQuery(), SummaryResultsResponse.class, cmd.hasOption(optionVerbose), cmd.hasOption(optionCurrent));
+        return new RequestResponsePair( new SummaryResultsQuery(), SummaryResultsResponse.class, cmd.hasOption(optionVerbose), cmd.hasOption(optionCurrent));
     }
 }

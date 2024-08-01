@@ -37,7 +37,7 @@ public class PhoneHomeDetectorCli
 {
     public static void main(String[] args)
     {
-        RequestResponseDetails queryDetails = CliArgumentParser.parse(args);
+        RequestResponsePair queryDetails = CliArgumentParser.parse(args);
         if (queryDetails == null)
         {
             return;
