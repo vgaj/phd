@@ -5,9 +5,6 @@
         <Property name="pattern">%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} - %msg%n</Property>
     </Properties>
     <Appenders>
-        <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="${pattern}"/>
-        </Console>
         <RollingFile name="RollingFile" fileName="${logFileName}.log"
                      filePattern="${logFileName}-%d{yyyy-MM-dd}.log">
             <PatternLayout pattern="${pattern}"/>
@@ -19,7 +16,6 @@
     </Appenders>
     <Loggers>
         <Root level="info">
-            <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Root>
     </Loggers>
