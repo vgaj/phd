@@ -43,7 +43,7 @@ for interface in $interfaces; do
   fi
 done
 
-/usr/sbin/bpftool prog load /opt/phone-home-detector/phone_home_detector_bpf_pid.o /sys/fs/bpf/phd_connect_pid autoattach
+/usr/sbin/bpftool prog load /opt/phone-home-detector/phone_home_detector_bpf_pid.o /sys/fs/bpf/phd_connect_pid
 if [ $? -eq 0 ]; then
   echo "Attached BPF program for IP to PID tracking"
 else
