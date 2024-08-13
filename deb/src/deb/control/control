@@ -3,7 +3,9 @@ Version: 0.1
 Section: misc
 Priority: optional
 Architecture: amd64
-Depends: systemd, bash, coreutils, network-manager, iproute2, openjdk-17-jre, bpftool, mawk, grep
+# bpftool is provided by linux-tools-common on Ubuntu 24.04
+# on Debian there is the package called bpftool but the version provided is currently too old
+Depends: systemd, bash, coreutils, network-manager, iproute2, openjdk-17-jre, mawk, grep, linux-tools-common
 Maintainer: Viru Gajanayake <viru.gajanayake@yahoo.com>
 Description: Detects if something is "Phoning Phone"
  Installs a service called phone-home-detector which monitors traffic

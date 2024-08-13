@@ -25,7 +25,7 @@ These are packaged in a deb.
  
 ## Support
 The following distributions and kernel versions have been tested:
-* Ubuntu 22.04 with Kernel 6.5
+* Ubuntu 24.04
 
 ## Known Issues
 * No IPv6 support
