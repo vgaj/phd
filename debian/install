@@ -1,0 +1,8 @@
+server/target/phd-server-0.0.1-SNAPSHOT.jar /opt/phone-home-detector
+cli/target/phd-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar /opt/phone-home-detector
+server/target/phone_home_detector_bpf_count.o /opt/phone-home-detector
+server/target/phone_home_detector_bpf_pid.o /opt/phone-home-detector
+server/src/main/resources/phone-home-detector-service-start.sh /opt/phone-home-detector
+server/src/main/resources/phone-home-detector-service-stop.sh /opt/phone-home-detector
+server/src/main/resources/phone-home-detector.service /usr/lib/systemd/system
+server/src/main/resources/phone-home-detector /usr/bin

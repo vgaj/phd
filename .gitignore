@@ -30,3 +30,8 @@ build/
 
 ### VS Code ###
 .vscode/
+/debian/phone-home-detector.substvars
+/debian/files
+/debian/debhelper-build-stamp
+/debian/.debhelper/
+/debian/phone-home-detector/

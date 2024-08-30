@@ -1,13 +1,18 @@
-Package: phone-home-detector
-Version: 0.1
+Source: phone-home-detector
 Section: misc
 Priority: optional
-Architecture: amd64
+Maintainer: Viru Gajanayake <viru.gajanayake@yahoo.com>
+Build-Depends: debhelper-compat (= 13), maven, openjdk-17-jdk, clang
+Standards-Version: 4.6.0
+Homepage: https://github.com/vgaj/phd
+Rules-Requires-Root: no
+
+Package: phone-home-detector
+Version: 0.1
+Architecture: all
 # bpftool is provided by linux-tools-common on Ubuntu 24.04
 # on Debian there is the package called bpftool but the version provided is currently too old
 Depends: systemd, network-manager, iproute2, openjdk-17-jre, mawk, linux-tools-common
-Maintainer: Viru Gajanayake <viru.gajanayake@yahoo.com>
-Homepage: https://github.com/vgaj/phd
 Description: Detects if something is "Phoning Phone"
  Installs a service called phone-home-detector which monitors traffic
  to identify something that might be phoning home to check for updates etc.

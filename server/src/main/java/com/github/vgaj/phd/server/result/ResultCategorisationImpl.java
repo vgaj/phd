@@ -38,27 +38,27 @@ public class ResultCategorisationImpl implements ResultCategorisation
      * The minimum number of pairs of transmissions at an interval that is of interest
      */
     @Value("${phd.minimum.count.at.interval}")
-    private Integer minCountAtInterval = 2;
+    private final Integer minCountAtInterval = 2;
 
     /**
      * The minimum number of transmissions of the same size that are considered interesting
      */
     @Value("${phd.minimum.count.of.size}")
-    private Integer minCountOfSameSize = 2;
+    private final Integer minCountOfSameSize = 2;
 
     /**
      * If this percentage of intervals are the same then most are considered to be the same
      */
     @Value("${phd.percent.interval.same.for.most}")
-    private Integer percentageOfIntervalsNeededForMostToBeSame = 80;
+    private final Integer percentageOfIntervalsNeededForMostToBeSame = 80;
 
     /**
      * If this percentage of sizes are the same then most are considered to be the same
      */
     @Value("${phd.percent.size.same.for.most}")
-    private Integer percentageOfSizesNeededForMostToBeSame = 80;
+    private final Integer percentageOfSizesNeededForMostToBeSame = 80;
 
-    private AnalysisResult result;
+    private final AnalysisResult result;
     public ResultCategorisationImpl(AnalysisResult result)
     {
         this.result = result;
@@ -79,10 +79,11 @@ public class ResultCategorisationImpl implements ResultCategorisation
     {
         int count = result.getIntervalCount().stream().mapToInt(pair -> pair.getValue().getCount()).sum();
         Optional<Integer> countForMostCommonInterval = getCountForMostCommonInterval();
+
         if (count > 0 && countForMostCommonInterval.isPresent())
         {
             // Check if 80% are the same interval - note 80% is based on observations
-            return ((double) countForMostCommonInterval.get() / count) > (percentageOfIntervalsNeededForMostToBeSame / 100);
+            return ((double) countForMostCommonInterval.get() / count) > ((double) percentageOfIntervalsNeededForMostToBeSame / 100);
         }
         return false;
     }
@@ -90,7 +91,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
     @Override
     public boolean areSomeIntervalsTheSame_c13()
     {
-        return getRepeatedTransferIntervalsStream().count() > 0;
+        return getRepeatedTransferIntervalsStream().findAny().isPresent();
     }
 
     private Stream<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedTransferIntervalsStream()
@@ -116,7 +117,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
         if (count > 0 && countForMostCommonSize.isPresent())
         {
             // Check if 80% are the same size - note 80% is based on observations
-            return ((double) countForMostCommonSize.get() / count) > (percentageOfSizesNeededForMostToBeSame / 100);
+            return ((double) countForMostCommonSize.get() / count) > ((double) percentageOfSizesNeededForMostToBeSame / 100);
         }
         return false;
     }
@@ -225,7 +226,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
 
         long minutesSinceLastSeen = EpochMinuteUtil.now() - result.getLastSeenEpochMinute();
 
-        return !mostCommonInterval.isPresent() || (minutesSinceLastSeen < (mostCommonInterval.get() + 2));
+        return mostCommonInterval.isEmpty() || (minutesSinceLastSeen < (mostCommonInterval.get() + 2));
     }
 
 }
