@@ -19,8 +19,8 @@ set -e
 
 case "$1" in
     remove|upgrade|deconfigure)
-        /usr/bin/systemctl stop phone-home-detector
-        /usr/bin/systemctl disable phone-home-detector --now
+        deb-systemd-invoke stop phone-home-detector
+        deb-systemd-invoke disable phone-home-detector
     ;;
 
     failed-upgrade)

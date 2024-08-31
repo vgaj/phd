@@ -1,0 +1,9 @@
+# TODO Create a man page
+no-manual-page usr/bin/phone-home-detector
+
+# lintian doesn't know about Java 17
+unknown-java-class-version
+
+# eBPF
+binary-from-other-architecture usr/lib/phone-home-detector/phone_home_detector_bpf_count.o
+binary-from-other-architecture usr/lib/phone-home-detector/phone_home_detector_bpf_pid.o

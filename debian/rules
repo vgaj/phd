@@ -1,31 +1,5 @@
 #!/usr/bin/make -f
 
-
-# See debhelper(7) (uncomment to enable)
-# output every command that modifies files on the build system.
-#export DH_VERBOSE = 1
-
-
-# see FEATURE AREAS in dpkg-buildflags(1)
-#export DEB_BUILD_MAINT_OPTIONS = hardening=+all
-
-# see ENVIRONMENT in dpkg-buildflags(1)
-# package maintainers to append CFLAGS
-#export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
-# package maintainers to append LDFLAGS
-#export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
-
-
-
-# Set JAVA_HOME if needed
-# export JAVA_HOME=/path/to/java
-
-# Maven build directory
-BUILD_DIR = target
-
-
-DESTDIR = debian/bpf
-
 %:
 	dh $@
 
@@ -36,17 +10,6 @@ override_dh_auto_clean:
 override_dh_auto_build:
 	mvn package -DskipTests
 	dh_auto_build
-
-#override_dh_auto_install:
-	# Install the built JAR file to the appropriate location
-#	install -D -m 755 $(BUILD_DIR)/your-app.jar $(DESTDIR)/usr/share/your-app/your-app.jar
-
-#    echo $(DESTDIR)
-
-	# Optionally, install additional files like configuration files, scripts, etc.
-	#install -D -m 755 server/target/phone_home_detector_bpf_count.o $(DESTDIR)/phone_home_detector_bpf_count.o
-	#install -D -m 755 server/target/phone_home_detector_bpf_pid.o $(DESTDIR)/phone_home_detector_bpf_pid.o
-#	dh_auto_install
 
 override_dh_auto_test:
 	mvn test

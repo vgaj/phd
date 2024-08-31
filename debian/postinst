@@ -20,8 +20,8 @@ set -e
 
 case "$1" in
     configure)
-        /usr/bin/systemctl daemon-reload
-        /usr/bin/systemctl enable phone-home-detector --now
+        deb-systemd-invoke enable phone-home-detector
+        deb-systemd-invoke start phone-home-detector
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

@@ -21,4 +21,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-java -jar /opt/phone-home-detector/phd-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar "$@"
+java -jar /usr/share/phone-home-detector/phd-cli-jar-with-dependencies.jar "$@"

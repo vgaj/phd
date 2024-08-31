@@ -48,19 +48,19 @@
 						<configuration>
 							<dataSet>
 								<data>
-									<src>../server/target/phd-server-0.0.1-SNAPSHOT.jar</src>
+									<src>../server/target/phd-server.jar</src>
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/opt/phone-home-detector</prefix>
+										<prefix>/usr/share/phone-home-detector</prefix>
 									</mapper>
 								</data>
 								<data>
-									<src>../cli/target/phd-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar</src>
+									<src>../cli/target/phd-cli-jar-with-dependencies.jar</src>
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/opt/phone-home-detector</prefix>
+										<prefix>/usr/share/phone-home-detector</prefix>
 									</mapper>
 								</data>
 								<data>
@@ -68,7 +68,7 @@
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/opt/phone-home-detector</prefix>
+										<prefix>/usr/lib/phone-home-detector</prefix>
 									</mapper>
 								</data>
 								<data>
@@ -76,7 +76,7 @@
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/opt/phone-home-detector</prefix>
+										<prefix>/usr/lib/phone-home-detector</prefix>
 									</mapper>
 								</data>
 								<data>
@@ -101,7 +101,7 @@
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/opt/phone-home-detector</prefix>
+										<prefix>/usr/share/phone-home-detector</prefix>
 										<filemode>755</filemode>
 									</mapper>
 								</data>
@@ -110,7 +110,7 @@
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/opt/phone-home-detector</prefix>
+										<prefix>/usr/share/phone-home-detector</prefix>
 										<filemode>755</filemode>
 									</mapper>
 								</data>

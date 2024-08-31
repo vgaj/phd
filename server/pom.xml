@@ -155,6 +155,7 @@
 							<goal>repackage</goal>
 						</goals>
 						<configuration>
+							<finalName>phd-server</finalName>
 							<excludes>
 								<exclude>
 									<groupId>org.projectlombok</groupId>

@@ -10,7 +10,7 @@ if [ "$UID" -ne 0 ]; then
 fi
 
 echo "Stopping any existing server"
-command="java -jar server/target/phd-server-0.0.1-SNAPSHOT.jar"
+command="java -jar server/target/phd-server.jar"
 pkill -f "$command"
 
 echo "Starting background load"
@@ -38,7 +38,7 @@ for ((i=1; i<=requestCount; i++)); do
 done
 sleep 1
 
-cliResult=$(java -jar cli/target/phd-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar)
+cliResult=$(java -jar cli/target/phd-cli-jar-with-dependencies.jar)
 
 echo "Stopping server"
 kill $serverPid

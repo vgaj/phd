@@ -21,7 +21,13 @@ set -e
 
 case "$1" in
     purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
-        /usr/bin/systemctl daemon-reload
+        if [ -f "/usr/share/phone-home-detector/results.xml" ]; then
+            rm "/usr/share/phone-home-detector/results.xml"
+        fi
+
+        if [ -d "/usr/share/phone-home-detector" ]; then
+            rm -r "/usr/share/phone-home-detector"
+        fi
     ;;
 
     *)
