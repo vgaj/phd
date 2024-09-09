@@ -64,19 +64,19 @@
 									</mapper>
 								</data>
 								<data>
-									<src>../server/target/phone_home_detector_bpf_count.o</src>
+									<src>../server/src/main/bpf/phone_home_detector_bpf_count.c</src>
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/usr/lib/phone-home-detector</prefix>
+										<prefix>/usr/share/phone-home-detector</prefix>
 									</mapper>
 								</data>
 								<data>
-									<src>../server/target/phone_home_detector_bpf_pid.o</src>
+									<src>../server/src/main/bpf/phone_home_detector_bpf_pid.c</src>
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
-										<prefix>/usr/lib/phone-home-detector</prefix>
+										<prefix>/usr/share/phone-home-detector</prefix>
 									</mapper>
 								</data>
 								<data>

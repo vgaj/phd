@@ -101,7 +101,7 @@
 							</arguments>
 						</configuration>
 					</execution>
-					<execution>
+<!--					<execution>
 						<id>compile-bpf-count</id>
 						<phase>compile</phase>
 						<goals>
@@ -142,7 +142,7 @@
 								<argument>target/phone_home_detector_bpf_pid.o</argument>
 							</arguments>
 						</configuration>
-					</execution>
+					</execution>-->
 				</executions>
 			</plugin>
 			<plugin>
