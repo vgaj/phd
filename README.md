@@ -27,5 +27,12 @@ These are packaged in a deb.
 The following distributions and kernel versions have been tested:
 * Ubuntu 24.04
 
+To install on Ubuntu 24.04 use:
+```
+add-apt-repository ppa:viru7/phd
+apt update
+apt install phone-home-detector
+```
+
 ## Known Issues
 * No IPv6 support
