@@ -1,6 +1,13 @@
 # Phone Home Detector
 This application monitors network traffic to identify programs that are "Phoning Home" to check for updates etc.
 
+To install on Ubuntu 24.04 use:
+```
+add-apt-repository ppa:viru7/phd
+apt update
+apt install phone-home-detector
+```
+
 ## Method
 The application works by looking at the data sent to IP addresses in one minute blocks.
 The source data can come from one of two source: libpcap or a BPF program.
@@ -26,13 +33,6 @@ These are packaged in a deb.
 ## Support
 The following distributions and kernel versions have been tested:
 * Ubuntu 24.04
-
-To install on Ubuntu 24.04 use:
-```
-add-apt-repository ppa:viru7/phd
-apt update
-apt install phone-home-detector
-```
 
 ## Known Issues
 * No IPv6 support
