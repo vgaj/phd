@@ -20,6 +20,12 @@ set -e
 
 case "$1" in
     configure)
+        if [ -f "/usr/share/phone-home-detector/phone_home_detector_bpf_count.o" ]; then
+          rm /usr/share/phone-home-detector/phone_home_detector_bpf_count.o
+        fi
+        if [ -f "/usr/share/phone-home-detector/phone_home_detector_bpf_pid.o" ]; then
+          rm /usr/share/phone-home-detector/phone_home_detector_bpf_pid.o
+        fi
         deb-systemd-invoke enable phone-home-detector
         deb-systemd-invoke start phone-home-detector
     ;;

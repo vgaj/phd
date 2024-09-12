@@ -23,16 +23,15 @@
 
 # Because of lintian errors and problems building on launchpad.net
 # we package the .c and build on start rather than packaging the .o
-mkdir -p /tmp/phone-home-detector
-if [ ! -f "/tmp/phone-home-detector/phone_home_detector_bpf_count.o" ]; then
-  clang -O2 -g -target bpf -c /usr/share/phone-home-detector/phone_home_detector_bpf_count.c -o /tmp/phone-home-detector/phone_home_detector_bpf_count.o
+if [ ! -f "/usr/share/phone-home-detector/phone_home_detector_bpf_count.o" ]; then
+  clang -O2 -g -target bpf -c /usr/share/phone-home-detector/phone_home_detector_bpf_count.c -o /usr/share/phone-home-detector/phone_home_detector_bpf_count.o
   if [ $? -ne 0 ]; then
     echo "ERROR failed build phone_home_detector_bpf_count.c"
     exit 1
   fi
 fi
-if [ ! -f "/tmp/phone-home-detector/phone_home_detector_bpf_pid.o" ]; then
-  clang -O2 -g -target bpf -c /usr/share/phone-home-detector/phone_home_detector_bpf_pid.c -o /tmp/phone-home-detector/phone_home_detector_bpf_pid.o
+if [ ! -f "/usr/share/phone-home-detector/phone_home_detector_bpf_pid.o" ]; then
+  clang -O2 -g -target bpf -c /usr/share/phone-home-detector/phone_home_detector_bpf_pid.c -o /usr/share/phone-home-detector/phone_home_detector_bpf_pid.o
   if [ $? -ne 0 ]; then
     echo "ERROR failed build phone_home_detector_bpf_pid.c"
     exit 1
@@ -47,7 +46,7 @@ for interface in $interfaces; do
   if [ $? -eq 1 ]; then
       tc qdisc add dev $interface clsact
       if [ $? -eq 0 ]; then
-        tc filter add dev $interface egress bpf da obj /tmp/phone-home-detector/phone_home_detector_bpf_count.o sec phone_home_detector_bpf_count
+        tc filter add dev $interface egress bpf da obj /usr/share/phone-home-detector/phone_home_detector_bpf_count.o sec phone_home_detector_bpf_count
         if [ $? -eq 0 ]; then
           echo "Attached BPF program for $interface"
         else
@@ -61,7 +60,7 @@ for interface in $interfaces; do
   fi
 done
 
-/usr/sbin/bpftool prog load /tmp/phone-home-detector/phone_home_detector_bpf_pid.o /sys/fs/bpf/phd_connect_pid autoattach
+/usr/sbin/bpftool prog load /usr/share/phone-home-detector/phone_home_detector_bpf_pid.o /sys/fs/bpf/phd_connect_pid autoattach
 if [ $? -eq 0 ]; then
   echo "Attached BPF program for IP to PID tracking"
 else
