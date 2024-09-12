@@ -25,6 +25,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -68,8 +73,6 @@
 					<mainClass>com.github.vgaj.phd.server.PhoneHomeDetectorApplication</mainClass>
 				</configuration>
 			</plugin>
-
 		</plugins>
-
 	</build>
 </project>
