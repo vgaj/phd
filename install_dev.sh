@@ -16,6 +16,14 @@ sudo ln -f -s $cwd/server/src/main/resources/phone-home-detector-service-stop.sh
 sudo ln -f -s $cwd/server/src/main/resources/phone-home-detector /usr/bin/phone-home-detector
 sudo ln -f -s $cwd/server/src/main/resources/phone-home-detector.service /usr/lib/systemd/system/phone-home-detector.service
 
+echo "*** Clean up..."
+if [ -f "/usr/share/phone-home-detector/phone_home_detector_bpf_count.o" ]; then
+  rm /usr/share/phone-home-detector/phone_home_detector_bpf_count.o
+fi
+if [ -f "/usr/share/phone-home-detector/phone_home_detector_bpf_pid.o" ]; then
+  rm /usr/share/phone-home-detector/phone_home_detector_bpf_pid.o
+fi
+
 echo "*** Starting..."
 sudo systemctl daemon-reload
 sudo systemctl enable phone-home-detector --now

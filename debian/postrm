@@ -20,13 +20,22 @@ set -e
 
 
 case "$1" in
-    purge|remove|upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)
+    upgrade|failed-upgrade|abort-upgrade|abort-install|disappear)
+    ;;
+
+    # Remove results for both purge and remove actions
+    purge|remove)
         if [ -f "/usr/share/phone-home-detector/results.xml" ]; then
             rm "/usr/share/phone-home-detector/results.xml"
         fi
-
-        if [ -d "/usr/share/phone-home-detector" ]; then
-            rm -r "/usr/share/phone-home-detector"
+        if [ -f "/usr/share/phone-home-detector/phone_home_detector_bpf_count.o" ]; then
+          rm /usr/share/phone-home-detector/phone_home_detector_bpf_count.o
+        fi
+        if [ -f "/usr/share/phone-home-detector/phone_home_detector_bpf_pid.o" ]; then
+          rm /usr/share/phone-home-detector/phone_home_detector_bpf_pid.o
+        fi
+        if [ -z "$(ls -A "/usr/share/phone-home-detector")" ]; then
+          rmdir "/usr/share/phone-home-detector"
         fi
     ;;
 
