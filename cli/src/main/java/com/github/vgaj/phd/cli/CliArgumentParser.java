@@ -82,10 +82,19 @@ public class CliArgumentParser
 
         if (cmd.hasOption(optionAddress))
         {
+            String enteredAddress = cmd.getOptionValue(optionAddress);
+
+            String ipv4Pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
+            if (!enteredAddress.matches(ipv4Pattern))
+            {
+                System.out.println(cmd.getOptionValue(optionAddress) + " is not a valid IP address");
+                return null;
+            }
+
             InetAddress inetAddress;
             try
             {
-                inetAddress = InetAddress.getByName(cmd.getOptionValue(optionAddress));
+                inetAddress = InetAddress.getByName(enteredAddress);
             }
             catch (UnknownHostException e)
             {

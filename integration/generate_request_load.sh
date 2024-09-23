@@ -22,6 +22,7 @@
 # SOFTWARE.
 
 sleep_time=10
+firefox_command="firefox -private -headless"
 
 if [ "$UID" -eq 0 ]; then
     echo "This needs to be run as the logged in user not root"
@@ -46,51 +47,51 @@ function ctrl_c() {
 while [ "$finished" = "false" ]
 do
   if [ "$finished" = false ] ; then
-    firefox -private https://www.abc.net.au 2> /dev/null &
+    $firefox_command https://www.abc.net.au 2> /dev/null &
     sleep 1
-    firefox -private https://www.msnbc.com 2> /dev/null &
+    $firefox_command https://www.msnbc.com 2> /dev/null &
     sleep 1
-    firefox -private https://www.bbc.com/news 2> /dev/null &
+    $firefox_command https://www.bbc.com/news 2> /dev/null &
     sleep ${sleep_time}
     pkill --signal TERM firefox
   fi
 
   if [ "$finished" = false ] ; then
-    firefox -private https://edition.cnn.com 2> /dev/null &
+    $firefox_command https://edition.cnn.com 2> /dev/null &
     sleep 1
-    firefox -private https://www.msnbc.com 2> /dev/null &
+    $firefox_command https://www.msnbc.com 2> /dev/null &
     sleep 1
-    firefox -private https://askubuntu.com 2> /dev/null &
+    $firefox_command https://askubuntu.com 2> /dev/null &
     sleep ${sleep_time}
     pkill --signal TERM firefox
   fi
 
   if [ "$finished" = false ] ; then
-    firefox -private https://stackoverflow.com 2> /dev/null &
+    $firefox_command https://stackoverflow.com 2> /dev/null &
     sleep 1
-    firefox -private https://serverfault.com 2> /dev/null &
+    $firefox_command https://serverfault.com 2> /dev/null &
     sleep 1
-    firefox -private https://superuser.com 2> /dev/null &
+    $firefox_command https://superuser.com 2> /dev/null &
     sleep ${sleep_time}
     pkill --signal TERM firefox
   fi
 
   if [ "$finished" = false ] ; then
-    firefox -private https://stackexchange.com 2> /dev/null &
+    $firefox_command https://stackexchange.com 2> /dev/null &
     sleep 1
-    firefox -private https://www.reddit.com 2> /dev/null &
+    $firefox_command https://www.reddit.com 2> /dev/null &
     sleep 1
-    firefox -private https://www.trivago.com.au 2> /dev/null &
+    $firefox_command https://www.trivago.com.au 2> /dev/null &
     sleep ${sleep_time}
     pkill --signal TERM firefox
   fi
 
   if [ "$finished" = false ] ; then
-    firefox -private https://hotels.com 2> /dev/null &
+    $firefox_command https://hotels.com 2> /dev/null &
     sleep 1
-    firefox -private https://www.expedia.com 2> /dev/null &
+    $firefox_command https://www.expedia.com 2> /dev/null &
     sleep 1
-    firefox -private https://www.booking.com 2> /dev/null &
+    $firefox_command https://www.booking.com 2> /dev/null &
     sleep ${sleep_time}
     pkill --signal TERM firefox
   fi

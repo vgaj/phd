@@ -37,6 +37,7 @@ import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -48,6 +49,7 @@ import java.util.concurrent.atomic.LongAdder;
  * Consumes new captured data via a Distruptor
  */
 @Component
+@ConditionalOnProperty(name = "phd.use.bpf", havingValue = "false", matchIfMissing = false)
 public class PcapNewDataProcessor
 {
     private static final int BUFFER_SIZE = 65536;
