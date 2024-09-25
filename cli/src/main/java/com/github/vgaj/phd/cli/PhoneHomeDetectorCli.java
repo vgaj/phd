@@ -29,9 +29,11 @@ import com.github.vgaj.phd.common.ipc.DomainSocketComms;
 import com.github.vgaj.phd.common.query.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.nio.channels.SocketChannel;
+import java.util.Properties;
 
 public class PhoneHomeDetectorCli
 {
@@ -43,7 +45,25 @@ public class PhoneHomeDetectorCli
             return;
         }
 
-        System.out.println("Phone Home Detector Results (use -? for options)");
+        Properties properties = new Properties();
+        try (InputStream input = PhoneHomeDetectorCli.class.getClassLoader().getResourceAsStream("application.properties"))
+        {
+            if (input == null)
+            {
+                System.out.println("Failed to load application.properties");
+                return;
+            }
+            properties.load(input);
+        }
+        catch (IOException ex)
+        {
+            System.out.println("Failed to load application.properties Error: " + ex);
+            return;
+        }
+
+        System.out.print("Phone Home Detector Results - version ");
+        System.out.print(properties.getProperty("phd.version"));
+        System.out.println(" (use -? for options)");
 
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
         SocketChannel channel = null;
