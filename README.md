@@ -5,6 +5,7 @@ To install on Ubuntu 24.04 use:
 ```
 add-apt-repository ppa:viru7/phd
 apt update
+apt upgrade
 apt install phone-home-detector
 ```
 

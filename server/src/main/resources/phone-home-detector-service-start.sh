@@ -26,45 +26,57 @@
 if [ ! -f "/usr/share/phone-home-detector/phone_home_detector_bpf_count.o" ]; then
   clang -O2 -g -target bpf -c /usr/share/phone-home-detector/phone_home_detector_bpf_count.c -o /usr/share/phone-home-detector/phone_home_detector_bpf_count.o
   if [ $? -ne 0 ]; then
-    echo "ERROR failed build phone_home_detector_bpf_count.c"
+    echo "ERROR: Failed build phone_home_detector_bpf_count.c"
     exit 1
   fi
 fi
 if [ ! -f "/usr/share/phone-home-detector/phone_home_detector_bpf_pid.o" ]; then
   clang -O2 -g -target bpf -c /usr/share/phone-home-detector/phone_home_detector_bpf_pid.c -o /usr/share/phone-home-detector/phone_home_detector_bpf_pid.o
   if [ $? -ne 0 ]; then
-    echo "ERROR failed build phone_home_detector_bpf_pid.c"
+    echo "ERROR: Failed build phone_home_detector_bpf_pid.c"
     exit 1
   fi
 fi
 
-interfaces=$(nmcli -t dev | grep :connected: | awk -F':' '{print $1}')
+found_any_interface=false
+for iface in /sys/class/net/*; do
+  if [ "$(cat "$iface"/operstate)" = "up" ]; then
+    found_any_interface=true
+    interface=$(basename "$iface")
 
-for interface in $interfaces; do
-  echo "Checking $interface ..."
-  tc qdisc show dev $interface | grep clsact > /dev/null
-  if [ $? -eq 1 ]; then
-      tc qdisc add dev $interface clsact
-      if [ $? -eq 0 ]; then
-        tc filter add dev $interface egress bpf da obj /usr/share/phone-home-detector/phone_home_detector_bpf_count.o sec phone_home_detector_bpf_count
+    echo "Checking $interface ..."
+    tc qdisc show dev "$interface" | grep clsact > /dev/null
+    if [ $? -eq 1 ]; then
+        tc qdisc add dev "$interface" clsact
         if [ $? -eq 0 ]; then
-          echo "Attached BPF program for $interface"
+          tc filter add dev "$interface" egress bpf da obj /usr/share/phone-home-detector/phone_home_detector_bpf_count.o sec phone_home_detector_bpf_count
+          if [ $? -eq 0 ]; then
+            echo "Attached BPF program for $interface"
+          else
+            echo "ERROR: Failed to add BPF program for $interface"
+            exit 1
+          fi
         else
-          echo "ERROR failed to add BPF program for $interface"
+          echo "ERROR: Failed to add clsact for $interface"
+          exit 1
         fi
-      else
-        echo "ERROR failed to add clsact for $interface"
-      fi
-  else
-    echo "ERROR $interface already has a qdisc clsact, not modifying"
+    else
+      echo "WARN: $interface already has a qdisc clsact, not modifying"
+    fi
   fi
 done
+
+if [ "$found_any_interface" = "false" ]; then
+  echo "ERROR: Found no interfaces to monitor."
+  exit 1
+fi
 
 /usr/sbin/bpftool prog load /usr/share/phone-home-detector/phone_home_detector_bpf_pid.o /sys/fs/bpf/phd_connect_pid autoattach
 if [ $? -eq 0 ]; then
   echo "Attached BPF program for IP to PID tracking"
 else
-  echo "ERROR failed to add BPF program for IP to PID tracking"
+  echo "ERROR: Failed to add BPF program for IP to PID tracking"
+  exit 1
 fi
 
 /usr/bin/java -Djava.net.preferIPv4Stack=true -jar /usr/share/phone-home-detector/phd-server.jar
