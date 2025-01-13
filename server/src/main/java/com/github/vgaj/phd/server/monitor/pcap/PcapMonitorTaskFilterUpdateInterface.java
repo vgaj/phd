@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.pcap;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 
 import java.util.Set;
 
@@ -33,5 +33,5 @@ import java.util.Set;
  */
 public interface PcapMonitorTaskFilterUpdateInterface
 {
-    void updateFilter(Set<RemoteAddress> addressesToExclude);
+    void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude);
 }

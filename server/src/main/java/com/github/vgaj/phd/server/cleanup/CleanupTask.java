@@ -26,7 +26,7 @@ package com.github.vgaj.phd.server.cleanup;
 
 import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
@@ -54,7 +54,7 @@ public class CleanupTask
     public void removeFrequentAddresses()
     {
         // Get addresses to ignore based on currently receiving data
-        Set<RemoteAddress> addressesToIgnore = rawDataProcessor.getAddressesToIgnore();
+        Set<SourceAndDestinationAddress> addressesToIgnore = rawDataProcessor.getAddressesToIgnore();
 
         // Add to list to ignore when monitoring
         monitor.updateFilter(addressesToIgnore);

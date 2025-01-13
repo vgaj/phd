@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.pcap;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 
@@ -94,14 +94,14 @@ public class PcapMonitorTask implements Runnable, PcapMonitorTaskFilterUpdateInt
      * @param addressesToExclude Addresses to exclude
      */
     @Override
-    public void updateFilter(Set<RemoteAddress> addressesToExclude)
+    public void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude)
     {
         try
         {
             long start = System.nanoTime();
             StringBuilder newFilter = new StringBuilder();
             newFilter.append("(").append(filter).append(")");
-            addressesToExclude.forEach( address -> newFilter.append(" and not host ").append(address.getAddressString()));
+            addressesToExclude.forEach( address -> newFilter.append(" and not host ").append(address.getDesinationAddressString()));
             handle.setFilter(newFilter.toString(), BpfProgram.BpfCompileMode.OPTIMIZE);
             long durationMs = (System.nanoTime() - start) / 1000000;
             if (durationMs > 0)

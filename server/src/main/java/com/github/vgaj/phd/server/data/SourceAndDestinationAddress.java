@@ -1,0 +1,163 @@
+/*
+MIT License
+
+Copyright (c) 2022-2024 Viru Gajanayake
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+ */
+
+package com.github.vgaj.phd.server.data;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+@NoArgsConstructor
+public class SourceAndDestinationAddress implements Comparable<SourceAndDestinationAddress>
+{
+    /**
+     * The source address. If all octets are 0 that means it is local.
+     * It is done this way to enable easy deserialisation
+     */
+    private final byte[] srcOctets = new byte[4];
+
+    /**
+     * The destination address
+     */
+    private final byte[] dstOctets = new byte[4];
+
+    private String destinationHostname = null;
+
+    private boolean lookupAttempted = false;
+
+    @Getter
+    private String reverseDesinationHostname = null;
+
+    public SourceAndDestinationAddress(byte srcOctet1, byte srcOctet2, byte srcOctet3, byte srcOctet4, byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4)
+    {
+        srcOctets[0] = srcOctet1;
+        srcOctets[1] = srcOctet2;
+        srcOctets[2] = srcOctet3;
+        srcOctets[3] = srcOctet4;
+        dstOctets[0] = dstOctet1;
+        dstOctets[1] = dstOctet2;
+        dstOctets[2] = dstOctet3;
+        dstOctets[3] = dstOctet4;
+    }
+    public SourceAndDestinationAddress(byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4)
+    {
+        dstOctets[0] = dstOctet1;
+        dstOctets[1] = dstOctet2;
+        dstOctets[2] = dstOctet3;
+        dstOctets[3] = dstOctet4;
+    }
+
+    public SourceAndDestinationAddress(InetAddress dstAddress)
+    {
+        assert dstAddress != null && dstAddress.getAddress().length == 4;
+        dstOctets[0] = dstAddress.getAddress()[0];
+        dstOctets[1] = dstAddress.getAddress()[1];
+        dstOctets[2] = dstAddress.getAddress()[2];
+        dstOctets[3] = dstAddress.getAddress()[3];
+    }
+
+    @JsonIgnore
+    public String getDesinationAddressString()
+    {
+        StringBuilder ip = new StringBuilder();
+        for (int i = 0; i < dstOctets.length; i++)
+        {
+            ip.append(Byte.toUnsignedInt(dstOctets[i]));
+            if (i != dstOctets.length - 1)
+            {
+                ip.append(".");
+            }
+        }
+        return ip.toString();
+    }
+
+    @JsonIgnore
+    public String getHostString()
+    {
+        return (destinationHostname != null) ? destinationHostname : getDesinationAddressString();
+    }
+
+    /**
+     * If the IP address has not previously been looked up then it is looked up.
+     * @return The hostname
+     */
+    public String lookupDestinataionHost() throws UnknownHostException
+    {
+        if (!lookupAttempted)
+        {
+            lookupAttempted = true;
+            InetAddress addr = InetAddress.getByAddress(dstOctets);
+            destinationHostname = addr.getHostName();
+            if (destinationHostname != null)
+            {
+                List<String> parts = Arrays.asList(destinationHostname.split("\\."));
+                Collections.reverse(parts);
+                reverseDesinationHostname = String.join(".", parts);
+            }
+        }
+        return destinationHostname;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SourceAndDestinationAddress that = (SourceAndDestinationAddress) o;
+        return Arrays.equals(srcOctets, that.srcOctets) && Arrays.equals(dstOctets, that.dstOctets);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Arrays.hashCode(new Object[] {
+                Arrays.hashCode(srcOctets),
+                Arrays.hashCode(dstOctets)
+        });
+    }
+
+    @Override
+    public int compareTo(SourceAndDestinationAddress other)
+    {
+        for (int i = 0; i < 4; i++) {
+            int diff = Byte.compare(this.dstOctets[i], other.dstOctets[i]);
+            if (diff != 0) {
+                return diff;
+            }
+        }
+        for (int i = 0; i < 4; i++) {
+            int diff = Byte.compare(this.srcOctets[i], other.srcOctets[i]);
+            if (diff != 0) {
+                return diff;
+            }
+        }
+        return 0;
+    }
+}

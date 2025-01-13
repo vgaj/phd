@@ -45,9 +45,9 @@ public class HostToExecutableLookup
     private PidToCommandLookup pidToCommandLookup;
 
     // Last PID or command for each host
-    private final ConcurrentMap<RemoteAddress, String > data = new ConcurrentHashMap<>();
+    private final ConcurrentMap<SourceAndDestinationAddress, String > data = new ConcurrentHashMap<>();
 
-    public void addData(@NonNull RemoteAddress host, int pid)
+    public void addData(@NonNull SourceAndDestinationAddress host, int pid)
     {
         String command = pidToCommandLookup.get(pid);
         String previousCommand = data.put(host, command);
@@ -55,7 +55,7 @@ public class HostToExecutableLookup
         //if (previousCommand != null && !command.equals(previousCommand)) messages.addMessage("Different command: " + command + " (previously " + previousCommand + ") for host " + host.getAddressString());
     }
 
-    public String getProcessForAddress(RemoteAddress address)
+    public String getProcessForAddress(SourceAndDestinationAddress address)
     {
         return data.get(address);
     }

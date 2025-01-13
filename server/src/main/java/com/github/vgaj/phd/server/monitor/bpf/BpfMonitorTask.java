@@ -27,7 +27,7 @@ package com.github.vgaj.phd.server.monitor.bpf;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.data.HostToExecutableLookup;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.common.util.Pair;
@@ -66,7 +66,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
     @Value("${phd.bpf.map.ip.pid}")
     private String bpf_map_ip_pid;
 
-    private Set<RemoteAddress> addressesToIgnore = new ConcurrentSkipListSet<RemoteAddress>();
+    private Set<SourceAndDestinationAddress> addressesToIgnore = new ConcurrentSkipListSet<SourceAndDestinationAddress>();
 
     int mapFdIpBytes;
     int mapFdIpPid;
@@ -99,8 +99,8 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
         long start = System.currentTimeMillis();
         Long epochMinute = EpochMinuteUtil.now();
 
-        List<Pair<RemoteAddress,Integer>> ipToBytesForLastMinute =  libBpfWrapper.getAddressToCountData(mapFdIpBytes);
-        List<Pair<RemoteAddress,Integer>> ipToPidForLastMinute =  libBpfWrapper.getAddressToPidData(mapFdIpPid);
+        List<Pair<SourceAndDestinationAddress,Integer>> ipToBytesForLastMinute =  libBpfWrapper.getAddressToCountData(mapFdIpBytes);
+        List<Pair<SourceAndDestinationAddress,Integer>> ipToPidForLastMinute =  libBpfWrapper.getAddressToPidData(mapFdIpPid);
         messages.addMessage("Total time (ms) to get data: " + (System.currentTimeMillis() - start));
 
         // Store count data
@@ -122,7 +122,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
     }
 
     @Override
-    public void updateFilter(Set<RemoteAddress> addressesToExclude)
+    public void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude)
     {
         int sizeBefore = addressesToIgnore.size();
         addressesToExclude.forEach(a ->
@@ -131,7 +131,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
             {
                 if (addressesToIgnore.add(a))
                 {
-                    messages.addDebug("Not monitoring " + a.getAddressString());
+                    messages.addDebug("Not monitoring " + a.getDesinationAddressString());
                 }
             }
             catch (Throwable t)

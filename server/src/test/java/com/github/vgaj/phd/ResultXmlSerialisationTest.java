@@ -27,7 +27,7 @@ package com.github.vgaj.phd;
 import com.github.vgaj.phd.server.analysis.ResultsSaveItem;
 import com.github.vgaj.phd.server.analysis.ResultsSaveList;
 import com.github.vgaj.phd.server.analysis.ResultsSaveXmlMapper;
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.result.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -108,40 +108,48 @@ public class ResultXmlSerialisationTest
     void roundTripRemoteAddress() throws UnknownHostException, JsonProcessingException, NoSuchFieldException, IllegalAccessException
     {
         // Arrange
-        RemoteAddress address = new RemoteAddress((byte) 8, (byte) 8, (byte) 4,(byte)  4);
-        address.lookupHost();
+        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8, (byte) 8, (byte) 8, (byte) 4,(byte)  4);
+        address.lookupDestinataionHost();
 
         // Act
         String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(address);
-        RemoteAddress fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, RemoteAddress.class);
+        SourceAndDestinationAddress fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, SourceAndDestinationAddress.class);
 
         // Assert
-        Field octetsField = RemoteAddress.class.getDeclaredField("octets");
-        octetsField.setAccessible(true);
-        byte[] octets =  (byte[])octetsField.get(fromXml);
-        assert octets[0] == 8;
-        assert octets[1] == 8;
-        assert octets[2] == 4;
-        assert octets[3] == 4;
+        Field dstCctetsField = SourceAndDestinationAddress.class.getDeclaredField("dstOctets");
+        dstCctetsField.setAccessible(true);
+        byte[] dstOctets =  (byte[])dstCctetsField.get(fromXml);
+        assert dstOctets[0] == 8;
+        assert dstOctets[1] == 8;
+        assert dstOctets[2] == 4;
+        assert dstOctets[3] == 4;
 
-        Field hostnameField = RemoteAddress.class.getDeclaredField("hostname");
+        Field srcOctetsField = SourceAndDestinationAddress.class.getDeclaredField("srcOctets");
+        srcOctetsField.setAccessible(true);
+        byte[] srcOctets =  (byte[])srcOctetsField.get(fromXml);
+        assert srcOctets[0] == 8;
+        assert srcOctets[1] == 8;
+        assert srcOctets[2] == 8;
+        assert srcOctets[3] == 8;
+
+        Field hostnameField = SourceAndDestinationAddress.class.getDeclaredField("destinationHostname");
         hostnameField.setAccessible(true);
         String hostname =  (String) hostnameField.get(fromXml);
         assert hostname.equals("dns.google");
 
-        Field lookupAttemptedField = RemoteAddress.class.getDeclaredField("lookupAttempted");
+        Field lookupAttemptedField = SourceAndDestinationAddress.class.getDeclaredField("lookupAttempted");
         lookupAttemptedField.setAccessible(true);
         assert (boolean)lookupAttemptedField.get(fromXml);
 
-        assert fromXml.getReverseHostname().equals("google.dns");
+        assert fromXml.getReverseDesinationHostname().equals("google.dns");
     }
 
     @Test
     void roundTripResultsSaveList() throws UnknownHostException, JsonProcessingException
     {
         // Arrange
-        RemoteAddress address = new RemoteAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
-        address.lookupHost();
+        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
+        address.lookupDestinataionHost();
         int interval1 = 1;
         int intervalCount1 = 2;
         int interval2 = 3;
@@ -162,7 +170,7 @@ public class ResultXmlSerialisationTest
         ResultsSaveList fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, ResultsSaveList.class);
 
         // Assert
-        assert fromXml.getResultsForSaving().get(0).getAddress().getReverseHostname().equals(address.getReverseHostname());
+        assert fromXml.getResultsForSaving().get(0).getAddress().getReverseDesinationHostname().equals(address.getReverseDesinationHostname());
         assert fromXml.getResultsForSaving().get(0).getResult().getLastSeenEpochMinute() == lastSeen;
         assert fromXml.getResultsForSaving().get(0).getResult().getIntervalCount().get(0).getKey().getInterval() == 1;
         assert fromXml.getResultsForSaving().get(0).getResult().getIntervalCount().get(0).getValue().getCount() == 2;

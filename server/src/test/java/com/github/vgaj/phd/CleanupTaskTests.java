@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.monitor.pcap.PcapCleanup;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.monitor.pcap.PcapMonitorTaskFilterUpdateInterface;
@@ -57,21 +57,21 @@ public class CleanupTaskTests
     private PcapCleanup cleanup;
 
     // Test data
-    private RemoteAddress address1 = new RemoteAddress((byte) 1, (byte) 0, (byte) 0,(byte)  0);
-    private RemoteAddress address2 = new RemoteAddress((byte) 2, (byte) 0, (byte) 0,(byte)  0);
-    private RemoteAddress address3 = new RemoteAddress((byte) 3, (byte) 0, (byte) 0,(byte)  0);
-    private RemoteAddress address4 = new RemoteAddress((byte) 4, (byte) 0, (byte) 0,(byte)  0);
-    private RemoteAddress address5 = new RemoteAddress((byte) 5, (byte) 0, (byte) 0,(byte)  0);
-    private RemoteAddress address6 = new RemoteAddress((byte) 6, (byte) 0, (byte) 0,(byte)  0);
-    private RemoteAddress address7 = new RemoteAddress((byte) 7, (byte) 0, (byte) 0,(byte)  0);
-    private RemoteAddress address8 = new RemoteAddress((byte) 8, (byte) 0, (byte) 0,(byte)  0);
-    private RemoteAddress address9 = new RemoteAddress((byte) 9, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address1 = new SourceAndDestinationAddress((byte) 1, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address2 = new SourceAndDestinationAddress((byte) 2, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address3 = new SourceAndDestinationAddress((byte) 3, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address4 = new SourceAndDestinationAddress((byte) 4, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address5 = new SourceAndDestinationAddress((byte) 5, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address6 = new SourceAndDestinationAddress((byte) 6, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address7 = new SourceAndDestinationAddress((byte) 7, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address8 = new SourceAndDestinationAddress((byte) 8, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address9 = new SourceAndDestinationAddress((byte) 9, (byte) 0, (byte) 0,(byte)  0);
 
     @Test
     public void firstCall()
     {
         // Arrange
-        Set<RemoteAddress> addresses = new HashSet<>();
+        Set<SourceAndDestinationAddress> addresses = new HashSet<>();
         addresses.add(address3);
         addresses.add(address1);
 
@@ -79,7 +79,7 @@ public class CleanupTaskTests
         cleanup.updateFilter(addresses);
 
         // Assert
-        ArgumentCaptor<Set<RemoteAddress>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
+        ArgumentCaptor<Set<SourceAndDestinationAddress>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
         verify(monitorTaskFilterUpdate).updateFilter(argumentCaptor.capture());
         assert argumentCaptor.getValue().size() == 2;
         assert argumentCaptor.getValue().contains(address1);
@@ -90,7 +90,7 @@ public class CleanupTaskTests
     public void addNewAddressesToIgnore() throws NoSuchFieldException, IllegalAccessException
     {
         // Arrange
-        Map<RemoteAddress,Long> currentlyIgnoredAddresses = new HashMap<>();
+        Map<SourceAndDestinationAddress,Long> currentlyIgnoredAddresses = new HashMap<>();
         currentlyIgnoredAddresses.put(address5, 5L);
         currentlyIgnoredAddresses.put(address4, 4L);
         currentlyIgnoredAddresses.put(address3, 3L);
@@ -98,7 +98,7 @@ public class CleanupTaskTests
         addressesField.setAccessible(true);
         addressesField.set(cleanup, currentlyIgnoredAddresses);
 
-        Set<RemoteAddress> addresses = new HashSet<>();
+        Set<SourceAndDestinationAddress> addresses = new HashSet<>();
         addresses.add(address2);
         addresses.add(address3);
 
@@ -106,7 +106,7 @@ public class CleanupTaskTests
         cleanup.updateFilter(addresses);
 
         // Assert
-        ArgumentCaptor<Set<RemoteAddress>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
+        ArgumentCaptor<Set<SourceAndDestinationAddress>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
         verify(monitorTaskFilterUpdate).updateFilter(argumentCaptor.capture());
         assert argumentCaptor.getValue().size() == 4;
         assert argumentCaptor.getValue().contains(address2);
@@ -119,7 +119,7 @@ public class CleanupTaskTests
     public void removeOldAddressesAndAddNew() throws NoSuchFieldException, IllegalAccessException
     {
         // Arrange
-        Map<RemoteAddress,Long> currentlyIgnoredAddresses = new HashMap<>();
+        Map<SourceAndDestinationAddress,Long> currentlyIgnoredAddresses = new HashMap<>();
         currentlyIgnoredAddresses.put(address5, 5L); // 1 to 5
         currentlyIgnoredAddresses.put(address1, 1L);
         currentlyIgnoredAddresses.put(address4, 4L);
@@ -133,7 +133,7 @@ public class CleanupTaskTests
         maxCountField.setAccessible(true);
         maxCountField.set(cleanup, 6);
 
-        Set<RemoteAddress> addresses = new HashSet<>();
+        Set<SourceAndDestinationAddress> addresses = new HashSet<>();
         addresses.add(address1); // 1 is the oldest in the current list, so it will be 2 and 3 to be removed
         addresses.add(address6); // 6 to 8 are 3 new ones
         addresses.add(address7);
@@ -144,7 +144,7 @@ public class CleanupTaskTests
 
         // Assert
         // 5 existing, adding 3, with max of 6 so 2 oldest should get removed
-        ArgumentCaptor<Set<RemoteAddress>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
+        ArgumentCaptor<Set<SourceAndDestinationAddress>> argumentCaptor = ArgumentCaptor.forClass(Set.class);
         verify(monitorTaskFilterUpdate).updateFilter(argumentCaptor.capture());
         assert argumentCaptor.getValue().size() == 6;
         assert argumentCaptor.getValue().contains(address1);

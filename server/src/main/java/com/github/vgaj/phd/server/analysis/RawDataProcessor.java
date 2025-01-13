@@ -27,7 +27,7 @@ package com.github.vgaj.phd.server.analysis;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.data.HostToExecutableLookup;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.result.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +58,7 @@ public class RawDataProcessor implements RawDataProcessorInterface
      * @param address The address to do the processing for
      * @return Structure containing the results of the analysis if the minimal criteria is met
      */
-    public Optional<AnalysisResult> processRawData(RemoteAddress address)
+    public Optional<AnalysisResult> processRawData(SourceAndDestinationAddress address)
     {
         AnalysisResultImpl result = new AnalysisResultImpl();
 
@@ -127,9 +127,9 @@ public class RawDataProcessor implements RawDataProcessorInterface
      * minimum duration then it will be ignored
      * @return addresses to ignore
      */
-    public Set<RemoteAddress> getAddressesToIgnore()
+    public Set<SourceAndDestinationAddress> getAddressesToIgnore()
     {
-        HashSet<RemoteAddress> addressesToIgnore = new HashSet<>();
+        HashSet<SourceAndDestinationAddress> addressesToIgnore = new HashSet<>();
 
         long now = EpochMinuteUtil.now();
         trafficDataStore.getAddresses().forEach(address ->

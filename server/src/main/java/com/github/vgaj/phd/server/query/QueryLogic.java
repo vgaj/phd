@@ -30,7 +30,7 @@ import com.github.vgaj.phd.server.data.DataForAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.common.query.DisplayContent;
 import com.github.vgaj.phd.common.query.DisplayResult;
 import com.github.vgaj.phd.common.query.DisplayResultLine;
@@ -73,19 +73,19 @@ public class QueryLogic
         ArrayList<DisplayResult> results = new ArrayList<>();
 
         // The addresses
-        List<RemoteAddress> addresses = analyserCache.getAddresses();
+        List<SourceAndDestinationAddress> addresses = analyserCache.getAddresses();
 
-        Collections.sort(addresses, new Comparator<RemoteAddress>() {
+        Collections.sort(addresses, new Comparator<SourceAndDestinationAddress>() {
             @Override
-            public int compare(RemoteAddress e1, RemoteAddress e2)
+            public int compare(SourceAndDestinationAddress e1, SourceAndDestinationAddress e2)
             {
-                if (e1 == null || e1.getReverseHostname() == null || e2 == null || e2.getReverseHostname() == null)
+                if (e1 == null || e1.getReverseDesinationHostname() == null || e2 == null || e2.getReverseDesinationHostname() == null)
                 {
                     return 0;
                 }
                 else
                 {
-                    return e1.getReverseHostname().compareTo(e2.getReverseHostname());
+                    return e1.getReverseDesinationHostname().compareTo(e2.getReverseDesinationHostname());
                 }
             }
         });
@@ -146,7 +146,7 @@ public class QueryLogic
                 {
                     DisplayResult displayResult = new DisplayResult(
                             address.getHostString(),
-                            address.getAddressString(),
+                            address.getDesinationAddressString(),
                             result.getProbableExecutable(),
                             totalBytes,
                             totalTimes,
@@ -173,7 +173,7 @@ public class QueryLogic
     public ArrayList<String> getData(InetAddress address)
     {
         ArrayList<String> results = new ArrayList<>();
-        DataForAddress dataForAddress = trafficDataStore.getDataForAddress(new RemoteAddress(address));
+        DataForAddress dataForAddress = trafficDataStore.getDataForAddress(new SourceAndDestinationAddress(address));
         if (dataForAddress != null)
         {
             var data = dataForAddress.getByteCountPerMinute().entrySet();

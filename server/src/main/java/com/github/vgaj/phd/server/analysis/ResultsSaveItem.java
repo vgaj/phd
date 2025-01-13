@@ -24,14 +24,14 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.analysis;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.result.AnalysisResultImpl;
 
 import lombok.Getter;
 
 public class ResultsSaveItem
 {
-    public static ResultsSaveItem of(RemoteAddress address, AnalysisResultImpl result)
+    public static ResultsSaveItem of(SourceAndDestinationAddress address, AnalysisResultImpl result)
     {
         ResultsSaveItem item = new ResultsSaveItem();
         item.address = address;
@@ -39,7 +39,7 @@ public class ResultsSaveItem
         return item;
     }
     @Getter
-    private RemoteAddress address;
+    private SourceAndDestinationAddress address;
 
     @Getter
     private AnalysisResultImpl result;

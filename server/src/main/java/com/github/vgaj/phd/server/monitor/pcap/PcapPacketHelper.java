@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.pcap;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 
 import org.pcap4j.packet.Packet;
 import org.springframework.stereotype.Component;
@@ -40,15 +40,15 @@ public class PcapPacketHelper
         return (pcapPacket.getRawData()[14]>>4 == 4);
     }
 
-    public RemoteAddress getSourceHost(Packet pcapPacket)
+    public SourceAndDestinationAddress getSourceHost(Packet pcapPacket)
     {
         return getHostAtOffset(pcapPacket,14+12);
     }
-    public RemoteAddress getDestHost(Packet pcapPacket)
+    public SourceAndDestinationAddress getDestHost(Packet pcapPacket)
     {
         return getHostAtOffset(pcapPacket,14+16);
     }
-    private RemoteAddress getHostAtOffset(Packet pcapPacket, int offset)
+    private SourceAndDestinationAddress getHostAtOffset(Packet pcapPacket, int offset)
     {
         // Want data to be stored on the stack, hence not using an array
         byte octet1,octet2,octet3,octet4;
@@ -56,7 +56,7 @@ public class PcapPacketHelper
         octet2 = pcapPacket.getRawData()[offset++];
         octet3 = pcapPacket.getRawData()[offset++];
         octet4 = pcapPacket.getRawData()[offset];
-        return new RemoteAddress(octet1,octet2,octet3,octet4);
+        return new SourceAndDestinationAddress(octet1,octet2,octet3,octet4);
     }
     public int getLength(Packet pcapPacket)
     {

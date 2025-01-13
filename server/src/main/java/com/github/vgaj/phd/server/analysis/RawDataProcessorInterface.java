@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.analysis;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 
 import java.util.Optional;
@@ -32,6 +32,6 @@ import java.util.Set;
 
 public interface RawDataProcessorInterface
 {
-    Optional<AnalysisResult> processRawData(RemoteAddress address);
-    Set<RemoteAddress> getAddressesToIgnore();
+    Optional<AnalysisResult> processRawData(SourceAndDestinationAddress address);
+    Set<SourceAndDestinationAddress> getAddressesToIgnore();
 }

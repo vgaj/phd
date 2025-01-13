@@ -25,7 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd;
 
 import com.github.vgaj.phd.server.analysis.AnalysisCache;
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.result.*;
 
 import com.github.vgaj.phd.common.util.Pair;
@@ -40,12 +40,12 @@ public class DataMergeTests
     void mergeAnalysisResult() throws UnknownHostException
     {
         // Arrange
-        RemoteAddress address1 = new RemoteAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
-        RemoteAddress address2 = new RemoteAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
+        SourceAndDestinationAddress address1 = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
+        SourceAndDestinationAddress address2 = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
         String executable1 = "firefox";
         String executable2 = "java";
-        address1.lookupHost();
-        address2.lookupHost();
+        address1.lookupDestinataionHost();
+        address2.lookupDestinataionHost();
         AnalysisResultImpl result1 = ResultXmlSerialisationTest.makeAnalysisResult(1, 11, 2, 22, 5, 55, 6, 666, 888, executable1);
         AnalysisResultImpl result2 = ResultXmlSerialisationTest.makeAnalysisResult(1, 10, 3, 10, 5, 11, 7, 777, 999, executable2);
 
@@ -73,26 +73,26 @@ public class DataMergeTests
         AnalysisCache cache = new AnalysisCache();
 
         // Previous
-        cache.putPreviousResult(new RemoteAddress((byte) 1, (byte) 1, (byte) 1, (byte) 1), new AnalysisResultImpl()); // unique
-        cache.putPreviousResult(new RemoteAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8), new AnalysisResultImpl()); // shared
-        cache.putPreviousResult(new RemoteAddress((byte) 1, (byte) 0, (byte) 0, (byte) 1), new AnalysisResultImpl()); // unique
-        cache.putPreviousResult(new RemoteAddress((byte) 8, (byte) 8, (byte) 4, (byte) 4), new AnalysisResultImpl()); // shared
+        cache.putPreviousResult(new SourceAndDestinationAddress((byte) 1, (byte) 1, (byte) 1, (byte) 1), new AnalysisResultImpl()); // unique
+        cache.putPreviousResult(new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8), new AnalysisResultImpl()); // shared
+        cache.putPreviousResult(new SourceAndDestinationAddress((byte) 1, (byte) 0, (byte) 0, (byte) 1), new AnalysisResultImpl()); // unique
+        cache.putPreviousResult(new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 4, (byte) 4), new AnalysisResultImpl()); // shared
 
         // Current
-        cache.putCurrentResult(new RemoteAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8), new AnalysisResultImpl()); // shared
-        cache.putCurrentResult(new RemoteAddress((byte) 9, (byte) 9, (byte) 9, (byte) 9), new AnalysisResultImpl()); // unique
-        cache.putCurrentResult(new RemoteAddress((byte) 8, (byte) 8, (byte) 4, (byte) 4), new AnalysisResultImpl()); // shared
+        cache.putCurrentResult(new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8), new AnalysisResultImpl()); // shared
+        cache.putCurrentResult(new SourceAndDestinationAddress((byte) 9, (byte) 9, (byte) 9, (byte) 9), new AnalysisResultImpl()); // unique
+        cache.putCurrentResult(new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 4, (byte) 4), new AnalysisResultImpl()); // shared
 
         // Act
-        List<RemoteAddress> mergeAddresses = cache.getAddresses();
+        List<SourceAndDestinationAddress> mergeAddresses = cache.getAddresses();
 
         // Assert
         assert mergeAddresses.size() == 5;
-        assert mergeAddresses.contains(new RemoteAddress((byte) 1, (byte) 1, (byte) 1, (byte) 1));
-        assert mergeAddresses.contains(new RemoteAddress((byte) 1, (byte) 0, (byte) 0, (byte) 1));
-        assert mergeAddresses.contains(new RemoteAddress((byte) 9, (byte) 9, (byte) 9, (byte) 9));
-        assert mergeAddresses.contains(new RemoteAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8));
-        assert mergeAddresses.contains(new RemoteAddress((byte) 8, (byte) 8, (byte) 4, (byte) 4));
+        assert mergeAddresses.contains(new SourceAndDestinationAddress((byte) 1, (byte) 1, (byte) 1, (byte) 1));
+        assert mergeAddresses.contains(new SourceAndDestinationAddress((byte) 1, (byte) 0, (byte) 0, (byte) 1));
+        assert mergeAddresses.contains(new SourceAndDestinationAddress((byte) 9, (byte) 9, (byte) 9, (byte) 9));
+        assert mergeAddresses.contains(new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8));
+        assert mergeAddresses.contains(new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 4, (byte) 4));
     }
 
 }

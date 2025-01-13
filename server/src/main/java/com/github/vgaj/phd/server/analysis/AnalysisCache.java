@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.analysis;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 
 import org.springframework.stereotype.Component;
@@ -38,25 +38,25 @@ import java.util.concurrent.ConcurrentMap;
 @Component
 public class AnalysisCache
 {
-    private final ConcurrentMap<RemoteAddress, AnalysisResult> currentResults = new ConcurrentHashMap<>();
-    private final ConcurrentMap<RemoteAddress, AnalysisResult> previousResults = new ConcurrentHashMap<>();
+    private final ConcurrentMap<SourceAndDestinationAddress, AnalysisResult> currentResults = new ConcurrentHashMap<>();
+    private final ConcurrentMap<SourceAndDestinationAddress, AnalysisResult> previousResults = new ConcurrentHashMap<>();
 
-    public void putCurrentResult(RemoteAddress address, AnalysisResult result)
+    public void putCurrentResult(SourceAndDestinationAddress address, AnalysisResult result)
     {
         currentResults.put(address, result);
     }
 
-    public void removeCurrentResult(RemoteAddress address)
+    public void removeCurrentResult(SourceAndDestinationAddress address)
     {
         currentResults.remove(address);
     }
 
-    public void putPreviousResult(RemoteAddress address, AnalysisResult result)
+    public void putPreviousResult(SourceAndDestinationAddress address, AnalysisResult result)
     {
         previousResults.put(address, result);
     }
 
-    public Optional<AnalysisResult> getResult(RemoteAddress address)
+    public Optional<AnalysisResult> getResult(SourceAndDestinationAddress address)
     {
         AnalysisResult currentResult = currentResults.get(address);
         AnalysisResult previousResult = previousResults.get(address);
@@ -70,9 +70,9 @@ public class AnalysisCache
         }
     }
 
-    public List<RemoteAddress> getAddresses()
+    public List<SourceAndDestinationAddress> getAddresses()
     {
-        ArrayList<RemoteAddress> addresses = new ArrayList<>(2*(currentResults.keySet().size()+previousResults.keySet().size()));
+        ArrayList<SourceAndDestinationAddress> addresses = new ArrayList<>(2*(currentResults.keySet().size()+previousResults.keySet().size()));
         currentResults.keySet().forEach(address -> addresses.add(address));
         previousResults.keySet().forEach(address -> { if (!addresses.contains(address)) addresses.add(address);} );
         return addresses;

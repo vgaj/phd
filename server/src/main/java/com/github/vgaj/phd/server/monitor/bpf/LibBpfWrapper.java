@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.bpf;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 
@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -142,18 +141,18 @@ public class LibBpfWrapper
         return returnFd;
     }
 
-    public List<Pair<RemoteAddress,Integer>> getAddressToCountData(int mapFd)
+    public List<Pair<SourceAndDestinationAddress,Integer>> getAddressToCountData(int mapFd)
     {
-        List<Pair<RemoteAddress,Integer>> results = new ArrayList<>();
+        List<Pair<SourceAndDestinationAddress,Integer>> results = new ArrayList<>();
         BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
                 results.add(Pair.of(makeRemoteAddress(key), value.getInt(0)));
         getData(mapFd, resultAdder);
         return results;
     }
 
-    public List<Pair<RemoteAddress,Integer>> getAddressToPidData(int mapFd)
+    public List<Pair<SourceAndDestinationAddress,Integer>> getAddressToPidData(int mapFd)
     {
-        List<Pair<RemoteAddress,Integer>> results = new ArrayList<>();
+        List<Pair<SourceAndDestinationAddress,Integer>> results = new ArrayList<>();
         BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
                 results.add(Pair.of(makeRemoteAddress(key), value.getInt(0)));
         getData(mapFd, resultAdder);
@@ -206,12 +205,12 @@ public class LibBpfWrapper
         }
     }
 
-    private RemoteAddress makeRemoteAddress(Pointer address)
+    private SourceAndDestinationAddress makeRemoteAddress(Pointer address)
     {
         int octet1 = address.getByte(0) & 0xFF;
         int octet2 = address.getByte(1) & 0xFF;
         int octet3 = address.getByte(2) & 0xFF;
         int octet4 = address.getByte(3) & 0xFF;
-        return new RemoteAddress((byte) octet1, (byte) octet2, (byte) octet3, (byte) octet4);
+        return new SourceAndDestinationAddress((byte) octet1, (byte) octet2, (byte) octet3, (byte) octet4);
     }
 }

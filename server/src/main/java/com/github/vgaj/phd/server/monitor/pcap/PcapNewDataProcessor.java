@@ -29,7 +29,7 @@ import com.github.vgaj.phd.server.messages.MessageInterface;
 import lombok.Data;
 import org.pcap4j.packet.Packet;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
 
@@ -90,12 +90,12 @@ public class PcapNewDataProcessor
         }
         else
         {
-            RemoteAddress host = pcapHelper.getDestHost(newDataEvent.getPcapPacket());
+            SourceAndDestinationAddress host = pcapHelper.getDestHost(newDataEvent.getPcapPacket());
             int length = pcapHelper.getLength(newDataEvent.getPcapPacket());
 
             if (DEBUG_LOG)
             {
-                messages.addDebug(pcapHelper.getSourceHost(newDataEvent.getPcapPacket()).getAddressString() + " -> " + host.getAddressString() + " (" + length + " bytes)");
+                messages.addDebug(pcapHelper.getSourceHost(newDataEvent.getPcapPacket()).getDesinationAddressString() + " -> " + host.getDesinationAddressString() + " (" + length + " bytes)");
             }
 
             trafficDataStore.addData(host, length, newDataEvent.getEpochMinute());

@@ -46,16 +46,16 @@ public class TrafficDataStore
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     // Stats for each host
-    private final ConcurrentMap<RemoteAddress, DataForAddress> data = new ConcurrentHashMap<>();
+    private final ConcurrentMap<SourceAndDestinationAddress, DataForAddress> data = new ConcurrentHashMap<>();
 
-    public void addData(@NonNull RemoteAddress host, int length, long epochMinute)
+    public void addData(@NonNull SourceAndDestinationAddress host, int length, long epochMinute)
     {
         if (!data.containsKey(host))
         {
             String hostname = null;
             try
             {
-                hostname = host.lookupHost();
+                hostname = host.lookupDestinataionHost();
                 messages.addDebug("New host: " + hostname);
                 data.put(host, new DataForAddress());
             }
@@ -68,7 +68,7 @@ public class TrafficDataStore
         data.get(host).addBytes(length, epochMinute);
     }
 
-    public ArrayList<Map.Entry<TransferTimestamp, TransferSizeBytes>> getCopyOfPerMinuteData(RemoteAddress address)
+    public ArrayList<Map.Entry<TransferTimestamp, TransferSizeBytes>> getCopyOfPerMinuteData(SourceAndDestinationAddress address)
     {
         ArrayList<Map.Entry<TransferTimestamp, TransferSizeBytes>> entries = new ArrayList<>();
         data.get(address).getPerMinuteData().forEach(e -> entries.add(
@@ -76,21 +76,21 @@ public class TrafficDataStore
         return entries;
     }
 
-    public DataForAddress getDataForAddress(RemoteAddress address)
+    public DataForAddress getDataForAddress(SourceAndDestinationAddress address)
     {
         return data.get(address);
     }
 
-    public List<RemoteAddress> getAddresses()
+    public List<SourceAndDestinationAddress> getAddresses()
     {
-        List<RemoteAddress> addresses = new LinkedList<>();
+        List<SourceAndDestinationAddress> addresses = new LinkedList<>();
         data.keySet().forEach(a -> addresses.add(a));
         return addresses;
     }
 
-    public List<RemoteAddress> getAddressesWithDataSince(long epochMinute)
+    public List<SourceAndDestinationAddress> getAddressesWithDataSince(long epochMinute)
     {
-        List<RemoteAddress> addresses = new LinkedList<>();
+        List<SourceAndDestinationAddress> addresses = new LinkedList<>();
         data.keySet().forEach(address ->
         {
             DataForAddress addressData = data.get(address);
@@ -102,7 +102,7 @@ public class TrafficDataStore
         return addresses;
     }
 
-    public void cleanupIgnoredAddresses(Set<RemoteAddress> addressesToExclude)
+    public void cleanupIgnoredAddresses(Set<SourceAndDestinationAddress> addressesToExclude)
     {
         addressesToExclude.forEach(address -> data.remove(address));
         messages.addDebug("Size of Monitor Data is now " + data.size());

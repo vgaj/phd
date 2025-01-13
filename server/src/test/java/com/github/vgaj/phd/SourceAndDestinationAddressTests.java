@@ -24,19 +24,19 @@ SOFTWARE.
 
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.server.data.RemoteAddress;
+import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import org.junit.Test;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class RemoteAddressTests
+public class SourceAndDestinationAddressTests
 {
     @Test
     public void addressStringFromBytesTest()
     {
-        RemoteAddress address = new RemoteAddress((byte) 192, (byte) 168, (byte) 111, (byte) 222);
-        assert address.getAddressString().equals("192.168.111.222");
+        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 192, (byte) 168, (byte) 111, (byte) 222);
+        assert address.getDesinationAddressString().equals("192.168.111.222");
     }
 
     @Test
@@ -44,30 +44,30 @@ public class RemoteAddressTests
     {
         String addressString = "192.168.111.222";
         InetAddress inetAddress = InetAddress.getByName(addressString);
-        RemoteAddress remoteAddress = new RemoteAddress(inetAddress);
-        assert remoteAddress.getAddressString().equals(addressString);
+        SourceAndDestinationAddress sourceAndDestinationAddress = new SourceAndDestinationAddress(inetAddress);
+        assert sourceAndDestinationAddress.getDesinationAddressString().equals(addressString);
     }
 
     @Test
     public void nonResolvableIpAddressStringTest() throws UnknownHostException
     {
-        RemoteAddress address = new RemoteAddress((byte) 192, (byte) 168, (byte) 111, (byte) 222);
-        address.lookupHost();
+        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 192, (byte) 168, (byte) 111, (byte) 222);
+        address.lookupDestinataionHost();
         assert address.getHostString().equals("192.168.111.222");
     }
 
     @Test
     public void resolvableIpAddressStringPriorToLookupTest() throws UnknownHostException
     {
-        RemoteAddress address = new RemoteAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
+        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
         assert address.getHostString().equals("8.8.8.8");
     }
 
     @Test
     public void resolvableIpAddressStringAfterLookupTest() throws UnknownHostException
     {
-        RemoteAddress address = new RemoteAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
-        address.lookupHost();
+        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
+        address.lookupDestinataionHost();
         assert !address.getHostString().equals("8.8.8.8");
     }
 }
