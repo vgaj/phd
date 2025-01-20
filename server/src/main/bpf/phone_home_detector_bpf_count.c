@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ SOFTWARE.
 struct 
 {
         __uint(type, BPF_MAP_TYPE_HASH);
-        __type(key, __u32);   // ip
+        __type(key, __u64);   // source IP + destination IP
         __type(value, __u32); // count
         __uint(max_entries, 1000000);
 } IP_TO_COUNT_MAP SEC(".maps");
@@ -52,22 +52,25 @@ int phone_home_detector_bpf_count_func(struct __sk_buff *skb)
         if (eth->h_proto == __constant_htons(ETH_P_IP)) 
         {
             struct iphdr *ip = data + sizeof(struct ethhdr);
-            
+
+            __u32 saddr = ip->saddr;
             __u32 daddr = ip->daddr;
-            
+
+            __u64 saddr_daddr = (((__u64)saddr) << 32) + ((__u64)daddr);
+
             // Note this is including the UDP/TCP header but that doesn't matter for what we are doing
             __u32 length = data_end - data - sizeof(struct ethhdr) - sizeof(struct iphdr);
 
             if (daddr > 0)
             {
-                __u32 *value = bpf_map_lookup_elem(&IP_TO_COUNT_MAP, &daddr);
+                __u32 *value = bpf_map_lookup_elem(&IP_TO_COUNT_MAP, &saddr_daddr);
                 if (value)
                 {
                     *value += length;
                 }
                 else
                 {
-                    bpf_map_update_elem(&IP_TO_COUNT_MAP, &daddr, &length, BPF_NOEXIST);
+                    bpf_map_update_elem(&IP_TO_COUNT_MAP, &saddr_daddr, &length, BPF_NOEXIST);
                 }
             }
         }

@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -86,16 +86,33 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     @JsonIgnore
     public String getDesinationAddressString()
     {
+        return getAddressString(dstOctets);
+    }
+
+    @JsonIgnore
+    public String getSourceAddressString()
+    {
+        return getAddressString(srcOctets);
+    }
+
+    private static String getAddressString(byte[] octetsToPrint)
+    {
         StringBuilder ip = new StringBuilder();
-        for (int i = 0; i < dstOctets.length; i++)
+        for (int i = 0; i < octetsToPrint.length; i++)
         {
-            ip.append(Byte.toUnsignedInt(dstOctets[i]));
-            if (i != dstOctets.length - 1)
+            ip.append(Byte.toUnsignedInt(octetsToPrint[i]));
+            if (i != octetsToPrint.length - 1)
             {
                 ip.append(".");
             }
         }
         return ip.toString();
+    }
+
+    @JsonIgnore
+    public String getSourceAndDestinationString()
+    {
+        return getSourceAddressString() + " -> " + getHostString();
     }
 
     @JsonIgnore

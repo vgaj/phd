@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -146,7 +146,7 @@ public class QueryLogic
                 {
                     DisplayResult displayResult = new DisplayResult(
                             address.getHostString(),
-                            address.getDesinationAddressString(),
+                            address.getSourceAndDestinationString(),
                             result.getProbableExecutable(),
                             totalBytes,
                             totalTimes,

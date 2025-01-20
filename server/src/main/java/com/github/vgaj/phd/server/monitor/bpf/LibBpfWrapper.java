@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -145,7 +145,7 @@ public class LibBpfWrapper
     {
         List<Pair<SourceAndDestinationAddress,Integer>> results = new ArrayList<>();
         BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
-                results.add(Pair.of(makeRemoteAddress(key), value.getInt(0)));
+                results.add(Pair.of(readSourceAndDestinationAddress(key), value.getInt(0)));
         getData(mapFd, resultAdder);
         return results;
     }
@@ -154,10 +154,14 @@ public class LibBpfWrapper
     {
         List<Pair<SourceAndDestinationAddress,Integer>> results = new ArrayList<>();
         BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
-                results.add(Pair.of(makeRemoteAddress(key), value.getInt(0)));
+                results.add(Pair.of(readDestinationAddress(key), value.getInt(0)));
         getData(mapFd, resultAdder);
         return results;
     }
+
+    private final Pointer current_key = new Memory(Long.BYTES);
+    private final Pointer next_key = new Memory(Long.BYTES);
+    private final Pointer value = new Memory(Integer.BYTES);
 
     private void getData(int mapFd, BiConsumer<Pointer, Pointer> resultAdder)
     {
@@ -168,17 +172,13 @@ public class LibBpfWrapper
 
         try
         {
-            Pointer current_key = new Memory(Integer.BYTES);
-            Pointer next_key = new Memory(Integer.BYTES);
-            Pointer value = new Memory(Long.BYTES);
-
             boolean isFirst = true;
             boolean isLast = false;
             while (!isLast)
             {
                 if (isFirst)
                 {
-                    current_key.setInt(0, 0);
+                    current_key.setLong(0, 0);
                 }
 
                 int ret = LibBpf.INSTANCE.bpf_map_get_next_key(mapFd,current_key,next_key);
@@ -195,7 +195,7 @@ public class LibBpfWrapper
                     LibBpf.INSTANCE.bpf_map_delete_elem(mapFd, current_key);
                 }
 
-                current_key.setInt(0, next_key.getInt(0));
+                current_key.setLong(0, next_key.getLong(0));
                 isFirst = false;
             }
         }
@@ -205,12 +205,25 @@ public class LibBpfWrapper
         }
     }
 
-    private SourceAndDestinationAddress makeRemoteAddress(Pointer address)
+    private SourceAndDestinationAddress readDestinationAddress(Pointer address)
     {
-        int octet1 = address.getByte(0) & 0xFF;
-        int octet2 = address.getByte(1) & 0xFF;
-        int octet3 = address.getByte(2) & 0xFF;
-        int octet4 = address.getByte(3) & 0xFF;
-        return new SourceAndDestinationAddress((byte) octet1, (byte) octet2, (byte) octet3, (byte) octet4);
+        int dstOctet1 = address.getByte(0) & 0xFF;
+        int dstOctet2 = address.getByte(1) & 0xFF;
+        int dstOctet3 = address.getByte(2) & 0xFF;
+        int dstOctet4 = address.getByte(3) & 0xFF;
+        return new SourceAndDestinationAddress((byte) dstOctet1, (byte) dstOctet2, (byte) dstOctet3, (byte) dstOctet4);
+    }
+
+    private SourceAndDestinationAddress readSourceAndDestinationAddress(Pointer address)
+    {
+        int dstOctet1 = address.getByte(0) & 0xFF;
+        int dstOctet2 = address.getByte(1) & 0xFF;
+        int dstOctet3 = address.getByte(2) & 0xFF;
+        int dstOctet4 = address.getByte(3) & 0xFF;
+        int srcOctet1 = address.getByte(4) & 0xFF;
+        int srcOctet2 = address.getByte(5) & 0xFF;
+        int srcOctet3 = address.getByte(6) & 0xFF;
+        int srcOctet4 = address.getByte(7) & 0xFF;
+        return new SourceAndDestinationAddress((byte) srcOctet1, (byte) srcOctet2, (byte) srcOctet3, (byte) srcOctet4, (byte) dstOctet1, (byte) dstOctet2, (byte) dstOctet3, (byte) dstOctet4);
     }
 }
