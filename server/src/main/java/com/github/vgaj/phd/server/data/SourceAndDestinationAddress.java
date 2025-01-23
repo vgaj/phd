@@ -83,6 +83,14 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
         dstOctets[3] = dstAddress.getAddress()[3];
     }
 
+    public boolean doesSourceMatch(InetAddress address) {
+        return Arrays.equals(srcOctets, address.getAddress());
+    }
+
+    public void clearSourceAddress() {
+        Arrays.fill(srcOctets, (byte)0);
+    }
+
     @JsonIgnore
     public String getDesinationAddressString()
     {
@@ -112,7 +120,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     @JsonIgnore
     public String getSourceAndDestinationString()
     {
-        return getSourceAddressString() + " -> " + getHostString();
+        return getSourceAddressString() + " -> " + getDesinationAddressString();
     }
 
     @JsonIgnore
@@ -163,18 +171,11 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     @Override
     public int compareTo(SourceAndDestinationAddress other)
     {
-        for (int i = 0; i < 4; i++) {
-            int diff = Byte.compare(this.dstOctets[i], other.dstOctets[i]);
-            if (diff != 0) {
-                return diff;
-            }
+        int compareDst = Arrays.compare(this.dstOctets, other.dstOctets);
+        if (compareDst != 0) {
+            return compareDst;
         }
-        for (int i = 0; i < 4; i++) {
-            int diff = Byte.compare(this.srcOctets[i], other.srcOctets[i]);
-            if (diff != 0) {
-                return diff;
-            }
-        }
-        return 0;
+        return Arrays.compare(this.srcOctets, other.srcOctets);
     }
+
 }
