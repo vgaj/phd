@@ -33,10 +33,10 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 @NoArgsConstructor
-public class SourceAndDestinationAddress implements Comparable<SourceAndDestinationAddress>
-{
+public class SourceAndDestinationAddress implements Comparable<SourceAndDestinationAddress> {
     /**
      * The source address. If all octets are 0 that means it is local.
      * It is done this way to enable easy deserialisation
@@ -55,8 +55,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     @Getter
     private String reverseDesinationHostname = null;
 
-    public SourceAndDestinationAddress(byte srcOctet1, byte srcOctet2, byte srcOctet3, byte srcOctet4, byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4)
-    {
+    public SourceAndDestinationAddress(byte srcOctet1, byte srcOctet2, byte srcOctet3, byte srcOctet4, byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4)  {
         srcOctets[0] = srcOctet1;
         srcOctets[1] = srcOctet2;
         srcOctets[2] = srcOctet3;
@@ -66,16 +65,14 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
         dstOctets[2] = dstOctet3;
         dstOctets[3] = dstOctet4;
     }
-    public SourceAndDestinationAddress(byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4)
-    {
+    public SourceAndDestinationAddress(byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4) {
         dstOctets[0] = dstOctet1;
         dstOctets[1] = dstOctet2;
         dstOctets[2] = dstOctet3;
         dstOctets[3] = dstOctet4;
     }
 
-    public SourceAndDestinationAddress(InetAddress dstAddress)
-    {
+    public SourceAndDestinationAddress(InetAddress dstAddress) {
         assert dstAddress != null && dstAddress.getAddress().length == 4;
         dstOctets[0] = dstAddress.getAddress()[0];
         dstOctets[1] = dstAddress.getAddress()[1];
@@ -92,25 +89,20 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     @JsonIgnore
-    public String getDesinationAddressString()
-    {
+    public String getDesinationAddressString() {
         return getAddressString(dstOctets);
     }
 
     @JsonIgnore
-    public String getSourceAddressString()
-    {
+    public String getSourceAddressString() {
         return getAddressString(srcOctets);
     }
 
-    private static String getAddressString(byte[] octetsToPrint)
-    {
+    private static String getAddressString(byte[] octetsToPrint) {
         StringBuilder ip = new StringBuilder();
-        for (int i = 0; i < octetsToPrint.length; i++)
-        {
+        for (int i = 0; i < octetsToPrint.length; i++) {
             ip.append(Byte.toUnsignedInt(octetsToPrint[i]));
-            if (i != octetsToPrint.length - 1)
-            {
+            if (i != octetsToPrint.length - 1) {
                 ip.append(".");
             }
         }
@@ -118,14 +110,16 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     @JsonIgnore
-    public String getSourceAndDestinationString()
-    {
-        return getSourceAddressString() + " -> " + getDesinationAddressString();
+    public String getSourceAndDestinationString() {
+        boolean isLocal = true;
+        for (byte b : srcOctets) {
+            if (b != 0) isLocal = false;
+        }
+        return  (isLocal ? "local" : getSourceAddressString()) + " -> " + getDesinationAddressString();
     }
 
     @JsonIgnore
-    public String getHostString()
-    {
+    public String getHostString() {
         return (destinationHostname != null) ? destinationHostname : getDesinationAddressString();
     }
 
@@ -133,15 +127,12 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
      * If the IP address has not previously been looked up then it is looked up.
      * @return The hostname
      */
-    public String lookupDestinataionHost() throws UnknownHostException
-    {
-        if (!lookupAttempted)
-        {
+    public String lookupDestinataionHost() throws UnknownHostException {
+        if (!lookupAttempted) {
             lookupAttempted = true;
             InetAddress addr = InetAddress.getByAddress(dstOctets);
             destinationHostname = addr.getHostName();
-            if (destinationHostname != null)
-            {
+            if (destinationHostname != null) {
                 List<String> parts = Arrays.asList(destinationHostname.split("\\."));
                 Collections.reverse(parts);
                 reverseDesinationHostname = String.join(".", parts);
@@ -151,8 +142,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SourceAndDestinationAddress that = (SourceAndDestinationAddress) o;
@@ -160,8 +150,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return Arrays.hashCode(new Object[] {
                 Arrays.hashCode(srcOctets),
                 Arrays.hashCode(dstOctets)
@@ -169,8 +158,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     @Override
-    public int compareTo(SourceAndDestinationAddress other)
-    {
+    public int compareTo(SourceAndDestinationAddress other) {
         int compareDst = Arrays.compare(this.dstOctets, other.dstOctets);
         if (compareDst != 0) {
             return compareDst;
