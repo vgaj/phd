@@ -1,7 +1,7 @@
 #!/bin/bash
 # MIT License
 #
-# Copyright (c) 2022-2024 Viru Gajanayake
+# Copyright (c) 2022-2025 Viru Gajanayake
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -40,17 +40,40 @@ requestCount=3
 for ((i=1; i<=requestCount; i++)); do
   echo "Making request ${i} of ${requestCount}"
   url="https://8.8.8.8"
-  curl $url &> /dev/null
+  curl $url &> /dev/null &
+  CURL_PID=$!
   sleep 120
 done
 sleep 1
 
-echo "Checking"
 cliResult=$(phone-home-detector)
 
+all_passed=true
+
+echo "Checking host"
 if [[ $cliResult == *"8.8.8.8 (dns.google)"* ]]; then
   echo "PASS"
 else
   echo "FAIL"
+  all_passed=false
+fi
+
+echo "Checking pid=$CURL_PID"
+if [[ $cliResult == *"pid=$CURL_PID"* ]]; then
+  echo "PASS"
+else
+  echo "FAIL"
+  all_passed=false
+fi
+
+echo "Checking result"
+if [[ $cliResult == *"all intervals are 2 minutes"* ]]; then
+  echo "PASS"
+else
+  echo "FAIL"
+  all_passed=false
+fi
+
+if ! $all_passed; then
   echo "$cliResult"
 fi
