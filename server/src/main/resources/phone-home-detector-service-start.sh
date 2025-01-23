@@ -49,7 +49,7 @@ for iface in /sys/class/net/*; do
     if [ $? -eq 1 ]; then
         tc qdisc add dev "$interface" clsact
         if [ $? -eq 0 ]; then
-          tc filter add dev "$interface" egress bpf da obj /usr/share/phone-home-detector/phone_home_detector_bpf_count.o sec phone_home_detector_bpf_count
+          tc filter add dev "$interface" egress bpf da obj /usr/share/phone-home-detector/phone_home_detector_bpf_count.o sec tc_phone_home_detector_bpf_count
           if [ $? -eq 0 ]; then
             echo "Attached BPF program for $interface"
           else
