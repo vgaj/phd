@@ -38,12 +38,8 @@ struct
         __uint(max_entries, 1000000);
 } IP_TO_COUNT_MAP SEC(".maps");
 
-SEC("phone_home_detector_bpf_count")
-int phone_home_detector_bpf_count_func(struct __sk_buff *skb)
+void process_packet_common(void *data_end, void *data)
 {
-    void *data_end = (void *)(long)skb->data_end;
-    void *data = (void *)(long)skb->data;
-
     if (data + sizeof(struct ethhdr) + sizeof(struct iphdr) < data_end)
     {
         struct ethhdr *eth = data;
@@ -75,5 +71,22 @@ int phone_home_detector_bpf_count_func(struct __sk_buff *skb)
             }
         }
     }
+}
+
+SEC("xdp_phone_home_detector_bpf_count")
+int xdp_phone_home_detector_bpf_count_func(struct xdp_md *ctx)
+{
+    void *data_end = (void *)(long)ctx->data_end;
+    void *data = (void *)(long)ctx->data;
+    process_packet_common(data_end, data);
+    return XDP_PASS;
+}
+
+SEC("tc_phone_home_detector_bpf_count")
+int tc_phone_home_detector_bpf_count_func(struct __sk_buff *skb)
+{
+    void *data_end = (void *)(long)skb->data_end;
+    void *data = (void *)(long)skb->data;
+    process_packet_common(data_end, data);
     return TC_ACT_UNSPEC;
 }
