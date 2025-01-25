@@ -54,7 +54,7 @@ struct sys_enter_connect_args {
 #define MAP_NAME phd_ip_to_pid
 struct
 {
-    __uint(type, BPF_MAP_TYPE_HASH);
+    __uint(type, BPF_MAP_TYPE_PERCPU_HASH);
     __type(key, __u32);   // addr
     __type(value, __u32); // pid
     __uint(max_entries, 1000000);

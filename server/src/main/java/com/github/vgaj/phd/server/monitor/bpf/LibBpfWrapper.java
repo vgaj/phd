@@ -149,8 +149,8 @@ public class LibBpfWrapper
     public List<Pair<SourceAndDestinationAddress,Integer>> getAddressToCountData(int mapFd)
     {
         List<Pair<SourceAndDestinationAddress,Integer>> results = new ArrayList<>();
-        BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
-                results.add(Pair.of(readSourceAndDestinationAddress(key), value.getInt(0)));
+        BiConsumer<Pointer, Integer> resultAdder = (key, value) ->
+                results.add(Pair.of(readSourceAndDestinationAddress(key), value));
         getData(mapFd, resultAdder);
         return results;
     }
@@ -158,17 +158,17 @@ public class LibBpfWrapper
     public List<Pair<SourceAndDestinationAddress,Integer>> getAddressToPidData(int mapFd)
     {
         List<Pair<SourceAndDestinationAddress,Integer>> results = new ArrayList<>();
-        BiConsumer<Pointer, Pointer> resultAdder = (key, value) ->
-                results.add(Pair.of(readDestinationAddress(key), value.getInt(0)));
+        BiConsumer<Pointer, Integer> resultAdder = (key, value) ->
+                results.add(Pair.of(readDestinationAddress(key), value));
         getData(mapFd, resultAdder);
         return results;
     }
 
     private final Pointer current_key = new Memory(Long.BYTES);
     private final Pointer next_key = new Memory(Long.BYTES);
-    private final Pointer value = new Memory(Integer.BYTES);
+    private final Pointer value = new Memory((long) Integer.BYTES * Runtime.getRuntime().availableProcessors());
 
-    private void getData(int mapFd, BiConsumer<Pointer, Pointer> resultAdder)
+    private void getData(int mapFd, BiConsumer<Pointer, Integer> resultAdder)
     {
         if (mapFd == -1)
         {
@@ -192,7 +192,14 @@ public class LibBpfWrapper
                 if (!isLast)
                 {
                     LibBpf.INSTANCE.bpf_map_lookup_elem(mapFd, next_key, value);
-                    resultAdder.accept(next_key,value);
+                    for (int cpu = 0; cpu < Runtime.getRuntime().availableProcessors(); cpu++)
+                    {
+                        int valueAsInt = value.getInt((long) cpu * Integer.BYTES);
+                        if (valueAsInt != 0)
+                        {
+                            resultAdder.accept(next_key, valueAsInt);
+                        }
+                    }
                 }
 
                 if (!isFirst)

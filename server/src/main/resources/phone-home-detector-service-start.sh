@@ -39,13 +39,6 @@ if [ ! -f "/usr/share/phone-home-detector/phone_home_detector_bpf_pid.o" ]; then
 fi
 
 HOTSPOT_NIC_FILE="$(dirname "$0")/hotspotnic"
-echo "$HOTSPOT_NIC_FILE"
-if [ -f "$HOTSPOT_NIC_FILE" ]; then
-    echo "-f passes"
-fi
-if [ -s "$HOTSPOT_NIC_FILE" ]; then
-    echo "-s passes"
-fi
 
 if [ -f "$HOTSPOT_NIC_FILE" ] && [ -s "$HOTSPOT_NIC_FILE" ]; then
     HOTSPOT_NIC=$(cat $HOTSPOT_NIC_FILE)

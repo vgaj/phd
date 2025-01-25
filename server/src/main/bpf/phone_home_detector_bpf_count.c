@@ -32,7 +32,7 @@ SOFTWARE.
 #define IP_TO_COUNT_MAP phd_ip_to_bytes
 struct 
 {
-        __uint(type, BPF_MAP_TYPE_HASH);
+        __uint(type, BPF_MAP_TYPE_PERCPU_HASH);
         __type(key, __u64);   // source IP + destination IP
         __type(value, __u32); // count
         __uint(max_entries, 1000000);
