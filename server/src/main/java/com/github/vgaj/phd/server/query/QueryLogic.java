@@ -145,8 +145,8 @@ public class QueryLogic
                 if (score > 0)
                 {
                     DisplayResult displayResult = new DisplayResult(
-                            address.getHostString(),
-                            address.getSourceAndDestinationString(),
+                            address.getDesinationHostString(),
+                            address.getDesinationAddressString(),
                             result.getProbableExecutable(),
                             totalBytes,
                             totalTimes,

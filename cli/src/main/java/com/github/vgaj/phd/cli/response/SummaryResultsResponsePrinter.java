@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -102,10 +102,10 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
                     sb.append(headerLine);
                 }
                 sb.append("  ");
-                sb.append(r.ipAddress());
-                if (!r.ipAddress().equals(r.hostName()))
+                sb.append(r.destinationIpAddress());
+                if (!r.destinationIpAddress().equals(r.destinationHostName()))
                 {
-                    sb.append(" (").append(r.hostName()).append(")");
+                    sb.append(" (").append(r.destinationHostName()).append(")");
                 }
                 sb.append(System.lineSeparator());
                 if (showExtraInfo)

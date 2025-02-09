@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,6 @@ package com.github.vgaj.phd.common.query;
 
 import java.io.Serializable;
 
-public record DisplayResult (String hostName, String ipAddress, String probableExecutableDetails, int totalBytes, int totalTimes, int score, boolean isCurrent, long lastSeenEpochMinute, DisplayResultLine[] resultLines) implements Serializable
+public record DisplayResult (String destinationHostName, String destinationIpAddress, String probableExecutableDetails, int totalBytes, int totalTimes, int score, boolean isCurrent, long lastSeenEpochMinute, DisplayResultLine[] resultLines) implements Serializable
 {
 }

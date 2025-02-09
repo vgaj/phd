@@ -33,7 +33,6 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 
 @NoArgsConstructor
 public class SourceAndDestinationAddress implements Comparable<SourceAndDestinationAddress> {
@@ -119,7 +118,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     @JsonIgnore
-    public String getHostString() {
+    public String getDesinationHostString() {
         return (destinationHostname != null) ? destinationHostname : getDesinationAddressString();
     }
 

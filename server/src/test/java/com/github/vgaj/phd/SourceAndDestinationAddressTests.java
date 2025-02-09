@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -53,14 +53,14 @@ public class SourceAndDestinationAddressTests
     {
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 192, (byte) 168, (byte) 111, (byte) 222);
         address.lookupDestinataionHost();
-        assert address.getHostString().equals("192.168.111.222");
+        assert address.getDesinationHostString().equals("192.168.111.222");
     }
 
     @Test
     public void resolvableIpAddressStringPriorToLookupTest() throws UnknownHostException
     {
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
-        assert address.getHostString().equals("8.8.8.8");
+        assert address.getDesinationHostString().equals("8.8.8.8");
     }
 
     @Test
@@ -68,6 +68,6 @@ public class SourceAndDestinationAddressTests
     {
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
         address.lookupDestinataionHost();
-        assert !address.getHostString().equals("8.8.8.8");
+        assert !address.getDesinationHostString().equals("8.8.8.8");
     }
 }
