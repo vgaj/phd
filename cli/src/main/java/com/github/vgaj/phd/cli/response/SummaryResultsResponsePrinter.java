@@ -81,22 +81,26 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
             String displayExeNameToUse = showExtraInfo ?
                     ExecutableDetails.getCommandWithArguments(r.probableExecutableDetails()) :
                     ExecutableDetails.getCommand(r.probableExecutableDetails());
+            String headerLine = null;
             if (showExtraInfo || first.get() || displayExeNameToUse != null && !displayExeNameToUse.equals(lastExe.get()))
             {
                 if (displayExeNameToUse != null && !displayExeNameToUse.isBlank())
                 {
-                    sb.append(displayExeNameToUse);
+                    headerLine = displayExeNameToUse + System.lineSeparator();
                 }
                 else
                 {
-                    sb.append("Unknown Source");
+                    headerLine = "Unknown Source" + System.lineSeparator();
                 }
-                sb.append(System.lineSeparator());
             }
             lastExe.set(displayExeNameToUse);
             first.set(false);
             if (!onlyShowCurrent || r.isCurrent())
             {
+                if (headerLine != null)
+                {
+                    sb.append(headerLine);
+                }
                 sb.append("  ");
                 sb.append(r.ipAddress());
                 if (!r.ipAddress().equals(r.hostName()))
