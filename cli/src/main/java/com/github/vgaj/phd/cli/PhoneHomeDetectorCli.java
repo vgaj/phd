@@ -45,24 +45,8 @@ public class PhoneHomeDetectorCli
             return;
         }
 
-        Properties properties = new Properties();
-        try (InputStream input = PhoneHomeDetectorCli.class.getClassLoader().getResourceAsStream("application.properties"))
-        {
-            if (input == null)
-            {
-                System.out.println("Failed to load application.properties");
-                return;
-            }
-            properties.load(input);
-        }
-        catch (IOException ex)
-        {
-            System.out.println("Failed to load application.properties Error: " + ex);
-            return;
-        }
-
         System.out.print("Phone Home Detector Results - version ");
-        System.out.print(properties.getProperty("phd.version"));
+        System.out.print(CliProperties.getVersion());
         System.out.println(" (use -? for options)");
 
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
@@ -74,7 +58,7 @@ public class PhoneHomeDetectorCli
         }
         catch (IOException e)
         {
-            System.out.println("Failed to connect to service. Is it running? Error: " + e);
+            System.err.println("Failed to connect to service. Is it running? Error: " + e);
             return;
         }
 
@@ -85,7 +69,7 @@ public class PhoneHomeDetectorCli
         }
         catch (IOException e)
         {
-            System.out.println("Failed to make request. Error: " + e);
+            System.err.println("Failed to make request. Error: " + e);
             return;
         }
 
@@ -96,12 +80,12 @@ public class PhoneHomeDetectorCli
         }
         catch (IOException e)
         {
-            System.out.println("Failed to read response. Error: " + e);
+            System.err.println("Failed to read response. Error: " + e);
             return;
         }
         if (response == null)
         {
-            System.out.println("Did not receive a response");
+            System.err.println("Did not receive a response");
         }
         else
         {

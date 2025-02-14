@@ -147,6 +147,7 @@ public class QueryLogic
                     DisplayResult displayResult = new DisplayResult(
                             address.getDesinationHostString(),
                             address.getDesinationAddressString(),
+                            address.getSourceAddressString(),
                             result.getProbableExecutable(),
                             totalBytes,
                             totalTimes,

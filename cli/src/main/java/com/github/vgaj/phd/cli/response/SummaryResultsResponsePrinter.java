@@ -31,6 +31,7 @@ import com.github.vgaj.phd.common.query.ResponseInterface;
 import com.github.vgaj.phd.common.query.SummaryResultsResponse;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.common.util.ExecutableDetails;
+import com.github.vgaj.phd.cli.HotSpotModeChecker;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -41,6 +42,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class SummaryResultsResponsePrinter implements ResponsePrinter
 {
+    private HotSpotModeChecker modeChecker = new HotSpotModeChecker();
     private RequestResponsePair queryDetails;
     private ResponseInterface response;
     public SummaryResultsResponsePrinter(RequestResponsePair queryDetails, ResponseInterface response)
@@ -48,6 +50,7 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
         this.queryDetails = queryDetails;
         this.response = response;
     }
+
     @Override
     public void print()
     {
@@ -58,11 +61,15 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
             @Override
             public int compare(DisplayResult e1, DisplayResult e2)
             {
-                // Group all for executable together
-                if (e1.probableExecutableDetails() != null
+                if (modeChecker.isHotSpot()) {
+                    // If running in hotspot mode then we group by source IP
+                    if (e1.sourceIpAddress() != null && !e1.sourceIpAddress().equals(e2.sourceIpAddress())) {
+                        return e1.sourceIpAddress().compareTo(e2.sourceIpAddress());
+                    }
+                } else if (e1.probableExecutableDetails() != null
                         && e2.probableExecutableDetails() != null
-                        && !e1.probableExecutableDetails().equals(e2.probableExecutableDetails()))
-                {
+                        && !e1.probableExecutableDetails().equals(e2.probableExecutableDetails())) {
+                    // Otherwise we group all for executable together
                     return e1.probableExecutableDetails().compareTo(e2.probableExecutableDetails());
                 }
 
@@ -82,16 +89,20 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
                     ExecutableDetails.getCommandWithArguments(r.probableExecutableDetails()) :
                     ExecutableDetails.getCommand(r.probableExecutableDetails());
             String headerLine = null;
-            if (showExtraInfo || first.get() || displayExeNameToUse != null && !displayExeNameToUse.equals(lastExe.get()))
+            if (modeChecker.isHotSpot())
+            {
+                headerLine = "Source " + r.sourceIpAddress() +  System.lineSeparator();
+            }
+            else if (showExtraInfo || first.get() || displayExeNameToUse != null && !displayExeNameToUse.equals(lastExe.get()))
             {
                 if (displayExeNameToUse != null && !displayExeNameToUse.isBlank())
                 {
                     headerLine = displayExeNameToUse + System.lineSeparator();
                 }
-                else
-                {
-                    headerLine = "Unknown Source" + System.lineSeparator();
-                }
+            }
+            else
+            {
+                headerLine = "Unknown Source" + System.lineSeparator();
             }
             lastExe.set(displayExeNameToUse);
             first.set(false);

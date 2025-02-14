@@ -22,10 +22,43 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.common.query;
+package com.github.vgaj.phd.cli;
 
-import java.io.Serializable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
-public record DisplayResult (String destinationHostName, String destinationIpAddress, String sourceIpAddress, String probableExecutableDetails, int totalBytes, int totalTimes, int score, boolean isCurrent, long lastSeenEpochMinute, DisplayResultLine[] resultLines) implements Serializable
+public class CliProperties
 {
+    private static Properties properties;
+
+    private static Properties getProperties()
+    {
+        properties = new Properties();
+        try (InputStream input = PhoneHomeDetectorCli.class.getClassLoader().getResourceAsStream("application.properties"))
+        {
+            if (input == null)
+            {
+                System.err.println("Failed to load application.properties");
+            }
+            else
+            {
+                properties.load(input);
+            }
+        } catch (IOException ex)
+        {
+            System.err.println("Failed to load application.properties Error: " + ex);
+        }
+        return properties;
+    }
+
+    public static String getVersion()
+    {
+        return getProperties().getProperty("phd.version");
+    }
+
+    public static String getHotspotNicPath()
+    {
+        return getProperties().getProperty("hotspotnic.file");
+    }
 }

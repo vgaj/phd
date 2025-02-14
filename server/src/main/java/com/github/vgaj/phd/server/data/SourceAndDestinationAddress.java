@@ -109,15 +109,6 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     @JsonIgnore
-    public String getSourceAndDestinationString() {
-        boolean isLocal = true;
-        for (byte b : srcOctets) {
-            if (b != 0) isLocal = false;
-        }
-        return  (isLocal ? "local" : getSourceAddressString()) + " -> " + getDesinationAddressString();
-    }
-
-    @JsonIgnore
     public String getDesinationHostString() {
         return (destinationHostname != null) ? destinationHostname : getDesinationAddressString();
     }

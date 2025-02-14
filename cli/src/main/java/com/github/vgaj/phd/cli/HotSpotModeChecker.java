@@ -22,10 +22,28 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.common.query;
+package com.github.vgaj.phd.cli;
 
-import java.io.Serializable;
+import java.io.File;
 
-public record DisplayResult (String destinationHostName, String destinationIpAddress, String sourceIpAddress, String probableExecutableDetails, int totalBytes, int totalTimes, int score, boolean isCurrent, long lastSeenEpochMinute, DisplayResultLine[] resultLines) implements Serializable
+public class HotSpotModeChecker
 {
+    private Boolean isHotSpotMode = null;
+    public boolean isHotSpot()
+    {
+        if (isHotSpotMode == null)
+        {
+            try
+            {
+                File file = new File(CliProperties.getHotspotNicPath());
+                isHotSpotMode = file.exists() && file.isFile() && file.length() > 0;
+            }
+            catch (Throwable t)
+            {
+                System.err.println("Failed to check of Hotspot NIC is specified. Error: " + t);
+                isHotSpotMode = true;
+            }
+        }
+        return isHotSpotMode;
+    }
 }
