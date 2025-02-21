@@ -25,10 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.ui;
 
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
-import com.github.vgaj.phd.common.query.HostHistoryQuery;
-import com.github.vgaj.phd.common.query.HostHistoryResponse;
-import com.github.vgaj.phd.common.query.SummaryResultsQuery;
-import com.github.vgaj.phd.common.query.SummaryResultsResponse;
+import com.github.vgaj.phd.common.query.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +40,9 @@ import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 public class PhdUiController
@@ -71,7 +71,9 @@ public class PhdUiController
             }
             else
             {
-                model.addAttribute("content", response.data());
+                List<DisplayResultModel> results = new ArrayList<>();
+                Arrays.stream(response.data().results()).forEach(result -> results.add(new DisplayResultModel(result)));
+                model.addAttribute("results", results);
                 return "index";
             }
         }

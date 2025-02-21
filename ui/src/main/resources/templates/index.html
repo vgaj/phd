@@ -1,24 +1,44 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:border="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Phone Home Detector</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 2px solid black;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
-<h3>Unusual Data Sent to Hosts</h3>
-<div th:each="result: ${content.results}">
-    <div>
-        <b th:text="${result.hostName}" />
-        <i th:text="'(' + ${result.totalBytes} + ' total bytes, ' + ${result.totalTimes} + ' times)'" />
-        <a th:href="@{/data(address=${result.ipAddress})}">see data</a>
-    </div>
-    <div th:text="'&nbsp;&nbsp;score: ' + ${result.score}" />
-    <div th:each="line: ${result.resultLines}" >
-        <div th:text="'&nbsp;&nbsp;' + ${line.message}" />
-        <div th:each="msg: ${line.subMessages}" th:text="'&nbsp;&nbsp;&nbsp;&nbsp;' + ${msg}" />
-    </div>
-</div>
-<h3>Last few messages</h3>
-<div th:each="message: ${content.messages}" th:text="${message}"/>
+<table style="border-collapse: collapse;">
+    <tr>
+        <th>Source</th>
+        <th>Destination</th>
+        <th>Last Seen</th>
+        <th>Current?</th>
+        <th>Score</th>
+        <th>Details</th>
+        <th />
+    </tr>
+    <tr th:each="result: ${results}">
+        <td th:text="${result.source}" />
+        <td th:text="${result.destination}" />
+        <td th:text="${result.lastSeen}" />
+        <td th:text="${result.isCurrent}" />
+        <td th:text="${result.score}" />
+        <td>
+            <div th:each="line: ${result.details}" >
+                <div th:text="${line}" />
+            </div>
+        </td>
+        <td>
+            <a th:href="@{/data(address=${result.destination})}" onclick="window.open(this.href, '_blank', 'width=800,height=600'); return false;">see data</a>
+        </td>
+    </tr>
+</table>
 </body>
 </html>
