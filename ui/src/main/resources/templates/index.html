@@ -14,7 +14,42 @@
     </style>
 </head>
 <body>
-<table style="border-collapse: collapse;">
+<form id="filterForm" action="" method="GET">
+    <b>Filter</b>
+    <table>
+        <tr>
+            <td>
+                Source:
+            </td>
+            <td>
+                <select th:name="source" onchange="document.getElementById('filterForm').submit();">
+                    <option th:each="option : ${sourceOptions}"
+                            th:value="${option}"
+                            th:text="${option}"
+                            th:selected="${option == selectedSource}">
+                    </option>
+                </select>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Destination:
+            </td>
+            <td>
+                <select th:name="destination" onchange="document.getElementById('filterForm').submit();">
+                    <option th:each="option : ${destinationOptions}"
+                            th:value="${option}"
+                            th:text="${option}"
+                            th:selected="${option == selectedDestination}">
+                    </option>
+                </select>
+            </td>
+        </tr>
+    </table>
+</form>
+<br/>
+<table>
     <tr>
         <th>Source</th>
         <th>Destination</th>

@@ -42,6 +42,7 @@ import java.net.UnknownHostException;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -58,8 +59,9 @@ public class PhdUiController
     }
 
     @GetMapping("/")
-    //public String index(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
-    public String index(Model model)
+    public String index(@RequestParam(name="source", required=false, defaultValue="") String source,
+                        @RequestParam(name="destination", required=false, defaultValue="") String destination,
+                        Model model)
     {
         try (DomainSocketComms sockComms = makeSocketComms())
         {
@@ -71,9 +73,40 @@ public class PhdUiController
             }
             else
             {
+                List<DisplayResultModel> fullResults = new ArrayList<>();
+                Arrays.stream(response.data().results()).forEach(result -> {
+                    fullResults.add(new DisplayResultModel(result));
+                });
+
+                List<String> sourceOptions = new ArrayList<>();
+                List<String> destinationOptions = new ArrayList<>();
+                sourceOptions.add("");
+                destinationOptions.add("");
+                fullResults.forEach(result -> {
+                    if (!sourceOptions.contains(result.source)) {
+                        sourceOptions.add(result.source);
+                    }
+                    if (!destinationOptions.contains(result.destination)) {
+                        destinationOptions.add(result.destination);
+                    }
+                });
+                Collections.sort(sourceOptions);
+                Collections.sort(destinationOptions);
+
                 List<DisplayResultModel> results = new ArrayList<>();
-                Arrays.stream(response.data().results()).forEach(result -> results.add(new DisplayResultModel(result)));
+                fullResults.forEach(result -> {
+                    if ((source.isBlank() || source.equals(result.source)) && (destination.isBlank() || destination.equals(result.destination))) {
+                        results.add(result);
+                    }
+                });
+
                 model.addAttribute("results", results);
+                model.addAttribute("sourceOptions", sourceOptions);
+                model.addAttribute("destinationOptions", destinationOptions);
+                model.addAttribute("selectedSource", source);
+                model.addAttribute("selectedDestination", destination);
+
+
                 return "index";
             }
         }
