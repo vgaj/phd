@@ -17,4 +17,32 @@
       <artifactId>lombok</artifactId>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <outputDirectory>target/classes</outputDirectory>
+          <resources>
+            <resource>
+              <directory>src/main/filtered</directory>
+              <filtering>true</filtering>
+            </resource>
+          </resources>
+        </configuration>
+        <executions>
+          <execution>
+            <id>filter-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

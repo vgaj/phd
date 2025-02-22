@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,14 +26,13 @@ package com.github.vgaj.phd.cli;
 
 import com.github.vgaj.phd.cli.response.ResponsePrinterFactory;
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
+import com.github.vgaj.phd.common.properties.ClientProperties;
 import com.github.vgaj.phd.common.query.*;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.nio.channels.SocketChannel;
-import java.util.Properties;
 
 public class PhoneHomeDetectorCli
 {
@@ -46,7 +45,7 @@ public class PhoneHomeDetectorCli
         }
 
         System.out.print("Phone Home Detector Results - version ");
-        System.out.print(CliProperties.getVersion());
+        System.out.print(ClientProperties.getVersion());
         System.out.println(" (use -? for options)");
 
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);

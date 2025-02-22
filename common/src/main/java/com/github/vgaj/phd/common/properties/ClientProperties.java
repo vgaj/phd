@@ -22,24 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.cli;
+package com.github.vgaj.phd.common.properties;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class CliProperties
+public class ClientProperties
 {
     private static Properties properties;
 
     private static Properties getProperties()
     {
         properties = new Properties();
-        try (InputStream input = PhoneHomeDetectorCli.class.getClassLoader().getResourceAsStream("application.properties"))
+        try (InputStream input = ClientProperties.class.getClassLoader().getResourceAsStream("common.properties"))
         {
             if (input == null)
             {
-                System.err.println("Failed to load application.properties");
+                System.err.println("Failed to load common.properties");
             }
             else
             {
@@ -47,7 +47,7 @@ public class CliProperties
             }
         } catch (IOException ex)
         {
-            System.err.println("Failed to load application.properties Error: " + ex);
+            System.err.println("Failed to load common.properties Error: " + ex);
         }
         return properties;
     }

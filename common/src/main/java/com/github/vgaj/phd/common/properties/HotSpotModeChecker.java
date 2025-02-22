@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.cli;
+package com.github.vgaj.phd.common.properties;
 
 import java.io.File;
 
@@ -35,7 +35,7 @@ public class HotSpotModeChecker
         {
             try
             {
-                File file = new File(CliProperties.getHotspotNicPath());
+                File file = new File(ClientProperties.getHotspotNicPath());
                 isHotSpotMode = file.exists() && file.isFile() && file.length() > 0;
             }
             catch (Throwable t)
