@@ -163,7 +163,7 @@ public class ExternalQueryTask  implements Runnable
                                     else if (request instanceof HostHistoryQuery)
                                     {
                                         messages.addMessage("Received a detailed request.");
-                                        HostHistoryResponse response = new HostHistoryResponse(query.getData(((HostHistoryQuery)request).address()).toArray(new String[0]));
+                                        HostHistoryResponse response = new HostHistoryResponse(query.getData(((HostHistoryQuery)request).source(),((HostHistoryQuery)request).destination()).toArray(new String[0]));
                                         sockComms.writeSocketMessage(response);
                                     }
                                     else if (request instanceof DebugLogQuery)

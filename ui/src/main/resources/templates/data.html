@@ -5,7 +5,7 @@
     <title>Phone Home Detector</title>
 </head>
 <body>
-<h3 th:text="'Data for host ' + ${address}" />
+<h3 th:text="'Data for from ' + ${source} + ' to ' + ${destination}" />
 <div th:each="line: ${content}" th:text="${line}" />
 </body>
 </html>

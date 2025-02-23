@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,8 @@ SOFTWARE.
 
 package com.github.vgaj.phd.common.query;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
 import java.net.InetAddress;
 
-public record HostHistoryQuery(InetAddress address) implements RequestInterface
+public record HostHistoryQuery(InetAddress source, InetAddress destination) implements RequestInterface
 {
 }

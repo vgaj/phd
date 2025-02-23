@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,7 @@ public class PhdUiController
     private DomainSocketComms makeSocketComms() throws IOException
     {
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
-        SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX);;
+        SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX);
         channel.connect(socketAddress);
         return new DomainSocketComms(channel);
     }
@@ -106,7 +106,6 @@ public class PhdUiController
                 model.addAttribute("selectedSource", source);
                 model.addAttribute("selectedDestination", destination);
 
-
                 return "index";
             }
         }
@@ -117,12 +116,14 @@ public class PhdUiController
     }
 
     @GetMapping("/data")
-    public String data(@RequestParam(name="address", required=false, defaultValue="") String address, Model model)
+    public String data(@RequestParam(name="source", required=true) String source, @RequestParam(name="destination", required=true) String destination, Model model)
     {
-        InetAddress inetAddress = null;
+        InetAddress sourceAddress = null;
+        InetAddress destinationAddress = null;
         try
         {
-            inetAddress = InetAddress.getByName(address);
+            sourceAddress = InetAddress.getByName(source);
+            destinationAddress = InetAddress.getByName(destination);
         }
         catch (UnknownHostException e)
         {
@@ -131,7 +132,7 @@ public class PhdUiController
 
         try (DomainSocketComms sockComms = makeSocketComms())
         {
-            sockComms.writeSocketMessage(new HostHistoryQuery(inetAddress));
+            sockComms.writeSocketMessage(new HostHistoryQuery(sourceAddress, destinationAddress));
             HostHistoryResponse response = sockComms.readSocketMessage(HostHistoryResponse.class);
             if (response == null)
             {
@@ -139,7 +140,8 @@ public class PhdUiController
             }
             else
             {
-                model.addAttribute("address", address);
+                model.addAttribute("source", source);
+                model.addAttribute("destination", destination);
                 model.addAttribute("content", response.results());
                 return "data";
             }

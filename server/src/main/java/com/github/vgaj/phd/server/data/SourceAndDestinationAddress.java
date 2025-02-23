@@ -71,6 +71,18 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
         dstOctets[3] = dstOctet4;
     }
 
+    public SourceAndDestinationAddress(InetAddress srcAddress, InetAddress dstAddress) {
+        assert srcAddress != null && srcAddress.getAddress().length == 4 && dstAddress != null && dstAddress.getAddress().length == 4;
+        srcOctets[0] = srcAddress.getAddress()[0];
+        srcOctets[1] = srcAddress.getAddress()[1];
+        srcOctets[2] = srcAddress.getAddress()[2];
+        srcOctets[3] = srcAddress.getAddress()[3];
+        dstOctets[0] = dstAddress.getAddress()[0];
+        dstOctets[1] = dstAddress.getAddress()[1];
+        dstOctets[2] = dstAddress.getAddress()[2];
+        dstOctets[3] = dstAddress.getAddress()[3];
+    }
+
     public SourceAndDestinationAddress(InetAddress dstAddress) {
         assert dstAddress != null && dstAddress.getAddress().length == 4;
         dstOctets[0] = dstAddress.getAddress()[0];

@@ -24,6 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.common.query;
 
+import com.github.vgaj.phd.common.properties.HotSpotModeChecker;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.common.util.ExecutableDetails;
 
@@ -31,17 +32,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The result for use by Thymeleaf rendering
+ */
 public class DisplayResultModel
 {
     public String source;
     public String destination;
+    public String sourceIp;
+    public String destinationIp;
     public String lastSeen;
     public String isCurrent;
     public String score;
     public List<String> details = new ArrayList<>();
     public DisplayResultModel(DisplayResult result) {
-        source = !result.probableExecutableDetails().isBlank() ? ExecutableDetails.getCommand(result.probableExecutableDetails()) : "Unknown Source";
+        if (new HotSpotModeChecker().isHotSpot()){
+            source = result.sourceIpAddress();
+        } else {
+            source = !result.probableExecutableDetails().isBlank() ? ExecutableDetails.getCommand(result.probableExecutableDetails()) : "Unknown Source";
+        }
         destination = result.destinationIpAddress();
+        if (!result.destinationIpAddress().equals(result.destinationHostName())) {
+            destination += " (" + result.destinationHostName() + ")";
+        }
+        sourceIp = result.sourceIpAddress();
+        destinationIp = result.destinationIpAddress();
         lastSeen = EpochMinuteUtil.toString(result.lastSeenEpochMinute());
         isCurrent = result.isCurrent() ? "Yes" : "No";
         score = String.valueOf(result.score());

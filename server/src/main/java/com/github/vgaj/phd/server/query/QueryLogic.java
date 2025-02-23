@@ -171,10 +171,10 @@ public class QueryLogic
     /**
      * Generate the data for a given address
      */
-    public ArrayList<String> getData(InetAddress address)
+    public ArrayList<String> getData(InetAddress source, InetAddress destination)
     {
         ArrayList<String> results = new ArrayList<>();
-        DataForAddress dataForAddress = trafficDataStore.getDataForAddress(new SourceAndDestinationAddress(address));
+        DataForAddress dataForAddress = trafficDataStore.getDataForAddress(new SourceAndDestinationAddress(source,destination));
         if (dataForAddress != null)
         {
             var data = dataForAddress.getByteCountPerMinute().entrySet();

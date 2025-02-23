@@ -71,7 +71,7 @@
             </div>
         </td>
         <td>
-            <a th:href="@{/data(address=${result.destination})}" onclick="window.open(this.href, '_blank', 'width=800,height=600'); return false;">see data</a>
+            <a th:href="@{/data(source=${result.sourceIp}, destination=${result.destinationIp})}" onclick="window.open(this.href, '_blank', 'width=800,height=600'); return false;">see data</a>
         </td>
     </tr>
 </table>
