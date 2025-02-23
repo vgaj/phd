@@ -42,7 +42,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class SummaryResultsResponsePrinter implements ResponsePrinter
 {
-    private HotSpotModeChecker modeChecker = new HotSpotModeChecker();
     private RequestResponsePair queryDetails;
     private ResponseInterface response;
     public SummaryResultsResponsePrinter(RequestResponsePair queryDetails, ResponseInterface response)
@@ -61,7 +60,7 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
             @Override
             public int compare(DisplayResult e1, DisplayResult e2)
             {
-                if (modeChecker.isHotSpot()) {
+                if (HotSpotModeChecker.isHotSpot()) {
                     // If running in hotspot mode then we group by source IP
                     if (e1.sourceIpAddress() != null && !e1.sourceIpAddress().equals(e2.sourceIpAddress())) {
                         return e1.sourceIpAddress().compareTo(e2.sourceIpAddress());
@@ -89,7 +88,7 @@ public class SummaryResultsResponsePrinter implements ResponsePrinter
                     ExecutableDetails.getCommandWithArguments(r.probableExecutableDetails()) :
                     ExecutableDetails.getCommand(r.probableExecutableDetails());
             String headerLine = null;
-            if (modeChecker.isHotSpot())
+            if (HotSpotModeChecker.isHotSpot())
             {
                 headerLine = "Source " + r.sourceIpAddress() +  System.lineSeparator();
             }

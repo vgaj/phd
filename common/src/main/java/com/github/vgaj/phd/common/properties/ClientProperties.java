@@ -30,24 +30,22 @@ import java.util.Properties;
 
 public class ClientProperties
 {
-    private static Properties properties;
+    private static Properties properties = null;
 
     private static Properties getProperties()
     {
-        properties = new Properties();
-        try (InputStream input = ClientProperties.class.getClassLoader().getResourceAsStream("common.properties"))
+        if (properties == null)
         {
-            if (input == null)
-            {
-                System.err.println("Failed to load common.properties");
+            properties = new Properties();
+            try (InputStream input = ClientProperties.class.getClassLoader().getResourceAsStream("common.properties")) {
+                if (input == null) {
+                    System.err.println("Failed to load common.properties");
+                } else {
+                    properties.load(input);
+                }
+            } catch (IOException ex) {
+                System.err.println("Failed to load common.properties Error: " + ex);
             }
-            else
-            {
-                properties.load(input);
-            }
-        } catch (IOException ex)
-        {
-            System.err.println("Failed to load common.properties Error: " + ex);
         }
         return properties;
     }

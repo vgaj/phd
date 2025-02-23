@@ -28,8 +28,8 @@ import java.io.File;
 
 public class HotSpotModeChecker
 {
-    private Boolean isHotSpotMode = null;
-    public boolean isHotSpot()
+    private static Boolean isHotSpotMode = null;
+    public static boolean isHotSpot()
     {
         if (isHotSpotMode == null)
         {

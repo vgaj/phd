@@ -46,7 +46,7 @@ public class DisplayResultModel
     public String score;
     public List<String> details = new ArrayList<>();
     public DisplayResultModel(DisplayResult result) {
-        if (new HotSpotModeChecker().isHotSpot()){
+        if (HotSpotModeChecker.isHotSpot()){
             source = result.sourceIpAddress();
         } else {
             source = !result.probableExecutableDetails().isBlank() ? ExecutableDetails.getCommand(result.probableExecutableDetails()) : "Unknown Source";
