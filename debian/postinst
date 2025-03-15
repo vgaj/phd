@@ -26,8 +26,17 @@ case "$1" in
         if [ -f "/usr/share/phone-home-detector/phone_home_detector_bpf_pid.o" ]; then
           rm /usr/share/phone-home-detector/phone_home_detector_bpf_pid.o
         fi
+
+        # Ensure user exists
+        UI_SERVICE_USER="phone-home-detector-ui"
+        if ! id "$UI_SERVICE_USER" &>/dev/null; then
+            useradd --system --no-create-home --shell /sbin/nologin "$UI_SERVICE_USER"
+        fi
+
         deb-systemd-invoke enable phone-home-detector
         deb-systemd-invoke start phone-home-detector
+        deb-systemd-invoke enable phone-home-detector-ui
+        deb-systemd-invoke start phone-home-detector-ui
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

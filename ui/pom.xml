@@ -60,6 +60,7 @@
 								</exclude>
 							</excludes>
 							<mainClass>com.github.vgaj.phd.ui.PhdUiApplication</mainClass>
+							<finalName>phd-ui</finalName>
 						</configuration>
 					</execution>
 				</executions>

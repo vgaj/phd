@@ -21,6 +21,8 @@ case "$1" in
     remove|upgrade|deconfigure)
         deb-systemd-invoke stop phone-home-detector
         deb-systemd-invoke disable phone-home-detector
+        deb-systemd-invoke stop phone-home-detector-ui
+        deb-systemd-invoke disable phone-home-detector-ui
     ;;
 
     failed-upgrade)
