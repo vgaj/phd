@@ -28,9 +28,10 @@ sudo systemctl stop phone-home-detector.service
 sudo mkdir -p /usr/share/phone-home-detector
 cwd=$(pwd)
 
-echo "*** Linking files..."
+echo "*** Linking / Copying files..."
+# This is accessed by a non-root user
+sudo cp -f $cwd/ui/target/phd-ui.jar /usr/share/phone-home-detector/phd-ui.jar
 sudo ln -f -s $cwd/server/target/phd-server.jar /usr/share/phone-home-detector/phd-server.jar
-sudo ln -f -s $cwd/ui/target/phd-ui.jar /usr/share/phone-home-detector/phd-ui.jar
 sudo ln -f -s $cwd/cli/target/phd-cli-jar-with-dependencies.jar /usr/share/phone-home-detector/phd-cli-jar-with-dependencies.jar
 sudo ln -f -s $cwd/server/src/main/bpf/phone_home_detector_bpf_count.c /usr/share/phone-home-detector/phone_home_detector_bpf_count.c
 sudo ln -f -s $cwd/server/src/main/bpf/phone_home_detector_bpf_pid.c /usr/share/phone-home-detector/phone_home_detector_bpf_pid.c
