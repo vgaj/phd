@@ -154,11 +154,6 @@
           <version>3.4.2</version>
         </plugin>
         <plugin>
-          <groupId>org.vafer</groupId>
-          <artifactId>jdeb</artifactId>
-          <version>1.11</version>
-        </plugin>
-        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
           <version>3.4.1</version>
@@ -178,6 +173,5 @@
     <module>common</module>
     <module>cli</module>
     <module>ui</module>
-    <module>deb</module>
   </modules>
 </project>
