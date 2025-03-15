@@ -6,5 +6,5 @@ server/src/main/bpf/phone_home_detector_bpf_pid.c /usr/share/phone-home-detector
 server/src/main/resources/phone-home-detector-service-start.sh /usr/share/phone-home-detector
 server/src/main/resources/phone-home-detector-service-stop.sh /usr/share/phone-home-detector
 server/src/main/resources/phone-home-detector.service /usr/lib/systemd/system
-server/src/main/resources/phone-home-detector-ui.service /usr/lib/systemd/system
+ui/src/main/resources/phone-home-detector-ui.service /usr/lib/systemd/system
 server/src/main/resources/phone-home-detector /usr/bin
