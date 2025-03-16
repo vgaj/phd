@@ -29,7 +29,7 @@ fi
 script_dir="$(dirname "$(realpath "$0")")"
 hotspotnic_file="$script_dir/hotspotnic"
 
-echo "Phone Home Detector can run in one of two modes: WORKSTATION or HOTSPOT"
+echo "Phone Home Detector can be run in one of two modes: WORKSTATION or HOTSPOT"
 if [[ -f "$hotspotnic_file" ]]; then
     hotspotnic_content="$(cat "$hotspotnic_file")"
 fi
@@ -45,7 +45,6 @@ fi
 echo -n "Do you want to change the mode to $new_mode (NB: any existing results will be lost)? (Y/N): "
 read -r response
 if [[ ! "$response" =~ ^[Yy]$ ]]; then
-    echo "Exiting script."
     exit 1
 fi
 
@@ -54,23 +53,33 @@ if [[ -z "$hotspotnic_content" ]]; then
     # Get a list of WIFI NICs
     mapfile -t wifi_devices < <(nmcli -t -f TYPE,DEVICE device | grep ^wifi | cut -d ':' -f 2)
 
-    echo
-    echo "Which WIFI NIC is being used for the HOTSPOT: "
-    for i in "${!wifi_devices[@]}"; do
-        echo "$i: ${wifi_devices[$i]}"
-    done
-
-    # Prompt the user to select an index
-    echo -n "Select an index: "
-    read -r selected_index
-
-    # Store the selected device
-    selected_device="${wifi_devices[$selected_index]}"
-    if [[ -z "$selected_device" ]]; then
-        echo "Invalid selection. Exiting."
+    if [[ ${#wifi_devices[@]} -eq 0 ]]; then
+        echo "There are no WIFI NICs that can be used as a hotspot"
         exit 1
+
+    elif [[ ${#wifi_devices[@]} -eq 1 ]]; then
+        selected_device="${wifi_devices[0]}"
+
+    else
+      echo
+      echo "Which WIFI NIC is being used for the HOTSPOT: "
+      for i in "${!wifi_devices[@]}"; do
+          echo "$i: ${wifi_devices[$i]}"
+      done
+
+      # Prompt the user to select an index
+      echo -n "Select an index: "
+      read -r selected_index
+
+      # Store the selected device
+      selected_device="${wifi_devices[$selected_index]}"
+      if [[ -z "$selected_device" ]]; then
+          echo "Invalid selection. Exiting."
+          exit 1
+      fi
+
     fi
-    echo "You selected: $selected_device"
+    echo "Using NIC: $selected_device"
 fi
 
 systemctl stop phone-home-detector
@@ -89,3 +98,5 @@ if [[ -n "$selected_device" ]]; then
 fi
 
 systemctl start phone-home-detector
+
+echo "Change completed"

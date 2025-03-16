@@ -21,6 +21,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+if [ "$UID" -ne 0 ]; then
+    echo "This needs to be run as root"
+    exit 1
+fi
+
 echo "*** Stopping..."
 sudo systemctl stop phone-home-detector-ui.service
 sudo systemctl stop phone-home-detector.service
@@ -37,6 +42,8 @@ sudo ln -f -s $cwd/server/src/main/bpf/phone_home_detector_bpf_count.c /usr/shar
 sudo ln -f -s $cwd/server/src/main/bpf/phone_home_detector_bpf_pid.c /usr/share/phone-home-detector/phone_home_detector_bpf_pid.c
 sudo ln -f -s $cwd/server/src/main/resources/phone-home-detector-service-start.sh /usr/share/phone-home-detector/phone-home-detector-service-start.sh
 sudo ln -f -s $cwd/server/src/main/resources/phone-home-detector-service-stop.sh /usr/share/phone-home-detector/phone-home-detector-service-stop.sh
+sudo cp -f $cwd/server/src/main/resources/phone-home-detector-config.sh /usr/share/phone-home-detector/phone-home-detector-config.sh
+
 sudo ln -f -s $cwd/server/src/main/resources/phone-home-detector /usr/bin/phone-home-detector
 sudo cp -f $cwd/server/src/main/resources/phone-home-detector.service /usr/lib/systemd/system/phone-home-detector.service
 sudo cp -f $cwd/ui/src/main/resources/phone-home-detector-ui.service /usr/lib/systemd/system/phone-home-detector-ui.service

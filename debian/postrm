@@ -28,6 +28,9 @@ case "$1" in
         if [ -f "/usr/share/phone-home-detector/results.xml" ]; then
             rm "/usr/share/phone-home-detector/results.xml"
         fi
+        if [ -f "/usr/share/phone-home-detector/hotspotnic" ]; then
+            rm "/usr/share/phone-home-detector/hotspotnic"
+        fi
         if [ -f "/usr/share/phone-home-detector/phone_home_detector_bpf_count.o" ]; then
           rm /usr/share/phone-home-detector/phone_home_detector_bpf_count.o
         fi

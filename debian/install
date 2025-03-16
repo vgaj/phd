@@ -3,6 +3,7 @@ ui/target/phd-ui.jar /usr/share/phone-home-detector
 cli/target/phd-cli-jar-with-dependencies.jar /usr/share/phone-home-detector
 server/src/main/bpf/phone_home_detector_bpf_count.c /usr/share/phone-home-detector
 server/src/main/bpf/phone_home_detector_bpf_pid.c /usr/share/phone-home-detector
+server/src/main/resources/phone-home-detector-config.sh /usr/share/phone-home-detector
 server/src/main/resources/phone-home-detector-service-start.sh /usr/share/phone-home-detector
 server/src/main/resources/phone-home-detector-service-stop.sh /usr/share/phone-home-detector
 server/src/main/resources/phone-home-detector.service /usr/lib/systemd/system
