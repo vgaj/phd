@@ -109,7 +109,7 @@ public class ResultXmlSerialisationTest
     {
         // Arrange
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8, (byte) 8, (byte) 8, (byte) 4,(byte)  4);
-        address.lookupDestinataionHost();
+        address.lookupDestinationHost();
 
         // Act
         String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(address);
@@ -137,7 +137,7 @@ public class ResultXmlSerialisationTest
         String hostname =  (String) hostnameField.get(fromXml);
         assert hostname.equals("dns.google");
 
-        Field lookupAttemptedField = SourceAndDestinationAddress.class.getDeclaredField("lookupAttempted");
+        Field lookupAttemptedField = SourceAndDestinationAddress.class.getDeclaredField("destinationLookupAttempted");
         lookupAttemptedField.setAccessible(true);
         assert (boolean)lookupAttemptedField.get(fromXml);
 
@@ -149,7 +149,7 @@ public class ResultXmlSerialisationTest
     {
         // Arrange
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
-        address.lookupDestinataionHost();
+        address.lookupDestinationHost();
         int interval1 = 1;
         int intervalCount1 = 2;
         int interval2 = 3;

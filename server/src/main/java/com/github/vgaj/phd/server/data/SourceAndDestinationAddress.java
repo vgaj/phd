@@ -33,6 +33,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @NoArgsConstructor
 public class SourceAndDestinationAddress implements Comparable<SourceAndDestinationAddress> {
@@ -49,10 +50,13 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
 
     private String destinationHostname = null;
 
-    private boolean lookupAttempted = false;
+    private boolean destinationLookupAttempted = false;
 
     @Getter
     private String reverseDesinationHostname = null;
+
+    @Getter
+    private String sourceMacAddressAndDetails = null;
 
     public SourceAndDestinationAddress(byte srcOctet1, byte srcOctet2, byte srcOctet3, byte srcOctet4, byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4)  {
         srcOctets[0] = srcOctet1;
@@ -100,6 +104,11 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     @JsonIgnore
+    public boolean isSourceAddressClear() {
+        return IntStream.range(0, srcOctets.length).allMatch(i -> srcOctets[i] == 0);
+    }
+
+    @JsonIgnore
     public String getDesinationAddressString() {
         return getAddressString(dstOctets);
     }
@@ -127,11 +136,10 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
 
     /**
      * If the IP address has not previously been looked up then it is looked up.
-     * @return The hostname
      */
-    public String lookupDestinataionHost() throws UnknownHostException {
-        if (!lookupAttempted) {
-            lookupAttempted = true;
+    public void lookupDestinationHost() throws UnknownHostException {
+        if (!destinationLookupAttempted) {
+            destinationLookupAttempted = true;
             InetAddress addr = InetAddress.getByAddress(dstOctets);
             destinationHostname = addr.getHostName();
             if (destinationHostname != null) {
@@ -140,7 +148,18 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
                 reverseDesinationHostname = String.join(".", parts);
             }
         }
-        return destinationHostname;
+    }
+
+    /**
+     * Use nmap to get the MAC address and type for the source address
+     */
+    public void lookupSourceMacAddress() {
+        /*
+        if (!isSourceAddressClear())  {
+            sourceMacAddressAndDetails = SourceIpToMacAddressLookup.lookup(getSourceAddressString());
+        }
+        */
+        sourceMacAddressAndDetails = SourceIpToMacAddressLookup.lookup("192.168.1.1");
     }
 
     @Override

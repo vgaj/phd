@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -52,11 +52,12 @@ public class TrafficDataStore
     {
         if (!data.containsKey(host))
         {
-            String hostname = null;
             try
             {
-                hostname = host.lookupDestinataionHost();
-                messages.addDebug("New host: " + hostname);
+                host.lookupDestinationHost();
+                host.lookupSourceMacAddress();
+                messages.addDebug("Adding destination: " + host.getDesinationHostString());
+
                 data.put(host, new DataForAddress());
             }
             catch (UnknownHostException e)

@@ -48,12 +48,15 @@ public class DisplayResultModel
     public DisplayResultModel(DisplayResult result) {
         if (HotSpotModeChecker.isHotSpot()){
             source = result.sourceIpAddress();
+            if (result.sourceMacAddressAndDetails() != null) {
+                source += " - " + result.sourceMacAddressAndDetails();
+            }
         } else {
             source = !result.probableExecutableDetails().isBlank() ? ExecutableDetails.getCommand(result.probableExecutableDetails()) : "Unknown Source";
         }
         destination = result.destinationIpAddress();
         if (!result.destinationIpAddress().equals(result.destinationHostName())) {
-            destination += " (" + result.destinationHostName() + ")";
+            destination += " - " + result.destinationHostName();
         }
         sourceIp = result.sourceIpAddress();
         destinationIp = result.destinationIpAddress();

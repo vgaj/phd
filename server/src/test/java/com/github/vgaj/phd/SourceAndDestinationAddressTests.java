@@ -52,7 +52,7 @@ public class SourceAndDestinationAddressTests
     public void nonResolvableIpAddressStringTest() throws UnknownHostException
     {
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 192, (byte) 168, (byte) 111, (byte) 222);
-        address.lookupDestinataionHost();
+        address.lookupDestinationHost();
         assert address.getDesinationHostString().equals("192.168.111.222");
     }
 
@@ -67,7 +67,7 @@ public class SourceAndDestinationAddressTests
     public void resolvableIpAddressStringAfterLookupTest() throws UnknownHostException
     {
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
-        address.lookupDestinataionHost();
+        address.lookupDestinationHost();
         assert !address.getDesinationHostString().equals("8.8.8.8");
     }
 }

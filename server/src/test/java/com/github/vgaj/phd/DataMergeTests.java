@@ -44,8 +44,8 @@ public class DataMergeTests
         SourceAndDestinationAddress address2 = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
         String executable1 = "firefox";
         String executable2 = "java";
-        address1.lookupDestinataionHost();
-        address2.lookupDestinataionHost();
+        address1.lookupDestinationHost();
+        address2.lookupDestinationHost();
         AnalysisResultImpl result1 = ResultXmlSerialisationTest.makeAnalysisResult(1, 11, 2, 22, 5, 55, 6, 666, 888, executable1);
         AnalysisResultImpl result2 = ResultXmlSerialisationTest.makeAnalysisResult(1, 10, 3, 10, 5, 11, 7, 777, 999, executable2);
 
