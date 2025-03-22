@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # MIT License
 #
 # Copyright (c) 2022-2024 Viru Gajanayake
@@ -21,4 +21,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-java -jar /usr/share/phone-home-detector/phd-cli-jar-with-dependencies.jar "$@"
+if [[ "$1" == "-s" || "$1" == "--setup" ]]; then
+  /usr/share/phone-home-detector/phone-home-detector-config.sh
+else
+  java -jar /usr/share/phone-home-detector/phd-cli-jar-with-dependencies.jar "$@"
+fi

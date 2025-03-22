@@ -38,8 +38,8 @@ public class CliArgumentParser
         Options options = new Options();
         Option optionCurrent = new Option("c", "current", false, "Restrict to current results (exclude past patterns that are no longer seen)");
         Option optionVerbose = new Option("v", "verbose", false, "Show verbose information for results");
-        Option optionAddress = new Option("a", "address", true, "Show history for the specified IP address pairs, e.g. 192.168.1.2:8.8.8.8");
-        Option optionDebug = new Option("d", "debug", false, "View tail of debug log");
+        Option optionAddress = new Option("h", "history", true, "Show history for the specified IP address pairs, e.g. 192.168.1.2:8.8.8.8");
+        Option optionDebug = new Option("l", "log", false, "View tail of debug log");
         Option optionHelp = new Option("?", "help", false, "View this help");
 
         options.addOption(optionAddress);
@@ -69,8 +69,10 @@ public class CliArgumentParser
             System.out.println(" -c,--current    " + optionCurrent.getDescription());
             System.out.println(" -v,--verbose    " + optionVerbose.getDescription());
             // -a and -d are not advertised
-            //System.out.println(" -a <Source IP address>:<Destination IP address> " + optionAddress.getDescription());
-            //System.out.println(" -d              " + optionDebug.getDescription());
+            //System.out.println(" -h <Source IP address>:<Destination IP address> " + optionAddress.getDescription());
+            //System.out.println(" -l              " + optionDebug.getDescription());
+            // -s is handled by the bash
+            System.out.println(" -s,--setup      Setup hotspot or workstation mode");
             System.out.println(" -?              " + optionHelp.getDescription());
             return null;
         }

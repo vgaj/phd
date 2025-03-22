@@ -83,14 +83,22 @@ if [[ -z "$hotspotnic_content" ]]; then
 fi
 
 systemctl stop phone-home-detector
+while systemctl is-active --quiet phone-home-detector; do
+    echo "Waiting for phone-home-detector to stop..."
+    sleep 5
+done
 
 if [[ -f "$hotspotnic_file" ]]; then
     rm -f "$hotspotnic_file"
+else
+    echo "Could not find $hotspotnic_file"
 fi
 
 results_file="$script_dir/results.xml"
 if [[ -f "$results_file" ]]; then
     rm "$results_file"
+else
+    echo "Could not find $results_file"
 fi
 
 if [[ -n "$selected_device" ]]; then

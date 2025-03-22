@@ -40,11 +40,11 @@ sudo ln -f -s $cwd/server/target/phd-server.jar /usr/share/phone-home-detector/p
 sudo ln -f -s $cwd/cli/target/phd-cli-jar-with-dependencies.jar /usr/share/phone-home-detector/phd-cli-jar-with-dependencies.jar
 sudo ln -f -s $cwd/server/src/main/bpf/phone_home_detector_bpf_count.c /usr/share/phone-home-detector/phone_home_detector_bpf_count.c
 sudo ln -f -s $cwd/server/src/main/bpf/phone_home_detector_bpf_pid.c /usr/share/phone-home-detector/phone_home_detector_bpf_pid.c
-sudo ln -f -s $cwd/server/src/main/resources/phone-home-detector-service-start.sh /usr/share/phone-home-detector/phone-home-detector-service-start.sh
-sudo ln -f -s $cwd/server/src/main/resources/phone-home-detector-service-stop.sh /usr/share/phone-home-detector/phone-home-detector-service-stop.sh
-sudo cp -f $cwd/server/src/main/resources/phone-home-detector-config.sh /usr/share/phone-home-detector/phone-home-detector-config.sh
 
-sudo ln -f -s $cwd/server/src/main/resources/phone-home-detector /usr/bin/phone-home-detector
+sudo cp -f $cwd/server/src/main/resources/phone-home-detector-service-start.sh /usr/share/phone-home-detector/phone-home-detector-service-start.sh
+sudo cp -f $cwd/server/src/main/resources/phone-home-detector-service-stop.sh /usr/share/phone-home-detector/phone-home-detector-service-stop.sh
+sudo cp -f $cwd/server/src/main/resources/phone-home-detector-config.sh /usr/share/phone-home-detector/phone-home-detector-config.sh
+sudo cp -f $cwd/server/src/main/resources/phone-home-detector /usr/bin/phone-home-detector
 sudo cp -f $cwd/server/src/main/resources/phone-home-detector.service /usr/lib/systemd/system/phone-home-detector.service
 sudo cp -f $cwd/ui/src/main/resources/phone-home-detector-ui.service /usr/lib/systemd/system/phone-home-detector-ui.service
 

@@ -154,12 +154,9 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
      * Use nmap to get the MAC address and type for the source address
      */
     public void lookupSourceMacAddress() {
-        /*
         if (!isSourceAddressClear())  {
             sourceMacAddressAndDetails = SourceIpToMacAddressLookup.lookup(getSourceAddressString());
         }
-        */
-        sourceMacAddressAndDetails = SourceIpToMacAddressLookup.lookup("192.168.1.1");
     }
 
     @Override
