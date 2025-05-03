@@ -28,11 +28,8 @@ case "$1" in
         fi
 
         # Ensure user exists
-        UI_SERVICE_USER="phone-home-detector-ui"
-        id "$UI_SERVICE_USER" >/dev/null 2>&1
-        if [ $? -ne 0 ]; then
-            useradd --system --no-create-home --shell /sbin/nologin "$UI_SERVICE_USER"
-        fi
+        # Note an id check was failing so just running the command with --quiet
+        adduser --quiet --system --group --no-create-home --shell /sbin/nologin phone-home-detector-ui
 
         deb-systemd-invoke enable phone-home-detector
         deb-systemd-invoke start phone-home-detector
