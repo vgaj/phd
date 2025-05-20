@@ -74,6 +74,7 @@ public class CliArgumentParser
             // -s is handled by the bash
             System.out.println(" -s,--setup      Setup hotspot or workstation mode");
             System.out.println(" -?              " + optionHelp.getDescription());
+            System.out.println("(if installed a web interface is also available at http://127.0.0.1:9080)");
             return null;
         }
 

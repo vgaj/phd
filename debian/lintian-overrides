@@ -1,5 +1,7 @@
 # TODO Create a man page
 no-manual-page usr/bin/phone-home-detector
 
+maintainer-script-lacks-home-in-adduser
+
 # lintian doesn't know about Java 17
 unknown-java-class-version
