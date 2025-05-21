@@ -27,6 +27,7 @@ package com.github.vgaj.phd.cli;
 import com.github.vgaj.phd.cli.response.ResponsePrinterFactory;
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
 import com.github.vgaj.phd.common.properties.ClientProperties;
+import com.github.vgaj.phd.common.properties.HotSpotModeChecker;
 import com.github.vgaj.phd.common.query.*;
 
 import java.io.IOException;
@@ -44,9 +45,10 @@ public class PhoneHomeDetectorCli
             return;
         }
 
-        System.out.print("Phone Home Detector Results - version ");
+        System.out.print("Phone Home Detector - ");
         System.out.print(ClientProperties.getVersion());
-        System.out.println(" (use -? for options)");
+        System.out.print(HotSpotModeChecker.isHotSpot() ? " - hotspot" : " - workstation");
+        System.out.println(" mode (use -? for options)");
 
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
         SocketChannel channel = null;
