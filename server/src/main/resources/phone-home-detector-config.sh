@@ -90,15 +90,11 @@ done
 
 if [[ -f "$hotspotnic_file" ]]; then
     rm -f "$hotspotnic_file"
-else
-    echo "Could not find $hotspotnic_file"
 fi
 
 results_file="$script_dir/results.xml"
 if [[ -f "$results_file" ]]; then
-    rm "$results_file"
-else
-    echo "Could not find $results_file"
+    rm -f "$results_file"
 fi
 
 if [[ -n "$selected_device" ]]; then
