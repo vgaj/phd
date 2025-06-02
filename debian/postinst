@@ -31,6 +31,12 @@ case "$1" in
         # Note an id check was failing so just running the command with --quiet
         adduser --quiet --system --group --no-create-home --shell /sbin/nologin phone-home-detector-ui
 
+        # Ensure the log directory exists for the UI that can't create it
+        if [ ! -d "/var/log/phone-phone-detector-ui" ]; then
+          mkdir -p "/var/log/phone-phone-detector-ui"
+          chown phone-home-detector-ui /var/log/phone-phone-detector-ui
+        fi
+
         deb-systemd-invoke enable phone-home-detector
         deb-systemd-invoke start phone-home-detector
         deb-systemd-invoke enable phone-home-detector-ui
