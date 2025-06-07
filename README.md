@@ -38,16 +38,16 @@ Standard OS mechanisms are used to set up a hotspot:
 * Enter Network Name and Password
 * Click Turn On
 
-Then any machines or devices to be monitored need to be connected the Hotspot network.
-One method that can be used is to turn off the existing Wi-Fi network and set up the Hotspot with the SSID and password of the existing network allowing devices to connect to it without re-configuration.
+Then any machines or devices to be monitored need to be connected the hotspot network.
+One method that can be used is to turn off the existing Wi-Fi network and set up the hotspot with the SSID and password of the existing network allowing devices to connect to it without re-configuration.
 
 At this point Phone Home Detector needs to be reconfigured run in hotspot mode.
 This is done by running the following command and following the instructions.
-Note that you will need to know the name of the Wi-Fi device that is being used for the Hotspot if there is more than one.
+Note that you will need to know the name of the Wi-Fi device that is being used for the hotspot if there is more than one.
 ```
 sudo phone-home-detector -s
 ```
-The web interface is useful for filtering results.
+The command line application or web interface can be used to view the results as before.
 
 ## Method
 The application works by looking at the data sent to each IP address in one minute blocks.
@@ -55,7 +55,7 @@ It then looks for patterns in the interval or size of data sent.
 
 The data is captured by a BPF program in the kernel and analysed by a userspace Java program.
 In workstation mode it captures outgoing traffic and in hotspot mode it captures incoming traffic on the specified NIC.
-In workstation mode it runs an additional BPF program to attempt to identify the process responsible. 
+In workstation mode it also runs an additional BPF program to attempt to identify the process responsible for the data. 
 
 
 ## Other Functionality
@@ -64,11 +64,6 @@ In workstation mode it runs an additional BPF program to attempt to identify the
 * The interface between these and the service is via a Unix Domain Socket.
 * When the service stops it saves the results in XML format which are reloaded when it starts.
 
-## Packing and Deployment
-* This maven project builds fat jars.
-* A systemd service and scripts to start the service have been created.
-* These are packaged in a deb.
- 
 ## Support
 The following distributions and kernel versions have been tested:
 * Ubuntu 24.04
