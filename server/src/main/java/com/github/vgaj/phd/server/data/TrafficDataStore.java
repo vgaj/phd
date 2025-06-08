@@ -55,7 +55,7 @@ public class TrafficDataStore
             try
             {
                 host.lookupDestinationHost();
-                host.lookupSourceMacAddress();
+                host.lookupSourceAddressExtraDetails();
                 messages.addDebug("Adding destination: " + host.getDesinationHostString());
 
                 data.put(host, new DataForAddress());

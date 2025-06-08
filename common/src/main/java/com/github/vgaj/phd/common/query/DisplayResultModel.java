@@ -48,8 +48,8 @@ public class DisplayResultModel
     public DisplayResultModel(DisplayResult result) {
         if (HotSpotModeChecker.isHotSpot()){
             source = result.sourceIpAddress();
-            if (result.sourceMacAddressAndDetails() != null) {
-                source += " - " + result.sourceMacAddressAndDetails();
+            if (result.sourceAddressExtraDetails() != null) {
+                source += " - " + result.sourceAddressExtraDetails();
             }
         } else {
             source = !result.probableExecutableDetails().isBlank() ? ExecutableDetails.getCommand(result.probableExecutableDetails()) : "Unknown Source";

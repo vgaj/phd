@@ -148,7 +148,7 @@ public class QueryLogic
                             address.getDesinationHostString(),
                             address.getDesinationAddressString(),
                             address.getSourceAddressString(),
-                            address.getSourceMacAddressAndDetails(),
+                            address.getSourceAddressExtraDetails(),
                             result.getProbableExecutable(),
                             totalBytes,
                             totalTimes,

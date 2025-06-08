@@ -56,7 +56,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     private String reverseDesinationHostname = null;
 
     @Getter
-    private String sourceMacAddressAndDetails = null;
+    private String sourceAddressExtraDetails = null;
 
     public SourceAndDestinationAddress(byte srcOctet1, byte srcOctet2, byte srcOctet3, byte srcOctet4, byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4)  {
         srcOctets[0] = srcOctet1;
@@ -153,9 +153,11 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     /**
      * Use nmap to get the MAC address and type for the source address
      */
-    public void lookupSourceMacAddress() {
+    public void lookupSourceAddressExtraDetails() {
         if (!isSourceAddressClear())  {
-            sourceMacAddressAndDetails = SourceIpToMacAddressLookup.lookup(getSourceAddressString());
+            String detailsFromNmap = SourceIpToMacAddressLookup.lookup(getSourceAddressString());
+            String detailsFromDns = SourceIpToDnsNameLookup.lookup(getSourceAddressString());
+            sourceAddressExtraDetails = detailsFromDns != null && !detailsFromDns.isBlank() ? detailsFromDns : detailsFromNmap;
         }
     }
 
