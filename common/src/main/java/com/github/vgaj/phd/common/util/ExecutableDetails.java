@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,47 +31,40 @@ import java.nio.file.Paths;
 /**
  * Logic to store the details of a command and arguments in a string
  */
-public class ExecutableDetails
-{
-    public static String COMMAND_SEPARATOR =  " #";
-    public static String lookup(int pid)
-    {
+public class ExecutableDetails {
+    public static String COMMAND_SEPARATOR = " #";
+
+    public static String lookup(int pid) {
         String command;
-        try
-        {
+        try {
             String comm = new String(Files.readAllBytes(Paths.get("/proc/", String.valueOf(pid), "/comm"))).replaceAll("\\r|\\n", "").replaceAll("\\p{C}", " ");
             String cmdLine = new String(Files.readAllBytes(Paths.get("/proc/", String.valueOf(pid), "/cmdline"))).replaceAll("\\r|\\n", "").replaceAll("\\p{C}", " ");
             command = comm + COMMAND_SEPARATOR + cmdLine;
-        } catch (IOException e)
-        {
+        } catch (IOException e) {
             // If the process no longer exists then use the PID
             command = "pid=" + pid;
         }
         return command;
     }
-    public static String getCommand(String commAndCmdline)
-    {
-        if  (commAndCmdline != null && commAndCmdline.contains(COMMAND_SEPARATOR))
-        {
+
+    public static String getCommand(String commAndCmdline) {
+        if (commAndCmdline != null && commAndCmdline.contains(COMMAND_SEPARATOR)) {
             return commAndCmdline.substring(0, commAndCmdline.indexOf(COMMAND_SEPARATOR));
         }
         return commAndCmdline;
     }
-    public static String getCmdline(String commAndCmdline)
-    {
-        if (commAndCmdline != null && commAndCmdline.contains(COMMAND_SEPARATOR))
-        {
+
+    public static String getCmdline(String commAndCmdline) {
+        if (commAndCmdline != null && commAndCmdline.contains(COMMAND_SEPARATOR)) {
             int startIndex = commAndCmdline.indexOf(COMMAND_SEPARATOR) + COMMAND_SEPARATOR.length();
-            if (startIndex < commAndCmdline.length())
-            {
+            if (startIndex < commAndCmdline.length()) {
                 return commAndCmdline.substring(startIndex);
             }
         }
         return "";
     }
-    public static String getCommandWithArguments(String commAndCmdline)
-    {
+
+    public static String getCommandWithArguments(String commAndCmdline) {
         return getCommand(commAndCmdline) + " " + getCmdline(commAndCmdline);
     }
-
 }
