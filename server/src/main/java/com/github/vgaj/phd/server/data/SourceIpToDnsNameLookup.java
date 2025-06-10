@@ -24,6 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.data;
 
+import com.github.vgaj.phd.common.properties.ClientProperties;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 
@@ -40,7 +41,7 @@ import java.util.concurrent.ConcurrentMap;
 public class SourceIpToDnsNameLookup {
     private static final String LEASE_FILE_PREFIX = "/var/lib/NetworkManager/dnsmasq-";
     private static final String LEASE_FILE_POSTFIX = ".leases";
-    private static final Path HOTSPOT_NIC_FILE = Path.of("/usr/share/phone-home-detector/hotspotnic");
+    private static final Path HOTSPOT_NIC_FILE = Path.of(ClientProperties.getHotspotNicPath());
 
     private static final MessageInterface messages = Messages.getLogger(SourceIpToMacAddressLookup.class);
     private static final ConcurrentMap<String, String> data = new ConcurrentHashMap<>();
