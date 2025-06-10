@@ -35,8 +35,7 @@ import java.util.List;
 /**
  * The result for use by Thymeleaf rendering
  */
-public class DisplayResultModel
-{
+public class DisplayResultModel {
     public String source;
     public String destination;
     public String sourceIp;
@@ -45,8 +44,9 @@ public class DisplayResultModel
     public String isCurrent;
     public String score;
     public List<String> details = new ArrayList<>();
+
     public DisplayResultModel(DisplayResult result) {
-        if (HotSpotModeChecker.isHotSpot()){
+        if (HotSpotModeChecker.isHotSpot()) {
             source = result.sourceIpAddress();
             if (result.sourceAddressExtraDetails() != null) {
                 source += " - " + result.sourceAddressExtraDetails();
@@ -66,7 +66,7 @@ public class DisplayResultModel
         Arrays.stream(result.resultLines()).forEach(line -> {
             details.add(line.message());
             Arrays.stream(line.subMessages()).forEach(subMessage -> {
-                details.add("- "+subMessage);
+                details.add("- " + subMessage);
             });
         });
     }

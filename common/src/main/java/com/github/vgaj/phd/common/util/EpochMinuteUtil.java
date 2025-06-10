@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,15 +28,15 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
-public class EpochMinuteUtil
-{
-    public static long now()
-    {
+public class EpochMinuteUtil {
+
+    public static long now() {
         return Instant.now().getEpochSecond() / 60;
     }
+
     private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm").withZone(ZoneId.systemDefault());
-    public static String toString(long epochMinute)
-    {
-        return formatter.format(Instant.ofEpochSecond(epochMinute*60));
+
+    public static String toString(long epochMinute) {
+        return formatter.format(Instant.ofEpochSecond(epochMinute * 60));
     }
 }

@@ -26,6 +26,5 @@ package com.github.vgaj.phd.common.query;
 
 import java.net.InetAddress;
 
-public record HostHistoryQuery(InetAddress source, InetAddress destination) implements RequestInterface
-{
+public record HostHistoryQuery(InetAddress source, InetAddress destination) implements RequestInterface {
 }

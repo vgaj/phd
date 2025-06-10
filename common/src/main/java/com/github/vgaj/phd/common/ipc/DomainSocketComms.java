@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -35,17 +35,16 @@ import java.nio.channels.SocketChannel;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-public class DomainSocketComms implements AutoCloseable
-{
+public class DomainSocketComms implements AutoCloseable {
     public static final Path SOCKET_PATH = Path.of("/tmp", "phone_home_detector_ipc");
 
     private final SocketChannel channel;
-    public DomainSocketComms(SocketChannel channel)
-    {
+
+    public DomainSocketComms(SocketChannel channel) {
         this.channel = channel;
     }
-    public void writeSocketMessage(IpcMessage message) throws IOException
-    {
+
+    public void writeSocketMessage(IpcMessage message) throws IOException {
         // Serialize to Buffer
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(os);
@@ -62,21 +61,18 @@ public class DomainSocketComms implements AutoCloseable
         buffer.flip();
 
 
-        while (buffer.hasRemaining())
-        {
+        while (buffer.hasRemaining()) {
             channel.write(buffer);
         }
     }
 
     public <T extends IpcMessage> T readSocketMessage(
-            Class<T> READ_TYPE) throws IOException
-    {
+            Class<T> READ_TYPE) throws IOException {
         // Read the size
         ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
         int bytesRead = channel.read(sizeBuffer);
         sizeBuffer.flip();
-        if (bytesRead < 0)
-        {
+        if (bytesRead < 0) {
             return null;
         }
         int messageSize = sizeBuffer.getInt();
@@ -84,8 +80,7 @@ public class DomainSocketComms implements AutoCloseable
         // Read from domain socket
         ByteBuffer messageBuffer = ByteBuffer.allocate(messageSize);
         bytesRead = channel.read(messageBuffer);
-        if (bytesRead < 0)
-        {
+        if (bytesRead < 0) {
             return null;
         }
 
@@ -115,33 +110,25 @@ public class DomainSocketComms implements AutoCloseable
 
         // Deserialize
         Object message = null;
-        try
-        {
+        try {
             message = ois.readObject();
-        }
-        catch (ClassNotFoundException e)
-        {
+        } catch (ClassNotFoundException e) {
             return null;
         }
 
         ois.close();
         is.close();
 
-        if (READ_TYPE.isInstance(message))
-        {
+        if (READ_TYPE.isInstance(message)) {
             return READ_TYPE.cast(message);
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
     @Override
-    public void close() throws Exception
-    {
-        if (channel != null)
-        {
+    public void close() throws Exception {
+        if (channel != null) {
             channel.close();
         }
     }

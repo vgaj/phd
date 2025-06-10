@@ -26,6 +26,5 @@ package com.github.vgaj.phd.common.query;
 
 import java.io.Serializable;
 
-public record DisplayResult (String destinationHostName, String destinationIpAddress, String sourceIpAddress, String sourceAddressExtraDetails, String probableExecutableDetails, int totalBytes, int totalTimes, int score, boolean isCurrent, long lastSeenEpochMinute, DisplayResultLine[] resultLines) implements Serializable
-{
+public record DisplayResult (String destinationHostName, String destinationIpAddress, String sourceIpAddress, String sourceAddressExtraDetails, String probableExecutableDetails, int totalBytes, int totalTimes, int score, boolean isCurrent, long lastSeenEpochMinute, DisplayResultLine[] resultLines) implements Serializable {
 }

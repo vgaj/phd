@@ -26,20 +26,15 @@ package com.github.vgaj.phd.common.properties;
 
 import java.io.File;
 
-public class HotSpotModeChecker
-{
+public class HotSpotModeChecker {
     private static Boolean isHotSpotMode = null;
-    public static boolean isHotSpot()
-    {
-        if (isHotSpotMode == null)
-        {
-            try
-            {
+
+    public static boolean isHotSpot() {
+        if (isHotSpotMode == null) {
+            try {
                 File file = new File(ClientProperties.getHotspotNicPath());
                 isHotSpotMode = file.exists() && file.isFile() && file.length() > 0;
-            }
-            catch (Throwable t)
-            {
+            } catch (Throwable t) {
                 System.err.println("Failed to check of Hotspot NIC is specified. Error: " + t);
                 isHotSpotMode = true;
             }

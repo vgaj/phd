@@ -28,14 +28,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class ClientProperties
-{
+public class ClientProperties {
     private static Properties properties = null;
 
-    private static Properties getProperties()
-    {
-        if (properties == null)
-        {
+    private static Properties getProperties() {
+        if (properties == null) {
             properties = new Properties();
             try (InputStream input = ClientProperties.class.getClassLoader().getResourceAsStream("common.properties")) {
                 if (input == null) {
@@ -50,13 +47,11 @@ public class ClientProperties
         return properties;
     }
 
-    public static String getVersion()
-    {
+    public static String getVersion() {
         return getProperties().getProperty("phd.version");
     }
 
-    public static String getHotspotNicPath()
-    {
+    public static String getHotspotNicPath() {
         return getProperties().getProperty("hotspotnic.file");
     }
 }

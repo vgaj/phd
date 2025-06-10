@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,15 +27,15 @@ package com.github.vgaj.phd.common.util;
 import lombok.Data;
 
 @Data
-public class Pair<K,V>
-{
-    public static <K,V> Pair of (K key, V value)
-    {
+public class Pair<K, V> {
+
+    public static <K, V> Pair of(K key, V value) {
         Pair p = new Pair();
         p.key = key;
         p.value = value;
         return p;
     }
+
     private K key;
     private V value;
 }
