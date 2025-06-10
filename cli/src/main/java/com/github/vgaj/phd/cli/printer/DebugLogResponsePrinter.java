@@ -22,24 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.cli.response;
+package com.github.vgaj.phd.cli.printer;
 
-import com.github.vgaj.phd.common.query.*;
+import com.github.vgaj.phd.common.query.DebugLogResponse;
+import com.github.vgaj.phd.common.query.ResponseInterface;
 
-public class HostHistoryResponsePrinter implements ResponsePrinter {
-    private ResponseInterface response;
+import java.util.Arrays;
 
-    public HostHistoryResponsePrinter(ResponseInterface response) {
+public class DebugLogResponsePrinter implements ResponsePrinter {
+    private final ResponseInterface response;
+
+    public DebugLogResponsePrinter(ResponseInterface response) {
         this.response = response;
     }
 
     @Override
     public void print() {
-        HostHistoryResponse detailedResponse = (HostHistoryResponse) response;
+        DebugLogResponse logResponse = (DebugLogResponse) response;
         StringBuilder sb = new StringBuilder();
-        for (String r : detailedResponse.results()) {
-            sb.append(r).append(System.lineSeparator());
-        }
+        Arrays.asList(logResponse.log()).forEach(entry -> {
+            sb.append(entry).append(System.lineSeparator());
+        });
         System.out.println(sb);
     }
 }

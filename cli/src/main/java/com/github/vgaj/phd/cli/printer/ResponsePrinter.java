@@ -22,20 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.cli.response;
+package com.github.vgaj.phd.cli.printer;
 
-import com.github.vgaj.phd.cli.RequestResponsePair;
-import com.github.vgaj.phd.common.query.*;
-
-public class ResponsePrinterFactory {
-    public static ResponsePrinter get(RequestResponsePair queryDetails, ResponseInterface response) {
-        if (response instanceof DebugLogResponse) {
-            return new DebugLogResponsePrinter(response);
-        } else if (response instanceof SummaryResultsResponse) {
-            return new SummaryResultsResponsePrinter(queryDetails, response);
-        } else if (response instanceof HostHistoryResponse) {
-            return new HostHistoryResponsePrinter(response);
-        }
-        return null;
-    }
+public interface ResponsePrinter {
+    void print();
 }
