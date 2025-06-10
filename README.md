@@ -14,6 +14,7 @@ Then install:
 ```
 sudo apt install phone-home-detector
 ```
+Note this can take a while as it has to install dependencies, notably Java and Clang.
 The Phone Home Detector will start running in the background as a systemd service.
 To query the results simply run:
 ```
