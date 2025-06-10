@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -42,8 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 @Component
-public class ResultsSaveTask
-{
+public class ResultsSaveTask {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
@@ -57,23 +56,18 @@ public class ResultsSaveTask
     private String xmlFilePath;
 
     @EventListener(ApplicationReadyEvent.class)
-    public void load()
-    {
+    public void load() {
         Path xmlFile = Path.of(xmlFilePath);
-        if (Files.exists(xmlFile))
-        {
-            try
-            {
+        if (Files.exists(xmlFile)) {
+            try {
                 messages.addMessage("Loading results from XML...");
                 String xml = new String(Files.readAllBytes(xmlFile));
                 ResultsSaveList fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, ResultsSaveList.class);
                 fromXml.getResultsForSaving().forEach(result -> {
                     analysisCache.putPreviousResult(result.getAddress(), result.getResult());
                 });
-                messages.addMessage("Loaded "+fromXml.getResultsForSaving().size()+" results from XML");
-            }
-            catch (Exception e)
-            {
+                messages.addMessage("Loaded " + fromXml.getResultsForSaving().size() + " results from XML");
+            } catch (Exception e) {
                 messages.addError("Error reading xml results file: " + xmlFilePath, e);
             }
         }
@@ -81,22 +75,18 @@ public class ResultsSaveTask
 
     @EventListener(ContextClosedEvent.class) // Occurs before @PreDestroy
     @Scheduled(fixedDelayString = "${phd.save.interval.ms}", initialDelayString = "${phd.save.interval.ms}")
-    public void save()
-    {
+    public void save() {
         messages.addMessage("Saving results to XML...");
         Path xmlFile = Path.of(xmlFilePath);
         ResultsSaveList toXml = new ResultsSaveList();
         analysisCache.getAddresses().forEach(address -> {
             toXml.getResultsForSaving().add(ResultsSaveItem.of(address, (AnalysisResultImpl) analysisCache.getResult(address).get()));
         });
-        try
-        {
+        try {
             String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(toXml);
             Files.writeString(xmlFile, xml);
-            messages.addMessage("Saved "+toXml.getResultsForSaving().size()+" results to XML");
-        }
-        catch (IOException e)
-        {
+            messages.addMessage("Saved " + toXml.getResultsForSaving().size() + " results to XML");
+        } catch (IOException e) {
             messages.addError("Error writing xml results file: " + xmlFilePath, e);
         }
     }

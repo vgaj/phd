@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -32,8 +32,7 @@ import java.lang.management.ManagementFactory;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class ResultCategorisationImpl implements ResultCategorisation
-{
+public class ResultCategorisationImpl implements ResultCategorisation {
     /**
      * The minimum number of pairs of transmissions at an interval that is of interest
      */
@@ -59,29 +58,27 @@ public class ResultCategorisationImpl implements ResultCategorisation
     private final Integer percentageOfSizesNeededForMostToBeSame = 80;
 
     private final AnalysisResult result;
-    public ResultCategorisationImpl(AnalysisResult result)
-    {
+
+    public ResultCategorisationImpl(AnalysisResult result) {
         this.result = result;
     }
 
     ////////////////////
     // Interval Rules
-    ////////////////////
+
+    /// /////////////////
 
     @Override
-    public boolean areAllIntervalsTheSame_c11()
-    {
+    public boolean areAllIntervalsTheSame_c11() {
         return getRepeatedTransferIntervalsStream().count() == 1;
     }
 
     @Override
-    public boolean areMostIntervalsTheSame_c12()
-    {
+    public boolean areMostIntervalsTheSame_c12() {
         int count = result.getIntervalCount().stream().mapToInt(pair -> pair.getValue().getCount()).sum();
         Optional<Integer> countForMostCommonInterval = getCountForMostCommonInterval();
 
-        if (count > 0 && countForMostCommonInterval.isPresent())
-        {
+        if (count > 0 && countForMostCommonInterval.isPresent()) {
             // Check if 80% are the same interval - note 80% is based on observations
             return ((double) countForMostCommonInterval.get() / count) > ((double) percentageOfIntervalsNeededForMostToBeSame / 100);
         }
@@ -89,33 +86,29 @@ public class ResultCategorisationImpl implements ResultCategorisation
     }
 
     @Override
-    public boolean areSomeIntervalsTheSame_c13()
-    {
+    public boolean areSomeIntervalsTheSame_c13() {
         return getRepeatedTransferIntervalsStream().findAny().isPresent();
     }
 
-    private Stream<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedTransferIntervalsStream()
-    {
+    private Stream<Pair<TransferIntervalMinutes, TransferCount>> getRepeatedTransferIntervalsStream() {
         return result.getIntervalCount().stream().filter(pair -> pair.getValue().getCount() >= minCountAtInterval);
     }
 
     /////////////////
     // Size Rules
-    /////////////////
+
+    /// //////////////
 
     @Override
-    public boolean areAllTransfersTheSameSize_c21()
-    {
+    public boolean areAllTransfersTheSameSize_c21() {
         return getRepeatedTransferSizeStream().count() == 1;
     }
 
     @Override
-    public boolean areMostTransfersTheSameSize_c22()
-    {
+    public boolean areMostTransfersTheSameSize_c22() {
         int count = result.getTransferSizeCount().stream().mapToInt(pair -> pair.getValue().getCount()).sum();
         Optional<Integer> countForMostCommonSize = getCountForMostCommonSize();
-        if (count > 0 && countForMostCommonSize.isPresent())
-        {
+        if (count > 0 && countForMostCommonSize.isPresent()) {
             // Check if 80% are the same size - note 80% is based on observations
             return ((double) countForMostCommonSize.get() / count) > ((double) percentageOfSizesNeededForMostToBeSame / 100);
         }
@@ -123,75 +116,61 @@ public class ResultCategorisationImpl implements ResultCategorisation
     }
 
     @Override
-    public boolean areSomeTransfersTheSameSize_c23()
-    {
+    public boolean areSomeTransfersTheSameSize_c23() {
         return getRepeatedTransferSizeStream().count() > 0;
     }
 
-    private Stream<Pair<TransferSizeBytes, TransferCount>> getRepeatedTransferSizeStream()
-    {
+    private Stream<Pair<TransferSizeBytes, TransferCount>> getRepeatedTransferSizeStream() {
         return result.getTransferSizeCount().stream().filter(pair -> pair.getValue().getCount() >= minCountOfSameSize);
     }
 
-    private Stream<Pair<TransferIntervalMinutes, TransferCount>> getIntervalsSorted()
-    {
+    private Stream<Pair<TransferIntervalMinutes, TransferCount>> getIntervalsSorted() {
         return getRepeatedTransferIntervalsStream()
                 .sorted((interval1, interval2) -> {
-                    if (interval1.getValue().getCount() == interval2.getValue().getCount())
-                    {
+                    if (interval1.getValue().getCount() == interval2.getValue().getCount()) {
                         // If two frequencies have the same count then return the longest
                         return interval2.getKey().getInterval() - interval1.getKey().getInterval();
-                    }
-                    else
-                    {
+                    } else {
                         return interval2.getValue().getCount() - interval1.getValue().getCount();
                     }
                 });
     }
 
-    private Stream<Pair<TransferSizeBytes, TransferCount>> getSizesSorted()
-    {
+    private Stream<Pair<TransferSizeBytes, TransferCount>> getSizesSorted() {
         return getRepeatedTransferSizeStream()
                 .sorted((size1, size2) -> {
-                    if (size1.getValue().getCount() == size2.getValue().getCount())
-                    {
+                    if (size1.getValue().getCount() == size2.getValue().getCount()) {
                         // If two sizes have the same count then return the largest
                         return size2.getKey().getSize() - size1.getKey().getSize();
-                    }
-                    else
-                    {
+                    } else {
                         return size2.getValue().getCount() - size1.getValue().getCount();
                     }
                 });
     }
 
     @Override
-    public Optional<Integer> getMostCommonInterval()
-    {
+    public Optional<Integer> getMostCommonInterval() {
         return getIntervalsSorted()
                 .map(x -> x.getKey().getInterval())
                 .findFirst();
     }
 
     @Override
-    public Optional<Integer> getCountForMostCommonInterval()
-    {
+    public Optional<Integer> getCountForMostCommonInterval() {
         return getIntervalsSorted()
                 .map(x -> x.getValue().getCount())
                 .findFirst();
     }
 
     @Override
-    public Optional<Integer> getMostCommonSize()
-    {
+    public Optional<Integer> getMostCommonSize() {
         return getSizesSorted()
                 .map(x -> x.getKey().getSize())
                 .findFirst();
     }
 
     @Override
-    public Optional<Integer> getCountForMostCommonSize()
-    {
+    public Optional<Integer> getCountForMostCommonSize() {
         return getSizesSorted()
                 .map(x -> x.getValue().getCount())
                 .findFirst();
@@ -202,8 +181,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
      * address for the result should have been seen
      */
     @Override
-    public boolean isRuntimeLongEnoughToDecideIfResultIsCurrent()
-    {
+    public boolean isRuntimeLongEnoughToDecideIfResultIsCurrent() {
         Optional<Integer> mostCommonInterval = getMostCommonInterval();
 
         long uptimeMinutes = ManagementFactory.getRuntimeMXBean().getUptime() / 60000;
@@ -212,7 +190,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
         // delays before we check if a previously identified pattern is current
         // The buffer includes the delay for information from the BPF program to be read,
         // to be processed, and the analysis to be performed
-        return  (mostCommonInterval.isEmpty() || uptimeMinutes > (mostCommonInterval.get() + 2));
+        return (mostCommonInterval.isEmpty() || uptimeMinutes > (mostCommonInterval.get() + 2));
     }
 
     /**
@@ -220,8 +198,7 @@ public class ResultCategorisationImpl implements ResultCategorisation
      * and the interval it is usually seen at
      */
     @Override
-    public boolean isResultCurrent()
-    {
+    public boolean isResultCurrent() {
         Optional<Integer> mostCommonInterval = getMostCommonInterval();
 
         long minutesSinceLastSeen = EpochMinuteUtil.now() - result.getLastSeenEpochMinute();

@@ -58,7 +58,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     @Getter
     private String sourceAddressExtraDetails = null;
 
-    public SourceAndDestinationAddress(byte srcOctet1, byte srcOctet2, byte srcOctet3, byte srcOctet4, byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4)  {
+    public SourceAndDestinationAddress(byte srcOctet1, byte srcOctet2, byte srcOctet3, byte srcOctet4, byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4) {
         srcOctets[0] = srcOctet1;
         srcOctets[1] = srcOctet2;
         srcOctets[2] = srcOctet3;
@@ -68,6 +68,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
         dstOctets[2] = dstOctet3;
         dstOctets[3] = dstOctet4;
     }
+
     public SourceAndDestinationAddress(byte dstOctet1, byte dstOctet2, byte dstOctet3, byte dstOctet4) {
         dstOctets[0] = dstOctet1;
         dstOctets[1] = dstOctet2;
@@ -100,7 +101,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     public void clearSourceAddress() {
-        Arrays.fill(srcOctets, (byte)0);
+        Arrays.fill(srcOctets, (byte) 0);
     }
 
     @JsonIgnore
@@ -154,7 +155,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
      * Use nmap and dnsmasq to populate more details about the source address
      */
     public void lookupSourceAddressExtraDetails() {
-        if (!isSourceAddressClear())  {
+        if (!isSourceAddressClear()) {
             String detailsFromDns = SourceIpToDnsNameLookup.lookup(getSourceAddressString());
             String detailsFromNmap = SourceIpToMacAddressLookup.lookup(getSourceAddressString());
             sourceAddressExtraDetails = detailsFromDns + " - " + detailsFromNmap;
@@ -171,7 +172,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(new Object[] {
+        return Arrays.hashCode(new Object[]{
                 Arrays.hashCode(srcOctets),
                 Arrays.hashCode(dstOctets)
         });

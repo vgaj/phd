@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -45,8 +45,7 @@ import java.util.Set;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class CleanupTaskTests
-{
+public class CleanupTaskTests {
     @Mock
     private Messages messages;
 
@@ -57,19 +56,18 @@ public class CleanupTaskTests
     private PcapCleanup cleanup;
 
     // Test data
-    private SourceAndDestinationAddress address1 = new SourceAndDestinationAddress((byte) 1, (byte) 0, (byte) 0,(byte)  0);
-    private SourceAndDestinationAddress address2 = new SourceAndDestinationAddress((byte) 2, (byte) 0, (byte) 0,(byte)  0);
-    private SourceAndDestinationAddress address3 = new SourceAndDestinationAddress((byte) 3, (byte) 0, (byte) 0,(byte)  0);
-    private SourceAndDestinationAddress address4 = new SourceAndDestinationAddress((byte) 4, (byte) 0, (byte) 0,(byte)  0);
-    private SourceAndDestinationAddress address5 = new SourceAndDestinationAddress((byte) 5, (byte) 0, (byte) 0,(byte)  0);
-    private SourceAndDestinationAddress address6 = new SourceAndDestinationAddress((byte) 6, (byte) 0, (byte) 0,(byte)  0);
-    private SourceAndDestinationAddress address7 = new SourceAndDestinationAddress((byte) 7, (byte) 0, (byte) 0,(byte)  0);
-    private SourceAndDestinationAddress address8 = new SourceAndDestinationAddress((byte) 8, (byte) 0, (byte) 0,(byte)  0);
-    private SourceAndDestinationAddress address9 = new SourceAndDestinationAddress((byte) 9, (byte) 0, (byte) 0,(byte)  0);
+    private SourceAndDestinationAddress address1 = new SourceAndDestinationAddress((byte) 1, (byte) 0, (byte) 0, (byte) 0);
+    private SourceAndDestinationAddress address2 = new SourceAndDestinationAddress((byte) 2, (byte) 0, (byte) 0, (byte) 0);
+    private SourceAndDestinationAddress address3 = new SourceAndDestinationAddress((byte) 3, (byte) 0, (byte) 0, (byte) 0);
+    private SourceAndDestinationAddress address4 = new SourceAndDestinationAddress((byte) 4, (byte) 0, (byte) 0, (byte) 0);
+    private SourceAndDestinationAddress address5 = new SourceAndDestinationAddress((byte) 5, (byte) 0, (byte) 0, (byte) 0);
+    private SourceAndDestinationAddress address6 = new SourceAndDestinationAddress((byte) 6, (byte) 0, (byte) 0, (byte) 0);
+    private SourceAndDestinationAddress address7 = new SourceAndDestinationAddress((byte) 7, (byte) 0, (byte) 0, (byte) 0);
+    private SourceAndDestinationAddress address8 = new SourceAndDestinationAddress((byte) 8, (byte) 0, (byte) 0, (byte) 0);
+    private SourceAndDestinationAddress address9 = new SourceAndDestinationAddress((byte) 9, (byte) 0, (byte) 0, (byte) 0);
 
     @Test
-    public void firstCall()
-    {
+    public void firstCall() {
         // Arrange
         Set<SourceAndDestinationAddress> addresses = new HashSet<>();
         addresses.add(address3);
@@ -87,10 +85,9 @@ public class CleanupTaskTests
     }
 
     @Test
-    public void addNewAddressesToIgnore() throws NoSuchFieldException, IllegalAccessException
-    {
+    public void addNewAddressesToIgnore() throws NoSuchFieldException, IllegalAccessException {
         // Arrange
-        Map<SourceAndDestinationAddress,Long> currentlyIgnoredAddresses = new HashMap<>();
+        Map<SourceAndDestinationAddress, Long> currentlyIgnoredAddresses = new HashMap<>();
         currentlyIgnoredAddresses.put(address5, 5L);
         currentlyIgnoredAddresses.put(address4, 4L);
         currentlyIgnoredAddresses.put(address3, 3L);
@@ -116,10 +113,9 @@ public class CleanupTaskTests
     }
 
     @Test
-    public void removeOldAddressesAndAddNew() throws NoSuchFieldException, IllegalAccessException
-    {
+    public void removeOldAddressesAndAddNew() throws NoSuchFieldException, IllegalAccessException {
         // Arrange
-        Map<SourceAndDestinationAddress,Long> currentlyIgnoredAddresses = new HashMap<>();
+        Map<SourceAndDestinationAddress, Long> currentlyIgnoredAddresses = new HashMap<>();
         currentlyIgnoredAddresses.put(address5, 5L); // 1 to 5
         currentlyIgnoredAddresses.put(address1, 1L);
         currentlyIgnoredAddresses.put(address4, 4L);

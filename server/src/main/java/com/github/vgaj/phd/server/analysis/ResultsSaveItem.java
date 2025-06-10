@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,15 +29,14 @@ import com.github.vgaj.phd.server.result.AnalysisResultImpl;
 
 import lombok.Getter;
 
-public class ResultsSaveItem
-{
-    public static ResultsSaveItem of(SourceAndDestinationAddress address, AnalysisResultImpl result)
-    {
+public class ResultsSaveItem {
+    public static ResultsSaveItem of(SourceAndDestinationAddress address, AnalysisResultImpl result) {
         ResultsSaveItem item = new ResultsSaveItem();
         item.address = address;
         item.result = result;
         return item;
     }
+
     @Getter
     private SourceAndDestinationAddress address;
 

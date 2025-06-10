@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,10 +30,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-public class PhoneHomeDetectorApplication
-{
-	public static void main(String[] args)
-	{
+public class PhoneHomeDetectorApplication {
+	public static void main(String[] args) {
 		SpringApplication.run(PhoneHomeDetectorApplication.class, args);
 	}
 }

@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -25,30 +25,24 @@ SOFTWARE.
 package com.github.vgaj.phd.server.data;
 
 import com.github.vgaj.phd.common.util.ExecutableDetails;
-import com.github.vgaj.phd.server.messages.MessageInterface;
-import com.github.vgaj.phd.server.messages.Messages;
 import org.springframework.stereotype.Component;
 
 
 import java.util.HashMap;
 
 @Component
-public class PidToCommandLookup
-{
-    private HashMap<Integer,String> cache;
+public class PidToCommandLookup {
+    private HashMap<Integer, String> cache;
     long nextCacheRefresh = 0;
 
-    String get(int pid)
-    {
+    String get(int pid) {
         // Reset the cache after 30 seconds
-        if (System.currentTimeMillis() > nextCacheRefresh)
-        {
+        if (System.currentTimeMillis() > nextCacheRefresh) {
             cache = new HashMap<>();
             nextCacheRefresh = System.currentTimeMillis() + 30000;
         }
 
-        if (!cache.containsKey(pid))
-        {
+        if (!cache.containsKey(pid)) {
             cache.put(pid, ExecutableDetails.lookup(pid));
         }
 

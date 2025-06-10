@@ -26,7 +26,6 @@ package com.github.vgaj.phd.server.data;
 
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,21 +36,17 @@ import java.util.concurrent.ConcurrentMap;
 /**
  * Uses nmap to lookup the MAC address and NIC details
  */
-public class SourceIpToMacAddressLookup
-{
+public class SourceIpToMacAddressLookup {
     private static final MessageInterface messages = Messages.getLogger(SourceIpToMacAddressLookup.class);
 
-    private static final ConcurrentMap<String, String > data = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, String> data = new ConcurrentHashMap<>();
 
-    public static String lookup(String ipAddress)
-    {
-        if (!data.containsKey(ipAddress))
-        {
+    public static String lookup(String ipAddress) {
+        if (!data.containsKey(ipAddress)) {
             // We only attempt the lookup once and if it fails store this value
             String macAddressString = null;
 
-            try
-            {
+            try {
                 String[] command = {"/usr/bin/nmap", "-sn", ipAddress};
                 ProcessBuilder processBuilder = new ProcessBuilder(command);
                 Process process = processBuilder.start();
@@ -60,14 +55,11 @@ public class SourceIpToMacAddressLookup
 
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String line;
-                while ((line = reader.readLine()) != null)
-                {
+                while ((line = reader.readLine()) != null) {
                     // Example: MAC Address: A1:B2:C3:D4:E5:F6 (Tp-link Technologies)
-                    if (line.startsWith("MAC Address:"))
-                    {
+                    if (line.startsWith("MAC Address:")) {
                         int startIndex = line.indexOf(':') + 2;
-                        if (line.length() > startIndex)
-                        {
+                        if (line.length() > startIndex) {
                             macAddressString = line.substring(startIndex);
                         }
                     }
@@ -76,22 +68,18 @@ public class SourceIpToMacAddressLookup
 
                 // Capture errors
                 BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-                while ((line = errorReader.readLine()) != null)
-                {
+                while ((line = errorReader.readLine()) != null) {
                     sb.append(line);
                 }
 
                 // Wait for process to finish
                 int exitCode = process.waitFor();
-                if (macAddressString == null)
-                {
+                if (macAddressString == null) {
                     messages.addError("nmap exited with code: " + exitCode);
                     messages.addError(sb.toString());
                 }
-            }
-            catch (IOException | InterruptedException e)
-            {
-                messages.addError("nmap failed",e);
+            } catch (IOException | InterruptedException e) {
+                messages.addError("nmap failed", e);
             }
             data.put(ipAddress, macAddressString);
         }

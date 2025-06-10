@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 @EqualsAndHashCode
-public class TransferCount
-{
-    public static TransferCount of(int count)
-    {
+public class TransferCount {
+    public static TransferCount of(int count) {
         TransferCount t = new TransferCount();
         t.count = count;
         return t;
@@ -40,11 +38,12 @@ public class TransferCount
     @Getter
     private int count;
 
-    public TransferCount merge(TransferCount other)
-    {
+    public TransferCount merge(TransferCount other) {
         return TransferCount.of(count + other.count);
     }
 
     @Override
-    public String toString() { return String.format("%d",count);}
+    public String toString() {
+        return String.format("%d", count);
+    }
 }

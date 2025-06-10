@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,20 +26,28 @@ package com.github.vgaj.phd.server.result;
 
 import java.util.Optional;
 
-public interface ResultCategorisation
-{
+public interface ResultCategorisation {
     boolean areAllIntervalsTheSame_c11();
+
     boolean areMostIntervalsTheSame_c12();
+
     boolean areSomeIntervalsTheSame_c13();
+
     boolean areAllTransfersTheSameSize_c21();
+
     boolean areMostTransfersTheSameSize_c22();
+
     boolean areSomeTransfersTheSameSize_c23();
 
     boolean isRuntimeLongEnoughToDecideIfResultIsCurrent();
+
     boolean isResultCurrent();
 
     Optional<Integer> getMostCommonInterval();
+
     Optional<Integer> getCountForMostCommonInterval();
+
     Optional<Integer> getMostCommonSize();
+
     Optional<Integer> getCountForMostCommonSize();
 }

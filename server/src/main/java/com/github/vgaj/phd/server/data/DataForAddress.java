@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public class DataForAddress
-{
+public class DataForAddress {
     private int totalBytes = 0;
 
     /**
@@ -42,29 +41,25 @@ public class DataForAddress
     @Getter
     private final ConcurrentMap<Long, Integer> byteCountPerMinute = new ConcurrentHashMap<>();
 
-    public void addBytes(int count, long epochMinute)
-    {
+    public void addBytes(int count, long epochMinute) {
         totalBytes += count;
         byteCountPerMinute.put(epochMinute,
                 count + (byteCountPerMinute.containsKey(epochMinute) ? byteCountPerMinute.get(epochMinute) : 0));
     }
-    public int getTotalBytes()
-    {
+
+    public int getTotalBytes() {
         return totalBytes;
     }
 
-    public int getMinuteBlockCount()
-    {
+    public int getMinuteBlockCount() {
         return byteCountPerMinute.keySet().size();
     }
 
-    public long getLatestEpochMinute()
-    {
+    public long getLatestEpochMinute() {
         return byteCountPerMinute.keySet().stream().max(Long::compareTo).orElse(0L);
     }
 
-    public List<Map.Entry<Long, Integer>> getPerMinuteData()
-    {
+    public List<Map.Entry<Long, Integer>> getPerMinuteData() {
         return new ArrayList<>(byteCountPerMinute.entrySet());
     }
 }

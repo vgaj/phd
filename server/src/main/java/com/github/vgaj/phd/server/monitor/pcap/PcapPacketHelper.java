@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -33,33 +33,30 @@ import org.springframework.stereotype.Component;
  * Functionality to parse pcap data
  */
 @Component
-public class PcapPacketHelper
-{
-     public boolean isIpv4(Packet pcapPacket)
-    {
-        return (pcapPacket.getRawData()[14]>>4 == 4);
+public class PcapPacketHelper {
+    public boolean isIpv4(Packet pcapPacket) {
+        return (pcapPacket.getRawData()[14] >> 4 == 4);
     }
 
-    public SourceAndDestinationAddress getSourceHost(Packet pcapPacket)
-    {
-        return getHostAtOffset(pcapPacket,14+12);
+    public SourceAndDestinationAddress getSourceHost(Packet pcapPacket) {
+        return getHostAtOffset(pcapPacket, 14 + 12);
     }
-    public SourceAndDestinationAddress getDestHost(Packet pcapPacket)
-    {
-        return getHostAtOffset(pcapPacket,14+16);
+
+    public SourceAndDestinationAddress getDestHost(Packet pcapPacket) {
+        return getHostAtOffset(pcapPacket, 14 + 16);
     }
-    private SourceAndDestinationAddress getHostAtOffset(Packet pcapPacket, int offset)
-    {
+
+    private SourceAndDestinationAddress getHostAtOffset(Packet pcapPacket, int offset) {
         // Want data to be stored on the stack, hence not using an array
-        byte octet1,octet2,octet3,octet4;
+        byte octet1, octet2, octet3, octet4;
         octet1 = pcapPacket.getRawData()[offset++];
         octet2 = pcapPacket.getRawData()[offset++];
         octet3 = pcapPacket.getRawData()[offset++];
         octet4 = pcapPacket.getRawData()[offset];
-        return new SourceAndDestinationAddress(octet1,octet2,octet3,octet4);
+        return new SourceAndDestinationAddress(octet1, octet2, octet3, octet4);
     }
-    public int getLength(Packet pcapPacket)
-    {
+
+    public int getLength(Packet pcapPacket) {
         return pcapPacket.length();
     }
 

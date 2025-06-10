@@ -52,8 +52,7 @@ import java.util.*;
  * is formatted to display to the user
  */
 @Component
-public class QueryLogic
-{
+public class QueryLogic {
     @Autowired
     private TrafficDataStore trafficDataStore;
 
@@ -66,10 +65,9 @@ public class QueryLogic
     private Integer maxDataToShowForHost;
 
     /**
-    Generate the content for the main page
+     * Generate the content for the main page
      */
-    public DisplayContent getDisplayContent()
-    {
+    public DisplayContent getDisplayContent() {
         ArrayList<DisplayResult> results = new ArrayList<>();
 
         // The addresses
@@ -77,32 +75,26 @@ public class QueryLogic
 
         Collections.sort(addresses, new Comparator<SourceAndDestinationAddress>() {
             @Override
-            public int compare(SourceAndDestinationAddress e1, SourceAndDestinationAddress e2)
-            {
-                if (e1 == null || e1.getReverseDesinationHostname() == null || e2 == null || e2.getReverseDesinationHostname() == null)
-                {
+            public int compare(SourceAndDestinationAddress e1, SourceAndDestinationAddress e2) {
+                if (e1 == null || e1.getReverseDesinationHostname() == null || e2 == null || e2.getReverseDesinationHostname() == null) {
                     return 0;
-                }
-                else
-                {
+                } else {
                     return e1.getReverseDesinationHostname().compareTo(e2.getReverseDesinationHostname());
                 }
             }
         });
 
-        addresses.forEach( address ->
+        addresses.forEach(address ->
         {
             Optional<AnalysisResult> resultFromCache = analyserCache.getResult(address);
-            if (resultFromCache.isPresent())
-            {
+            if (resultFromCache.isPresent()) {
                 AnalysisResult result = resultFromCache.get();
                 ResultCategorisation resultCategorisation = new ResultCategorisationImpl(result);
 
                 int totalBytes = 0;
                 int totalTimes = 0;
                 DataForAddress currentDataForAddress = trafficDataStore.getDataForAddress(address);
-                if (currentDataForAddress != null)
-                {
+                if (currentDataForAddress != null) {
                     totalBytes = currentDataForAddress.getTotalBytes();
                     totalTimes = currentDataForAddress.getMinuteBlockCount();
                 }
@@ -115,35 +107,24 @@ public class QueryLogic
                 ArrayList<String> sizeSubMessages = new ArrayList<>();
                 result.getTransferSizeCount().forEach(r ->
                         sizeSubMessages.add(r.getKey() + " bytes, " + r.getValue() + " times"));
-                if (resultCategorisation.areAllIntervalsTheSame_c11())
-                {
-                    resultLines.add( new DisplayResultLine("all intervals are " + resultCategorisation.getMostCommonInterval().get() + " minutes", new String[0]));
-                }
-                else if (resultCategorisation.areMostIntervalsTheSame_c12())
-                {
-                    resultLines.add( new DisplayResultLine("most intervals are " + resultCategorisation.getMostCommonInterval().get() + " minutes", intervalSubMessages.toArray(new String[0])));
-                }
-                else if (resultCategorisation.areSomeIntervalsTheSame_c13())
-                {
+                if (resultCategorisation.areAllIntervalsTheSame_c11()) {
+                    resultLines.add(new DisplayResultLine("all intervals are " + resultCategorisation.getMostCommonInterval().get() + " minutes", new String[0]));
+                } else if (resultCategorisation.areMostIntervalsTheSame_c12()) {
+                    resultLines.add(new DisplayResultLine("most intervals are " + resultCategorisation.getMostCommonInterval().get() + " minutes", intervalSubMessages.toArray(new String[0])));
+                } else if (resultCategorisation.areSomeIntervalsTheSame_c13()) {
                     DisplayResultLine resultLine = new DisplayResultLine("some intervals are the same", intervalSubMessages.toArray(new String[0]));
                     resultLines.add(resultLine);
                 }
-                if (resultCategorisation.areAllTransfersTheSameSize_c21())
-                {
-                    resultLines.add( new DisplayResultLine("all transfers are " + resultCategorisation.getMostCommonSize().get() + " bytes", new String[0]));
-                }
-                else if (resultCategorisation.areMostTransfersTheSameSize_c22())
-                {
-                    resultLines.add( new DisplayResultLine("most transfers are " + resultCategorisation.getMostCommonSize().get() + " bytes", sizeSubMessages.toArray(new String[0])));
-                }
-                else if (resultCategorisation.areSomeTransfersTheSameSize_c23())
-                {
+                if (resultCategorisation.areAllTransfersTheSameSize_c21()) {
+                    resultLines.add(new DisplayResultLine("all transfers are " + resultCategorisation.getMostCommonSize().get() + " bytes", new String[0]));
+                } else if (resultCategorisation.areMostTransfersTheSameSize_c22()) {
+                    resultLines.add(new DisplayResultLine("most transfers are " + resultCategorisation.getMostCommonSize().get() + " bytes", sizeSubMessages.toArray(new String[0])));
+                } else if (resultCategorisation.areSomeTransfersTheSameSize_c23()) {
                     DisplayResultLine resultLine = new DisplayResultLine("some data sizes are repeated", sizeSubMessages.toArray(new String[0]));
-                    resultLines.add( resultLine);
+                    resultLines.add(resultLine);
                 }
 
-                if (score > 0)
-                {
+                if (score > 0) {
                     DisplayResult displayResult = new DisplayResult(
                             address.getDesinationHostString(),
                             address.getDesinationAddressString(),
@@ -172,17 +153,15 @@ public class QueryLogic
     /**
      * Generate the data for a given address
      */
-    public ArrayList<String> getData(InetAddress source, InetAddress destination)
-    {
+    public ArrayList<String> getData(InetAddress source, InetAddress destination) {
         ArrayList<String> results = new ArrayList<>();
-        DataForAddress dataForAddress = trafficDataStore.getDataForAddress(new SourceAndDestinationAddress(source,destination));
-        if (dataForAddress != null)
-        {
+        DataForAddress dataForAddress = trafficDataStore.getDataForAddress(new SourceAndDestinationAddress(source, destination));
+        if (dataForAddress != null) {
             var data = dataForAddress.getByteCountPerMinute().entrySet();
             int dataLength = data.size();
             data.stream()
                     .sorted(Comparator.comparing(e -> ((Long) e.getKey())))
-                    .skip( maxDataToShowForHost < dataLength ? dataLength - maxDataToShowForHost : 0)
+                    .skip(maxDataToShowForHost < dataLength ? dataLength - maxDataToShowForHost : 0)
                     .limit(maxDataToShowForHost)
                     .map(e -> EpochMinuteUtil.toString(e.getKey()) + " : " + e.getValue() + " bytes")
                     .forEach(results::add);

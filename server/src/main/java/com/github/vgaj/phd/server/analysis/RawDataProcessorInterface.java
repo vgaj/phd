@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,8 +30,8 @@ import com.github.vgaj.phd.server.result.AnalysisResult;
 import java.util.Optional;
 import java.util.Set;
 
-public interface RawDataProcessorInterface
-{
+public interface RawDataProcessorInterface {
     Optional<AnalysisResult> processRawData(SourceAndDestinationAddress address);
+
     Set<SourceAndDestinationAddress> getAddressesToIgnore();
 }

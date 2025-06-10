@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,8 +38,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class AnalysisTask
-{
+public class AnalysisTask {
     @Autowired
     AnalysisCache analysisCache;
 
@@ -53,22 +52,18 @@ public class AnalysisTask
 
     @Value("${phd.analysis.interval.ms}")
     private Integer analysisIntervalMs;
-    
+
     @Scheduled(fixedRateString = "${phd.analysis.interval.ms}", initialDelayString = "${phd.analysis.interval.ms}")
-    public void processRawData()
-    {
+    public void processRawData() {
         // Only process new data
         long epochMinuteReference = EpochMinuteUtil.now() - (long) Math.ceil((double) analysisIntervalMs / 60000);
 
         trafficDataStore.getAddressesWithDataSince(epochMinuteReference).forEach(address ->
         {
             Optional<AnalysisResult> result = analyser.processRawData(address);
-            if (result.isPresent())
-            {
+            if (result.isPresent()) {
                 analysisCache.putCurrentResult(address, result.get());
-            }
-            else
-            {
+            } else {
                 analysisCache.removeCurrentResult(address);
             }
         });

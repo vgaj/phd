@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -28,10 +28,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
-public class ResultsSaveXmlMapper
-{
-    public static XmlMapper getXmlMapper()
-    {
+public class ResultsSaveXmlMapper {
+    public static XmlMapper getXmlMapper() {
         JacksonXmlModule xmlModule = new JacksonXmlModule();
 
         // Prevent Jackson from using a wrapper for empty lists

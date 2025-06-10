@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ import java.util.Set;
 /**
  * General interface to update the filter list for either BPF or PCAP
  */
-public interface MonitorTaskFilterUpdateInterface
-{
+public interface MonitorTaskFilterUpdateInterface {
     void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude);
 }

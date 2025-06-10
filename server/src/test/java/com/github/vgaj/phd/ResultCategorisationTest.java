@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,10 +31,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-public class ResultCategorisationTest
-{
-    private static ResultCategorisationImpl setupForMostCommonTests()
-    {
+public class ResultCategorisationTest {
+    private static ResultCategorisationImpl setupForMostCommonTests() {
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addIntervalCount(TransferIntervalMinutes.of(1), TransferCount.of(1));
         result.addIntervalCount(TransferIntervalMinutes.of(2), TransferCount.of(9));
@@ -53,8 +51,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testGetMostCommonInterval() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
+    public void testGetMostCommonInterval() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Arrange
         ResultCategorisationImpl categorisation = setupForMostCommonTests();
 
@@ -69,8 +66,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testGetCountForMostCommonInterval() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
+    public void testGetCountForMostCommonInterval() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Arrange
         ResultCategorisationImpl categorisation = setupForMostCommonTests();
 
@@ -85,8 +81,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testGetMostCommonSize() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
+    public void testGetMostCommonSize() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Arrange
         ResultCategorisationImpl categorisation = setupForMostCommonTests();
 
@@ -101,8 +96,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testGetCountForMostCommonSize() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException
-    {
+    public void testGetCountForMostCommonSize() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         // Arrange
         ResultCategorisationImpl categorisation = setupForMostCommonTests();
 
@@ -117,8 +111,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testAllIntervalsTheSame()
-    {
+    public void testAllIntervalsTheSame() {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addIntervalCount(TransferIntervalMinutes.of(10), TransferCount.of(2));
@@ -131,8 +124,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testMostIntervalsTheSame()
-    {
+    public void testMostIntervalsTheSame() {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addIntervalCount(TransferIntervalMinutes.of(3), TransferCount.of(9));
@@ -147,8 +139,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testSomeIntervalsTheSame()
-    {
+    public void testSomeIntervalsTheSame() {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addIntervalCount(TransferIntervalMinutes.of(1), TransferCount.of(1));
@@ -163,8 +154,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testNoIntervalsTheSame()
-    {
+    public void testNoIntervalsTheSame() {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addIntervalCount(TransferIntervalMinutes.of(10), TransferCount.of(1));
@@ -177,8 +167,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testAllSizesTheSame()
-    {
+    public void testAllSizesTheSame() {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addTransferSizeCount(TransferSizeBytes.of(10), TransferCount.of(2));
@@ -191,8 +180,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testMostSizesTheSame()
-    {
+    public void testMostSizesTheSame() {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addTransferSizeCount(TransferSizeBytes.of(3), TransferCount.of(9));
@@ -207,8 +195,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testSomeSizesTheSame()
-    {
+    public void testSomeSizesTheSame() {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addTransferSizeCount(TransferSizeBytes.of(1), TransferCount.of(1));
@@ -223,8 +210,7 @@ public class ResultCategorisationTest
     }
 
     @Test
-    public void testNoSizesTheSame()
-    {
+    public void testNoSizesTheSame() {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addTransferSizeCount(TransferSizeBytes.of(10), TransferCount.of(1));

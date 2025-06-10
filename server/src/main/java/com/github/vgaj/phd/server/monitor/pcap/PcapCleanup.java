@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -39,14 +39,13 @@ import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "false", matchIfMissing = false)
-public class PcapCleanup implements MonitorTaskFilterUpdateInterface
-{
+public class PcapCleanup implements MonitorTaskFilterUpdateInterface {
     @Autowired
     private PcapMonitorTaskFilterUpdateInterface monitor;
 
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
-    private Map<SourceAndDestinationAddress,Long> currentlyIgnoredAddresses = new HashMap<>();
+    private Map<SourceAndDestinationAddress, Long> currentlyIgnoredAddresses = new HashMap<>();
 
     /**
      * The maximum number of addresses to put in the ignore list
@@ -55,14 +54,12 @@ public class PcapCleanup implements MonitorTaskFilterUpdateInterface
     private int maxAddressesToIgnore = 250;
 
     @Override
-    public void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude)
-    {
+    public void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude) {
         // Get the new addresses that should be ignored
         List<SourceAndDestinationAddress> newAddressesToIgnore = addressesToExclude.stream().filter(a -> !currentlyIgnoredAddresses.containsKey(a)).collect(Collectors.toList());
 
         // There is a maximum number of addresses that will be ignored
-        if (currentlyIgnoredAddresses.size() + newAddressesToIgnore.size() > maxAddressesToIgnore)
-        {
+        if (currentlyIgnoredAddresses.size() + newAddressesToIgnore.size() > maxAddressesToIgnore) {
             int numberToRemove = currentlyIgnoredAddresses.size() + newAddressesToIgnore.size() - maxAddressesToIgnore;
             List<SourceAndDestinationAddress> addressesToRemove = currentlyIgnoredAddresses.entrySet().stream()
                     .filter(entry -> !addressesToExclude.contains(entry.getKey()))
@@ -73,7 +70,7 @@ public class PcapCleanup implements MonitorTaskFilterUpdateInterface
             addressesToRemove.forEach(currentlyIgnoredAddresses::remove);
         }
 
-        newAddressesToIgnore.forEach( a ->
+        newAddressesToIgnore.forEach(a ->
         {
             messages.addDebug("Not monitoring " + a.getDesinationAddressString());
             currentlyIgnoredAddresses.put(a, System.currentTimeMillis());

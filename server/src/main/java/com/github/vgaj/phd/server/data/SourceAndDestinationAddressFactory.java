@@ -46,10 +46,10 @@ import java.util.stream.Stream;
  * This class is responsible for enforcing that.
  */
 @Component
-public class SourceAndDestinationAddressFactory
-{
+public class SourceAndDestinationAddressFactory {
     private MessageInterface messages = Messages.getLogger(this.getClass());
     private List<InetAddress> localAddresses = null;
+
     private Stream<InetAddress> getLocalAddressesStream() {
         if (localAddresses == null) {
             try {
@@ -75,13 +75,11 @@ public class SourceAndDestinationAddressFactory
         return localAddresses.stream();
     }
 
-    public SourceAndDestinationAddress createForDestinationAddress(Pointer address)
-    {
+    public SourceAndDestinationAddress createForDestinationAddress(Pointer address) {
         return new SourceAndDestinationAddress(address.getByte(0), address.getByte(1), address.getByte(2), address.getByte(3));
     }
 
-    public SourceAndDestinationAddress createForSourceAndDestinationAddress(Pointer address)
-    {
+    public SourceAndDestinationAddress createForSourceAndDestinationAddress(Pointer address) {
         // Note that the bytes are written in little endian in BPF
         SourceAndDestinationAddress sourceAndDestinationAddress = new SourceAndDestinationAddress(
                 address.getByte(4), address.getByte(5), address.getByte(6), address.getByte(7),

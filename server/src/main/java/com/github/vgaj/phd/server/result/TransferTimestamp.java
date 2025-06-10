@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,21 +30,20 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @EqualsAndHashCode
-public class TransferTimestamp
-{
+public class TransferTimestamp {
     @Getter
     private Long timestamp;
 
     @Override
-    public String toString() { return String.format("%d",timestamp); }
+    public String toString() {
+        return String.format("%d", timestamp);
+    }
 
-    public int compareTo(TransferTimestamp other)
-    {
+    public int compareTo(TransferTimestamp other) {
         return timestamp.compareTo(other.timestamp);
     }
 
-    public TransferIntervalMinutes subtract(TransferTimestamp other)
-    {
+    public TransferIntervalMinutes subtract(TransferTimestamp other) {
         return TransferIntervalMinutes.of((int) (timestamp - other.timestamp));
     }
 }

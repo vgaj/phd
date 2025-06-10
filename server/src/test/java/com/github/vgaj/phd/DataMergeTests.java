@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,14 +34,12 @@ import org.junit.jupiter.api.Test;
 import java.net.UnknownHostException;
 import java.util.List;
 
-public class DataMergeTests
-{
+public class DataMergeTests {
     @Test
-    void mergeAnalysisResult() throws UnknownHostException
-    {
+    void mergeAnalysisResult() throws UnknownHostException {
         // Arrange
-        SourceAndDestinationAddress address1 = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
-        SourceAndDestinationAddress address2 = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
+        SourceAndDestinationAddress address1 = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
+        SourceAndDestinationAddress address2 = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
         String executable1 = "firefox";
         String executable2 = "java";
         address1.lookupDestinationHost();
@@ -57,9 +55,9 @@ public class DataMergeTests
         assert combined.getProbableExecutable().equals(executable2);
         List<Pair<TransferIntervalMinutes, TransferCount>> intervals = combined.getIntervalCount();
         List<Pair<TransferSizeBytes, TransferCount>> sizes = combined.getTransferSizeCount();
-        assert intervals.get(0).getKey().getInterval() == 1  && intervals.get(0).getValue().getCount() == 21; // 11 + 10
-        assert intervals.get(1).getKey().getInterval() == 2  && intervals.get(1).getValue().getCount() == 22;
-        assert intervals.get(2).getKey().getInterval() == 3  && intervals.get(2).getValue().getCount() == 10;
+        assert intervals.get(0).getKey().getInterval() == 1 && intervals.get(0).getValue().getCount() == 21; // 11 + 10
+        assert intervals.get(1).getKey().getInterval() == 2 && intervals.get(1).getValue().getCount() == 22;
+        assert intervals.get(2).getKey().getInterval() == 3 && intervals.get(2).getValue().getCount() == 10;
         assert sizes.get(0).getKey().getSize() == 5 && sizes.get(0).getValue().getCount() == 66; // 55 + 11
         assert sizes.get(1).getKey().getSize() == 6 && sizes.get(1).getValue().getCount() == 666;
         assert sizes.get(2).getKey().getSize() == 7 && sizes.get(2).getValue().getCount() == 777;
@@ -67,8 +65,7 @@ public class DataMergeTests
 
 
     @Test
-    void mergeAddresses()
-    {
+    void mergeAddresses() {
         // Arrange
         AnalysisCache cache = new AnalysisCache();
 

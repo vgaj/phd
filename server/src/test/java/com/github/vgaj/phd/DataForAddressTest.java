@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,15 +27,12 @@ package com.github.vgaj.phd;
 import com.github.vgaj.phd.server.data.DataForAddress;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DataForAddressTest
-{
+public class DataForAddressTest {
     @Test
-    public void dataForAddressTest()
-    {
+    public void dataForAddressTest() {
         // Arrange
         DataForAddress data = new DataForAddress();
         data.addBytes(1, 1);
@@ -50,12 +47,12 @@ public class DataForAddressTest
         List<Map.Entry<Long, Integer>> byteCountPerMinute = data.getPerMinuteData();
 
         // Assert
-        assert totalBytes == 1+2+3+4;
+        assert totalBytes == 1 + 2 + 3 + 4;
         assert blockCount == 3;
         assert latest == 9;
         assert byteCountPerMinute.size() == 3;
         assert byteCountPerMinute.get(0).getKey() == 1;
-        assert byteCountPerMinute.get(0).getValue() == 1+2;
+        assert byteCountPerMinute.get(0).getValue() == 1 + 2;
         assert byteCountPerMinute.get(1).getKey() == 5;
         assert byteCountPerMinute.get(1).getValue() == 3;
         assert byteCountPerMinute.get(2).getKey() == 9;

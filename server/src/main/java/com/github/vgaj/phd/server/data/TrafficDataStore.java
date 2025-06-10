@@ -41,27 +41,21 @@ import java.util.concurrent.ConcurrentMap;
  * Store of traffic data for each host
  */
 @Component
-public class TrafficDataStore
-{
+public class TrafficDataStore {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     // Stats for each host
     private final ConcurrentMap<SourceAndDestinationAddress, DataForAddress> data = new ConcurrentHashMap<>();
 
-    public void addData(@NonNull SourceAndDestinationAddress host, int length, long epochMinute)
-    {
-        if (!data.containsKey(host))
-        {
-            try
-            {
+    public void addData(@NonNull SourceAndDestinationAddress host, int length, long epochMinute) {
+        if (!data.containsKey(host)) {
+            try {
                 host.lookupDestinationHost();
                 host.lookupSourceAddressExtraDetails();
                 messages.addDebug("Adding destination: " + host.getDesinationHostString());
 
                 data.put(host, new DataForAddress());
-            }
-            catch (UnknownHostException e)
-            {
+            } catch (UnknownHostException e) {
                 messages.addError("Failed to lookup address", e);
             }
         }
@@ -69,42 +63,36 @@ public class TrafficDataStore
         data.get(host).addBytes(length, epochMinute);
     }
 
-    public ArrayList<Map.Entry<TransferTimestamp, TransferSizeBytes>> getCopyOfPerMinuteData(SourceAndDestinationAddress address)
-    {
+    public ArrayList<Map.Entry<TransferTimestamp, TransferSizeBytes>> getCopyOfPerMinuteData(SourceAndDestinationAddress address) {
         ArrayList<Map.Entry<TransferTimestamp, TransferSizeBytes>> entries = new ArrayList<>();
         data.get(address).getPerMinuteData().forEach(e -> entries.add(
-                Map.entry( new TransferTimestamp(e.getKey()), new TransferSizeBytes(e.getValue()))));
+                Map.entry(new TransferTimestamp(e.getKey()), new TransferSizeBytes(e.getValue()))));
         return entries;
     }
 
-    public DataForAddress getDataForAddress(SourceAndDestinationAddress address)
-    {
+    public DataForAddress getDataForAddress(SourceAndDestinationAddress address) {
         return data.get(address);
     }
 
-    public List<SourceAndDestinationAddress> getAddresses()
-    {
+    public List<SourceAndDestinationAddress> getAddresses() {
         List<SourceAndDestinationAddress> addresses = new LinkedList<>();
         data.keySet().forEach(a -> addresses.add(a));
         return addresses;
     }
 
-    public List<SourceAndDestinationAddress> getAddressesWithDataSince(long epochMinute)
-    {
+    public List<SourceAndDestinationAddress> getAddressesWithDataSince(long epochMinute) {
         List<SourceAndDestinationAddress> addresses = new LinkedList<>();
         data.keySet().forEach(address ->
         {
             DataForAddress addressData = data.get(address);
-            if (addressData != null && addressData.getLatestEpochMinute() >= epochMinute)
-            {
+            if (addressData != null && addressData.getLatestEpochMinute() >= epochMinute) {
                 addresses.add(address);
             }
         });
         return addresses;
     }
 
-    public void cleanupIgnoredAddresses(Set<SourceAndDestinationAddress> addressesToExclude)
-    {
+    public void cleanupIgnoredAddresses(Set<SourceAndDestinationAddress> addressesToExclude) {
         addressesToExclude.forEach(address -> data.remove(address));
         messages.addDebug("Size of Monitor Data is now " + data.size());
     }

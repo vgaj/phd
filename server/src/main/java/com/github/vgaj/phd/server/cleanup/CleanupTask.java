@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,7 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 @Component
-public class CleanupTask
-{
+public class CleanupTask {
     @Autowired
     private RawDataProcessorInterface rawDataProcessor;
 
@@ -51,8 +50,7 @@ public class CleanupTask
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Scheduled(cron = "30 * * * * *")
-    public void removeFrequentAddresses()
-    {
+    public void removeFrequentAddresses() {
         // Get addresses to ignore based on currently receiving data
         Set<SourceAndDestinationAddress> addressesToIgnore = rawDataProcessor.getAddressesToIgnore();
 

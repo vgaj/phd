@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +46,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Component
-public class ExternalQueryTask  implements Runnable
-{
+public class ExternalQueryTask implements Runnable {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     private Thread queryThread;
@@ -58,54 +57,39 @@ public class ExternalQueryTask  implements Runnable
 
     // Occurs after @PostConstruct
     @EventListener(ApplicationReadyEvent.class)
-    public void start()
-    {
+    public void start() {
         queryThread = new Thread(this);
         queryThread.start();
     }
 
     // Occurs before @PreDestroy
     @EventListener(ContextClosedEvent.class)
-    public void stop()
-    {
-        try
-        {
+    public void stop() {
+        try {
             isShuttingDown = true;
             queryThread.interrupt();
             queryThread.join(1);
-        }
-        catch (InterruptedException ignored)
-        {
+        } catch (InterruptedException ignored) {
         }
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
 
-        try
-        {
+        try {
             Files.deleteIfExists(DomainSocketComms.SOCKET_PATH);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             messages.addError("Failed to delete " + DomainSocketComms.SOCKET_PATH, e);
             return;
         }
 
-        try
-        {
-            try (ServerSocketChannel serverChannel = ServerSocketChannel.open(StandardProtocolFamily.UNIX))
-            {
-                try
-                {
+        try {
+            try (ServerSocketChannel serverChannel = ServerSocketChannel.open(StandardProtocolFamily.UNIX)) {
+                try {
                     serverChannel.bind(socketAddress);
-                }
-                catch (IOException e)
-                {
-                    if (!isShuttingDown)
-                    {
+                } catch (IOException e) {
+                    if (!isShuttingDown) {
                         messages.addError("Failed to bind to " + DomainSocketComms.SOCKET_PATH, e);
                     }
                     return;
@@ -119,94 +103,65 @@ public class ExternalQueryTask  implements Runnable
                 permissions.add(PosixFilePermission.GROUP_WRITE);
                 permissions.add(PosixFilePermission.OTHERS_READ);
                 permissions.add(PosixFilePermission.OTHERS_WRITE);
-                try
-                {
+                try {
                     Files.setPosixFilePermissions(DomainSocketComms.SOCKET_PATH, permissions);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     messages.addError("Failed to change permissions for " + DomainSocketComms.SOCKET_PATH, e);
                     return;
                 }
 
-                while (true)
-                {
+                while (true) {
                     SocketChannel channel = null;
-                    try
-                    {
+                    try {
                         channel = serverChannel.accept();
                         messages.addDebug("New client connected.");
-                    }
-                    catch (IOException e)
-                    {
-                        if (!isShuttingDown)
-                        {
+                    } catch (IOException e) {
+                        if (!isShuttingDown) {
                             messages.addError("Failed accept connection on " + DomainSocketComms.SOCKET_PATH, e);
                         }
                         return;
                     }
                     DomainSocketComms sockComms = new DomainSocketComms(channel);
                     new Thread(() -> {
-                        while (true)
-                        {
-                            try
-                            {
+                        while (true) {
+                            try {
                                 RequestInterface request = sockComms.readSocketMessage(RequestInterface.class);
-                                if (request != null)
-                                {
-                                    if (request instanceof SummaryResultsQuery)
-                                    {
+                                if (request != null) {
+                                    if (request instanceof SummaryResultsQuery) {
                                         messages.addMessage("Received a summary request.");
                                         SummaryResultsResponse response = new SummaryResultsResponse(query.getDisplayContent());
                                         sockComms.writeSocketMessage(response);
-                                    }
-                                    else if (request instanceof HostHistoryQuery)
-                                    {
+                                    } else if (request instanceof HostHistoryQuery) {
                                         messages.addMessage("Received a detailed request.");
-                                        HostHistoryResponse response = new HostHistoryResponse(query.getData(((HostHistoryQuery)request).source(),((HostHistoryQuery)request).destination()).toArray(new String[0]));
+                                        HostHistoryResponse response = new HostHistoryResponse(query.getData(((HostHistoryQuery) request).source(), ((HostHistoryQuery) request).destination()).toArray(new String[0]));
                                         sockComms.writeSocketMessage(response);
-                                    }
-                                    else if (request instanceof DebugLogQuery)
-                                    {
+                                    } else if (request instanceof DebugLogQuery) {
                                         messages.addMessage("Received a debug log request.");
                                         DebugLogResponse response = new DebugLogResponse(Messages.getMessages().toArray(new String[0]));
                                         sockComms.writeSocketMessage(response);
-                                    }
-                                    else
-                                    {
-                                        messages.addError( "Received unexpected request type " + request.getClass().getCanonicalName());
+                                    } else {
+                                        messages.addError("Received unexpected request type " + request.getClass().getCanonicalName());
                                     }
                                     messages.addDebug("Sent response.");
-                                }
-                                else
-                                {
+                                } else {
                                     // Connection was closed
                                     messages.addDebug("Client disconnected.");
                                     break;
                                 }
-                            }
-                            catch (IOException connectionException)
-                            {
+                            } catch (IOException connectionException) {
                                 messages.addError("Error communicating with client", connectionException);
                                 break;
                             }
                         }
                     }).start();
                 }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 messages.addError("Failed to open " + DomainSocketComms.SOCKET_PATH, e);
             }
-        }
-        finally
-        {
-            try
-            {
+        } finally {
+            try {
                 Files.deleteIfExists(DomainSocketComms.SOCKET_PATH);
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
                 messages.addError("Failed to delete " + DomainSocketComms.SOCKET_PATH, e);
             }
         }

@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,45 +36,38 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @Component
-public class AnalysisCache
-{
+public class AnalysisCache {
     private final ConcurrentMap<SourceAndDestinationAddress, AnalysisResult> currentResults = new ConcurrentHashMap<>();
     private final ConcurrentMap<SourceAndDestinationAddress, AnalysisResult> previousResults = new ConcurrentHashMap<>();
 
-    public void putCurrentResult(SourceAndDestinationAddress address, AnalysisResult result)
-    {
+    public void putCurrentResult(SourceAndDestinationAddress address, AnalysisResult result) {
         currentResults.put(address, result);
     }
 
-    public void removeCurrentResult(SourceAndDestinationAddress address)
-    {
+    public void removeCurrentResult(SourceAndDestinationAddress address) {
         currentResults.remove(address);
     }
 
-    public void putPreviousResult(SourceAndDestinationAddress address, AnalysisResult result)
-    {
+    public void putPreviousResult(SourceAndDestinationAddress address, AnalysisResult result) {
         previousResults.put(address, result);
     }
 
-    public Optional<AnalysisResult> getResult(SourceAndDestinationAddress address)
-    {
+    public Optional<AnalysisResult> getResult(SourceAndDestinationAddress address) {
         AnalysisResult currentResult = currentResults.get(address);
         AnalysisResult previousResult = previousResults.get(address);
-        if (currentResult != null && previousResult != null)
-        {
+        if (currentResult != null && previousResult != null) {
             return Optional.of(currentResult.merge(previousResult));
-        }
-        else
-        {
+        } else {
             return Optional.ofNullable((currentResult != null) ? currentResult : previousResult);
         }
     }
 
-    public List<SourceAndDestinationAddress> getAddresses()
-    {
-        ArrayList<SourceAndDestinationAddress> addresses = new ArrayList<>(2*(currentResults.keySet().size()+previousResults.keySet().size()));
+    public List<SourceAndDestinationAddress> getAddresses() {
+        ArrayList<SourceAndDestinationAddress> addresses = new ArrayList<>(2 * (currentResults.keySet().size() + previousResults.keySet().size()));
         currentResults.keySet().forEach(address -> addresses.add(address));
-        previousResults.keySet().forEach(address -> { if (!addresses.contains(address)) addresses.add(address);} );
+        previousResults.keySet().forEach(address -> {
+            if (!addresses.contains(address)) addresses.add(address);
+        });
         return addresses;
     }
 

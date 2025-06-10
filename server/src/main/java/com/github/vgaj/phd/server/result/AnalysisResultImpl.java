@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,8 +34,7 @@ import java.util.*;
 /**
  * Store the results from analysing the data
  */
-public class AnalysisResultImpl implements AnalysisResult
-{
+public class AnalysisResultImpl implements AnalysisResult {
     @Setter
     @Getter
     long lastSeenEpochMinute;
@@ -49,15 +48,13 @@ public class AnalysisResultImpl implements AnalysisResult
      */
     private List<Pair<TransferIntervalMinutes, TransferCount>> intervals = new ArrayList<>();
 
-    public void addIntervalCount(TransferIntervalMinutes intervalMinutes, TransferCount numberOfTimes)
-    {
-        intervals.add( Pair.of(intervalMinutes, numberOfTimes));
+    public void addIntervalCount(TransferIntervalMinutes intervalMinutes, TransferCount numberOfTimes) {
+        intervals.add(Pair.of(intervalMinutes, numberOfTimes));
     }
 
     @JsonIgnore
     @Override
-    public List<Pair<TransferIntervalMinutes, TransferCount>> getIntervalCount()
-    {
+    public List<Pair<TransferIntervalMinutes, TransferCount>> getIntervalCount() {
         return intervals;
     }
 
@@ -66,43 +63,37 @@ public class AnalysisResultImpl implements AnalysisResult
      */
     private List<Pair<TransferSizeBytes, TransferCount>> dataSizes = new ArrayList<>();
 
-    public void addTransferSizeCount(TransferSizeBytes transferSizeBytes, TransferCount numberOfTimes)
-    {
-        dataSizes.add( Pair.of(transferSizeBytes, numberOfTimes));
+    public void addTransferSizeCount(TransferSizeBytes transferSizeBytes, TransferCount numberOfTimes) {
+        dataSizes.add(Pair.of(transferSizeBytes, numberOfTimes));
     }
 
     @JsonIgnore
     @Override
-    public List<Pair<TransferSizeBytes, TransferCount>> getTransferSizeCount()
-    {
+    public List<Pair<TransferSizeBytes, TransferCount>> getTransferSizeCount() {
         return dataSizes;
     }
 
     @Override
-    public AnalysisResult merge (AnalysisResult other)
-    {
+    public AnalysisResult merge(AnalysisResult other) {
         AnalysisResultImpl combinedResult = new AnalysisResultImpl();
 
         HashMap<TransferIntervalMinutes, TransferCount> combinedIntervals = new HashMap<>();
         this.intervals.forEach(interval -> combinedIntervals.put(interval.getKey(), interval.getValue()));
         other.getIntervalCount().forEach(interval -> combinedIntervals.merge(interval.getKey(), interval.getValue(), TransferCount::merge));
-        combinedIntervals.forEach((interval,count) -> combinedResult.addIntervalCount(interval, count));
+        combinedIntervals.forEach((interval, count) -> combinedResult.addIntervalCount(interval, count));
 
         HashMap<TransferSizeBytes, TransferCount> combinedSizes = new HashMap<>();
         this.dataSizes.forEach(size -> combinedSizes.put(size.getKey(), size.getValue()));
         other.getTransferSizeCount().forEach(size -> combinedSizes.merge(size.getKey(), size.getValue(), TransferCount::merge));
-        combinedSizes.forEach((size,count) -> combinedResult.addTransferSizeCount(size, count));
+        combinedSizes.forEach((size, count) -> combinedResult.addTransferSizeCount(size, count));
 
         combinedResult.setLastSeenEpochMinute(
                 this.getLastSeenEpochMinute() > other.getLastSeenEpochMinute() ? this.getLastSeenEpochMinute() : other.getLastSeenEpochMinute());
 
         // Use the executable from the result that was seen later
-        if (this.getLastSeenEpochMinute() > other.getLastSeenEpochMinute() && this.getProbableExecutable() != null &&  !this.getProbableExecutable().isBlank())
-        {
+        if (this.getLastSeenEpochMinute() > other.getLastSeenEpochMinute() && this.getProbableExecutable() != null && !this.getProbableExecutable().isBlank()) {
             combinedResult.setProbableExecutable(this.getProbableExecutable());
-        }
-        else
-        {
+        } else {
             combinedResult.setProbableExecutable(other.getProbableExecutable());
         }
 

@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,9 @@ import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 
 import org.pcap4j.core.*;
+
 import static org.pcap4j.core.PcapNetworkInterface.PromiscuousMode.PROMISCUOUS;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -47,8 +49,7 @@ import java.util.Set;
  */
 @Component
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "false", matchIfMissing = false)
-public class PcapMonitorTask implements Runnable, PcapMonitorTaskFilterUpdateInterface
-{
+public class PcapMonitorTask implements Runnable, PcapMonitorTaskFilterUpdateInterface {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
@@ -60,23 +61,18 @@ public class PcapMonitorTask implements Runnable, PcapMonitorTaskFilterUpdateInt
 
     // Occurs after @PostConstruct
     @EventListener(ApplicationReadyEvent.class)
-    public void start()
-    {
+    public void start() {
         monitorThread = new Thread(this);
         monitorThread.start();
     }
 
     // Occurs before @PreDestroy
     @EventListener(ContextClosedEvent.class)
-    public void stop()
-    {
-        try
-        {
+    public void stop() {
+        try {
             handle.breakLoop();
             monitorThread.join(5000);
-        }
-        catch (NotOpenException | InterruptedException e)
-        {
+        } catch (NotOpenException | InterruptedException e) {
             messages.addError("Error while stopping", e);
         }
     }
@@ -91,38 +87,31 @@ public class PcapMonitorTask implements Runnable, PcapMonitorTaskFilterUpdateInt
      * - 50ms for 250
      * - 6 seconds for 2500
      * - and you get a Segmentation fault with 10000
+     *
      * @param addressesToExclude Addresses to exclude
      */
     @Override
-    public void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude)
-    {
-        try
-        {
+    public void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude) {
+        try {
             long start = System.nanoTime();
             StringBuilder newFilter = new StringBuilder();
             newFilter.append("(").append(filter).append(")");
-            addressesToExclude.forEach( address -> newFilter.append(" and not host ").append(address.getDesinationAddressString()));
+            addressesToExclude.forEach(address -> newFilter.append(" and not host ").append(address.getDesinationAddressString()));
             handle.setFilter(newFilter.toString(), BpfProgram.BpfCompileMode.OPTIMIZE);
             long durationMs = (System.nanoTime() - start) / 1000000;
-            if (durationMs > 0)
-            {
+            if (durationMs > 0) {
                 messages.addDebug("Filter update took " + durationMs + " ms");
             }
-        }
-        catch (PcapNativeException | NotOpenException e)
-        {
+        } catch (PcapNativeException | NotOpenException e) {
             messages.addError("Failed to update libpcap filter", e);
         }
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
+    public void run() {
+        try {
             PcapNetworkInterface nif = null;
-            try
-            {
+            try {
                 Optional<PcapNetworkInterface> optInt = Pcaps.findAllDevs().stream()
                         .filter(i -> !i.isLoopBack()
                                 && !i.getAddresses().isEmpty()
@@ -130,16 +119,13 @@ public class PcapMonitorTask implements Runnable, PcapMonitorTaskFilterUpdateInt
                                 && i.isRunning()
                                 && i.isUp())
                         .findFirst();
-                if (optInt.isEmpty())
-                {
+                if (optInt.isEmpty()) {
                     messages.addError("Could not find NIC");
                     return;
                 }
                 nif = optInt.get();
                 messages.addMessage("Using " + nif.getName());
-            }
-            catch (PcapNativeException e)
-            {
+            } catch (PcapNativeException e) {
                 messages.addError("Error looking for NIC", e);
                 return;
             }
@@ -150,16 +136,14 @@ public class PcapMonitorTask implements Runnable, PcapMonitorTaskFilterUpdateInt
             messages.addMessage("Using filter: " + filter);
             handle.setFilter(filter, BpfProgram.BpfCompileMode.OPTIMIZE);
 
-            PacketListener listener = pcapPacket -> { newDataProcessor.processNewData(pcapPacket); };
+            PacketListener listener = pcapPacket -> {
+                newDataProcessor.processNewData(pcapPacket);
+            };
 
             handle.loop(-1, listener);
             handle.close(); // This won't normally get called
-        }
-        catch (InterruptedException e)
-        {
-        }
-        catch (Exception e)
-        {
+        } catch (InterruptedException e) {
+        } catch (Exception e) {
             messages.addError("Exiting monitor thread due to an error ", e);
         }
     }

@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -31,8 +31,7 @@ import java.util.List;
 /**
  * Interface to access the results from analysing the data
  */
-public interface AnalysisResult
-{
+public interface AnalysisResult {
     long getLastSeenEpochMinute();
 
     String getProbableExecutable();
@@ -41,5 +40,5 @@ public interface AnalysisResult
 
     List<Pair<TransferSizeBytes, TransferCount>> getTransferSizeCount();
 
-    AnalysisResult merge (AnalysisResult other);
+    AnalysisResult merge(AnalysisResult other);
 }

@@ -30,18 +30,15 @@ import org.junit.Test;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-public class SourceAndDestinationAddressTests
-{
+public class SourceAndDestinationAddressTests {
     @Test
-    public void addressStringFromBytesTest()
-    {
+    public void addressStringFromBytesTest() {
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 192, (byte) 168, (byte) 111, (byte) 222);
         assert address.getDesinationAddressString().equals("192.168.111.222");
     }
 
     @Test
-    public void addressStringFromInetAddressTest() throws UnknownHostException
-    {
+    public void addressStringFromInetAddressTest() throws UnknownHostException {
         String addressString = "192.168.111.222";
         InetAddress inetAddress = InetAddress.getByName(addressString);
         SourceAndDestinationAddress sourceAndDestinationAddress = new SourceAndDestinationAddress(inetAddress);
@@ -49,23 +46,20 @@ public class SourceAndDestinationAddressTests
     }
 
     @Test
-    public void nonResolvableIpAddressStringTest() throws UnknownHostException
-    {
+    public void nonResolvableIpAddressStringTest() throws UnknownHostException {
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 192, (byte) 168, (byte) 111, (byte) 222);
         address.lookupDestinationHost();
         assert address.getDesinationHostString().equals("192.168.111.222");
     }
 
     @Test
-    public void resolvableIpAddressStringPriorToLookupTest() throws UnknownHostException
-    {
+    public void resolvableIpAddressStringPriorToLookupTest() throws UnknownHostException {
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
         assert address.getDesinationHostString().equals("8.8.8.8");
     }
 
     @Test
-    public void resolvableIpAddressStringAfterLookupTest() throws UnknownHostException
-    {
+    public void resolvableIpAddressStringAfterLookupTest() throws UnknownHostException {
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
         address.lookupDestinationHost();
         assert !address.getDesinationHostString().equals("8.8.8.8");

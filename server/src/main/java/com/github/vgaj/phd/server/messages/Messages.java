@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,24 +26,20 @@ package com.github.vgaj.phd.server.messages;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Messages implements MessageInterface
-{
+public class Messages implements MessageInterface {
     private Logger logger;
 
-    public static Messages getLogger(Class<?> clazz)
-    {
+    public static Messages getLogger(Class<?> clazz) {
         return new Messages(clazz);
     }
 
-    private Messages(Class<?> clazz)
-    {
+    private Messages(Class<?> clazz) {
         logger = LoggerFactory.getLogger(clazz);
     }
 
@@ -55,54 +51,44 @@ public class Messages implements MessageInterface
 
     // The ring buffer of messages
     private static String[] messages = new String[maxMessagesToShow];
-    
-    public void addError(String msg, Throwable t)
-    {
+
+    public void addError(String msg, Throwable t) {
         logger.error(msg, t);
         add(msg);
     }
 
-    public void addError(String msg)
-    {
+    public void addError(String msg) {
         logger.error(msg);
         add(msg);
     }
 
-    public void addMessage(String msg)
-    {
+    public void addMessage(String msg) {
         logger.info(msg);
         add(msg);
     }
 
     @Override
-    public void addDebug(String msg)
-    {
+    public void addDebug(String msg) {
         logger.debug(msg);
         add(msg);
     }
 
-    private static void add(String msg)
-    {
-        synchronized (messages)
-        {
+    private static void add(String msg) {
+        synchronized (messages) {
             messages[msgIndex] = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm:ss ")) + msg;
             msgIndex = getNext(msgIndex);
         }
     }
 
-    private static int getNext(int i)
-    {
-        return (i == (maxMessagesToShow - 1) ? 0 : i+1);
+    private static int getNext(int i) {
+        return (i == (maxMessagesToShow - 1) ? 0 : i + 1);
     }
 
-    public static List<String> getMessages()
-    {
+    public static List<String> getMessages() {
         ArrayList<String> results = new ArrayList<>(maxMessagesToShow);
         int i = msgIndex;
-        for (int x = 0; x < maxMessagesToShow; x++)
-        {
-            if (messages[i] != null)
-            {
+        for (int x = 0; x < maxMessagesToShow; x++) {
+            if (messages[i] != null) {
                 results.add(messages[i]);
             }
             i = getNext(i);

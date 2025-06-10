@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,7 @@ import lombok.Getter;
 import java.util.LinkedList;
 import java.util.List;
 
-public class ResultsSaveList
-{
+public class ResultsSaveList {
     @Getter
     private List<ResultsSaveItem> resultsForSaving = new LinkedList<>();
 }

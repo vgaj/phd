@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,26 +37,23 @@ import java.util.concurrent.ConcurrentMap;
  * Data about processes.  The last process associated with an address.
  */
 @Component
-public class HostToExecutableLookup
-{
+public class HostToExecutableLookup {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
     private PidToCommandLookup pidToCommandLookup;
 
     // Last PID or command for each host
-    private final ConcurrentMap<SourceAndDestinationAddress, String > data = new ConcurrentHashMap<>();
+    private final ConcurrentMap<SourceAndDestinationAddress, String> data = new ConcurrentHashMap<>();
 
-    public void addData(@NonNull SourceAndDestinationAddress host, int pid)
-    {
+    public void addData(@NonNull SourceAndDestinationAddress host, int pid) {
         String command = pidToCommandLookup.get(pid);
         String previousCommand = data.put(host, command);
 
         //if (previousCommand != null && !command.equals(previousCommand)) messages.addMessage("Different command: " + command + " (previously " + previousCommand + ") for host " + host.getAddressString());
     }
 
-    public String getProcessForAddress(SourceAndDestinationAddress address)
-    {
+    public String getProcessForAddress(SourceAndDestinationAddress address) {
         return data.get(address);
     }
 }

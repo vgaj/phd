@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,24 +36,21 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.net.UnknownHostException;
 
-public class ResultXmlSerialisationTest
-{
+public class ResultXmlSerialisationTest {
 
-    public static AnalysisResultImpl makeAnalysisResult(int interval1, int intervalCount1, int interval2, int intervalCount2, int size1, int sizeCount1, int size2, int sizeCount2, long lastSeen, String executable)
-    {
+    public static AnalysisResultImpl makeAnalysisResult(int interval1, int intervalCount1, int interval2, int intervalCount2, int size1, int sizeCount1, int size2, int sizeCount2, long lastSeen, String executable) {
         AnalysisResultImpl result = new AnalysisResultImpl();
-        result.addIntervalCount( TransferIntervalMinutes.of(interval1), TransferCount.of(intervalCount1));
-        result.addIntervalCount( TransferIntervalMinutes.of(interval2), TransferCount.of(intervalCount2));
-        result.addTransferSizeCount( TransferSizeBytes.of(size1), TransferCount.of(sizeCount1));
-        result.addTransferSizeCount( TransferSizeBytes.of(size2), TransferCount.of(sizeCount2));
+        result.addIntervalCount(TransferIntervalMinutes.of(interval1), TransferCount.of(intervalCount1));
+        result.addIntervalCount(TransferIntervalMinutes.of(interval2), TransferCount.of(intervalCount2));
+        result.addTransferSizeCount(TransferSizeBytes.of(size1), TransferCount.of(sizeCount1));
+        result.addTransferSizeCount(TransferSizeBytes.of(size2), TransferCount.of(sizeCount2));
         result.setLastSeenEpochMinute(lastSeen);
         result.setProbableExecutable(executable);
         return result;
     }
 
     @Test
-    void roundTripAnalysisResult() throws JsonProcessingException
-    {
+    void roundTripAnalysisResult() throws JsonProcessingException {
         // Arrange
         int interval1 = 1;
         int intervalCount1 = 2;
@@ -87,11 +84,10 @@ public class ResultXmlSerialisationTest
     }
 
     @Test
-    void roundTripEmptyAnalysisResult() throws JsonProcessingException
-    {
+    void roundTripEmptyAnalysisResult() throws JsonProcessingException {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
-        result.addIntervalCount( TransferIntervalMinutes.of(1), TransferCount.of(2));
+        result.addIntervalCount(TransferIntervalMinutes.of(1), TransferCount.of(2));
 
         // Act
         String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(result);
@@ -105,10 +101,9 @@ public class ResultXmlSerialisationTest
     }
 
     @Test
-    void roundTripRemoteAddress() throws UnknownHostException, JsonProcessingException, NoSuchFieldException, IllegalAccessException
-    {
+    void roundTripRemoteAddress() throws UnknownHostException, JsonProcessingException, NoSuchFieldException, IllegalAccessException {
         // Arrange
-        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8, (byte) 8, (byte) 8, (byte) 4,(byte)  4);
+        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8, (byte) 8, (byte) 8, (byte) 4, (byte) 4);
         address.lookupDestinationHost();
 
         // Act
@@ -118,7 +113,7 @@ public class ResultXmlSerialisationTest
         // Assert
         Field dstCctetsField = SourceAndDestinationAddress.class.getDeclaredField("dstOctets");
         dstCctetsField.setAccessible(true);
-        byte[] dstOctets =  (byte[])dstCctetsField.get(fromXml);
+        byte[] dstOctets = (byte[]) dstCctetsField.get(fromXml);
         assert dstOctets[0] == 8;
         assert dstOctets[1] == 8;
         assert dstOctets[2] == 4;
@@ -126,7 +121,7 @@ public class ResultXmlSerialisationTest
 
         Field srcOctetsField = SourceAndDestinationAddress.class.getDeclaredField("srcOctets");
         srcOctetsField.setAccessible(true);
-        byte[] srcOctets =  (byte[])srcOctetsField.get(fromXml);
+        byte[] srcOctets = (byte[]) srcOctetsField.get(fromXml);
         assert srcOctets[0] == 8;
         assert srcOctets[1] == 8;
         assert srcOctets[2] == 8;
@@ -134,21 +129,20 @@ public class ResultXmlSerialisationTest
 
         Field hostnameField = SourceAndDestinationAddress.class.getDeclaredField("destinationHostname");
         hostnameField.setAccessible(true);
-        String hostname =  (String) hostnameField.get(fromXml);
+        String hostname = (String) hostnameField.get(fromXml);
         assert hostname.equals("dns.google");
 
         Field lookupAttemptedField = SourceAndDestinationAddress.class.getDeclaredField("destinationLookupAttempted");
         lookupAttemptedField.setAccessible(true);
-        assert (boolean)lookupAttemptedField.get(fromXml);
+        assert (boolean) lookupAttemptedField.get(fromXml);
 
         assert fromXml.getReverseDesinationHostname().equals("google.dns");
     }
 
     @Test
-    void roundTripResultsSaveList() throws UnknownHostException, JsonProcessingException
-    {
+    void roundTripResultsSaveList() throws UnknownHostException, JsonProcessingException {
         // Arrange
-        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8,(byte)  8);
+        SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
         address.lookupDestinationHost();
         int interval1 = 1;
         int intervalCount1 = 2;
@@ -163,7 +157,7 @@ public class ResultXmlSerialisationTest
         AnalysisResultImpl result = makeAnalysisResult(interval1, intervalCount1, interval2, intervalCount2, size1, sizeCount1, size2, sizeCount2, lastSeen, executable);
 
         ResultsSaveList results = new ResultsSaveList();
-        results.getResultsForSaving().add(ResultsSaveItem.of(address,result));
+        results.getResultsForSaving().add(ResultsSaveItem.of(address, result));
 
         // Act
         String xml = ResultsSaveXmlMapper.getXmlMapper().writeValueAsString(results);

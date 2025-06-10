@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -47,8 +47,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 @Component
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "true", matchIfMissing = true)
-public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
-{
+public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
@@ -73,41 +72,35 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
 
     // Occurs after @PostConstruct
     @EventListener(ApplicationReadyEvent.class)
-    public void load()
-    {
+    public void load() {
         mapFdIpBytes = libBpfWrapper.getMapFdByName(bpf_map_ip_bytes);
-        if (mapFdIpBytes == -1)
-        {
+        if (mapFdIpBytes == -1) {
             messages.addError("Map " + bpf_map_ip_bytes + " was not loaded");
         }
         mapFdIpPid = libBpfWrapper.getMapFdByName(bpf_map_ip_pid);
-        if (mapFdIpPid == -1)
-        {
+        if (mapFdIpPid == -1) {
             messages.addError("Map " + bpf_map_ip_pid + " was not loaded");
         }
     }
 
     // Occurs before @PreDestroy
     @EventListener(ContextClosedEvent.class)
-    public void unload()
-    {
+    public void unload() {
     }
 
     @Scheduled(cron = "59 * * * * *")
-    public void collectData()
-    {
+    public void collectData() {
         long start = System.currentTimeMillis();
         Long epochMinute = EpochMinuteUtil.now();
 
-        List<Pair<SourceAndDestinationAddress,Integer>> ipToBytesForLastMinute =  libBpfWrapper.getAddressToCountData(mapFdIpBytes);
-        List<Pair<SourceAndDestinationAddress,Integer>> ipToPidForLastMinute =  libBpfWrapper.getAddressToPidData(mapFdIpPid);
+        List<Pair<SourceAndDestinationAddress, Integer>> ipToBytesForLastMinute = libBpfWrapper.getAddressToCountData(mapFdIpBytes);
+        List<Pair<SourceAndDestinationAddress, Integer>> ipToPidForLastMinute = libBpfWrapper.getAddressToPidData(mapFdIpPid);
         messages.addMessage("Total time (ms) to get data: " + (System.currentTimeMillis() - start));
 
         // Store count data
-        ipToBytesForLastMinute.forEach(entry->
+        ipToBytesForLastMinute.forEach(entry ->
         {
-            if (!addressesToIgnore.contains(entry.getKey()))
-            {
+            if (!addressesToIgnore.contains(entry.getKey())) {
                 trafficDataStore.addData(entry.getKey(), entry.getValue(), epochMinute);
             }
         });
@@ -122,27 +115,21 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface
     }
 
     @Override
-    public void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude)
-    {
+    public void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude) {
         int sizeBefore = addressesToIgnore.size();
         addressesToExclude.forEach(a ->
         {
-            try
-            {
-                if (addressesToIgnore.add(a))
-                {
+            try {
+                if (addressesToIgnore.add(a)) {
                     messages.addDebug("Not monitoring " + a.getDesinationAddressString());
                 }
-            }
-            catch (Throwable t)
-            {
+            } catch (Throwable t) {
                 messages.addError("Failed to add address to ignore", t);
             }
         });
         int sizeAfter = addressesToIgnore.size();
 
-        if (sizeAfter > sizeBefore)
-        {
+        if (sizeAfter > sizeBefore) {
             messages.addDebug("Total ignored addresses now is " + sizeAfter);
         }
     }

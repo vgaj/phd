@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,46 +29,33 @@ import lombok.Getter;
 /**
  * Calculate a store of interest for an Analysis Result
  */
-public class AnalysisScore
-{
+public class AnalysisScore {
     @Getter
     private int score = 0;
-    public AnalysisScore( ResultCategorisation resultCategorisation)
-    {
-        if (resultCategorisation.areAllIntervalsTheSame_c11())
-        {
+
+    public AnalysisScore(ResultCategorisation resultCategorisation) {
+        if (resultCategorisation.areAllIntervalsTheSame_c11()) {
             score += 5;
-        }
-        else if (resultCategorisation.areMostIntervalsTheSame_c12())
-        {
+        } else if (resultCategorisation.areMostIntervalsTheSame_c12()) {
             score += 4;
-        }
-        else if (resultCategorisation.areSomeIntervalsTheSame_c13())
-        {
+        } else if (resultCategorisation.areSomeIntervalsTheSame_c13()) {
             score += 2;
         }
 
-        if (resultCategorisation.areAllTransfersTheSameSize_c21())
-        {
+        if (resultCategorisation.areAllTransfersTheSameSize_c21()) {
             score += 5;
-        }
-        else if (resultCategorisation.areMostTransfersTheSameSize_c22())
-        {
+        } else if (resultCategorisation.areMostTransfersTheSameSize_c22()) {
             score += 4;
-        }
-        else if (resultCategorisation.areSomeTransfersTheSameSize_c23())
-        {
+        } else if (resultCategorisation.areSomeTransfersTheSameSize_c23()) {
             score += 2;
         }
 
-        if (resultCategorisation.isRuntimeLongEnoughToDecideIfResultIsCurrent() && !resultCategorisation.isResultCurrent())
-        {
+        if (resultCategorisation.isRuntimeLongEnoughToDecideIfResultIsCurrent() && !resultCategorisation.isResultCurrent()) {
             score = score / 2;
         }
     }
 
-    public String toString()
-    {
-        return String.format("%d",score);
+    public String toString() {
+        return String.format("%d", score);
     }
 }

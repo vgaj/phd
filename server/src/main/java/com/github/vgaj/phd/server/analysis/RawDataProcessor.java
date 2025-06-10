@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class RawDataProcessor implements RawDataProcessorInterface
-{
+public class RawDataProcessor implements RawDataProcessorInterface {
     @Autowired
     private TrafficDataStore trafficDataStore;
 
@@ -55,11 +54,11 @@ public class RawDataProcessor implements RawDataProcessorInterface
 
     /**
      * This is the logic which process the data for a given host
+     *
      * @param address The address to do the processing for
      * @return Structure containing the results of the analysis if the minimal criteria is met
      */
-    public Optional<AnalysisResult> processRawData(SourceAndDestinationAddress address)
-    {
+    public Optional<AnalysisResult> processRawData(SourceAndDestinationAddress address) {
         AnalysisResultImpl result = new AnalysisResultImpl();
 
         // List of:
@@ -70,15 +69,14 @@ public class RawDataProcessor implements RawDataProcessorInterface
 
         // Map of:
         // interval (minutes) -> list to lengths of data at this interval
-        Map<TransferIntervalMinutes,List<TransferSizeBytes>> intervalsBetweenData = rawDataProcessorUtil.getIntervalsBetweenData(dataForAddress);
+        Map<TransferIntervalMinutes, List<TransferSizeBytes>> intervalsBetweenData = rawDataProcessorUtil.getIntervalsBetweenData(dataForAddress);
 
         //=============
         // Pre-criteria: We are only interested in looking at hosts where every interval between
         // data is greater than the configured minimum.
         // This should reduce web browsing traffic getting captured.
         if (!intervalsBetweenData.isEmpty() &&
-                intervalsBetweenData.entrySet().stream().allMatch(entryForFrequency -> entryForFrequency.getKey().getInterval() >= minIntervalMinutes))
-        {
+                intervalsBetweenData.entrySet().stream().allMatch(entryForFrequency -> entryForFrequency.getKey().getInterval() >= minIntervalMinutes)) {
             //=============
             // Repeated transfers at the same interval
             intervalsBetweenData.entrySet().stream()
@@ -105,9 +103,7 @@ public class RawDataProcessor implements RawDataProcessorInterface
             result.setProbableExecutable(executable != null ? executable : " ");
 
             return Optional.of(result);
-        }
-        else
-        {
+        } else {
             /* For testing
             if (true)
             {
@@ -125,10 +121,10 @@ public class RawDataProcessor implements RawDataProcessorInterface
      * Identifies addresses which can be ignored.
      * If data was sent to the address in more than once over the previous
      * minimum duration then it will be ignored
+     *
      * @return addresses to ignore
      */
-    public Set<SourceAndDestinationAddress> getAddressesToIgnore()
-    {
+    public Set<SourceAndDestinationAddress> getAddressesToIgnore() {
         HashSet<SourceAndDestinationAddress> addressesToIgnore = new HashSet<>();
 
         long now = EpochMinuteUtil.now();
@@ -141,12 +137,9 @@ public class RawDataProcessor implements RawDataProcessorInterface
             // was the minimum duration ago.
             // For example if this is minute 100 and the minimum interval is 2
             // then we look at minute 99 and 98
-            for (long minute = now - 1; minute >= now - minIntervalMinutes; minute--)
-            {
-                if (trafficDataStore.getDataForAddress(address).getByteCountPerMinute().getOrDefault(minute, 0) > 0)
-                {
-                    if (receivedDataInLastInterval)
-                    {
+            for (long minute = now - 1; minute >= now - minIntervalMinutes; minute--) {
+                if (trafficDataStore.getDataForAddress(address).getByteCountPerMinute().getOrDefault(minute, 0) > 0) {
+                    if (receivedDataInLastInterval) {
                         addressesToIgnore.add(address);
                         break;
                     }
