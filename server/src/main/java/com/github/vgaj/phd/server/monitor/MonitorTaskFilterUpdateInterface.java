@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor;
 
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 
 import java.util.Set;
 

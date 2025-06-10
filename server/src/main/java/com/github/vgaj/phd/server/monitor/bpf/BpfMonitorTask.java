@@ -25,9 +25,9 @@ SOFTWARE.
 package com.github.vgaj.phd.server.monitor.bpf;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
-import com.github.vgaj.phd.server.data.HostToExecutableLookup;
+import com.github.vgaj.phd.server.lookup.HostToExecutableLookup;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.common.util.Pair;

@@ -24,7 +24,7 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.analysis;
 
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 
 import java.util.Optional;

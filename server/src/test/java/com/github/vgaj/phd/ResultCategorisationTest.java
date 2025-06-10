@@ -24,7 +24,11 @@ SOFTWARE.
 
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.server.result.*;
+import com.github.vgaj.phd.server.result.AnalysisResultImpl;
+import com.github.vgaj.phd.server.result.TransferCount;
+import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
+import com.github.vgaj.phd.server.result.TransferSizeBytes;
+import com.github.vgaj.phd.server.score.ResultCategorisationImpl;
 import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;

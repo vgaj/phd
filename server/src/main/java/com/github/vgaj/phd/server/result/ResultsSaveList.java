@@ -24,30 +24,12 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.result;
 
-import java.util.Optional;
+import lombok.Getter;
 
-public interface ResultCategorisation {
-    boolean areAllIntervalsTheSame_c11();
+import java.util.LinkedList;
+import java.util.List;
 
-    boolean areMostIntervalsTheSame_c12();
-
-    boolean areSomeIntervalsTheSame_c13();
-
-    boolean areAllTransfersTheSameSize_c21();
-
-    boolean areMostTransfersTheSameSize_c22();
-
-    boolean areSomeTransfersTheSameSize_c23();
-
-    boolean isRuntimeLongEnoughToDecideIfResultIsCurrent();
-
-    boolean isResultCurrent();
-
-    Optional<Integer> getMostCommonInterval();
-
-    Optional<Integer> getCountForMostCommonInterval();
-
-    Optional<Integer> getMostCommonSize();
-
-    Optional<Integer> getCountForMostCommonSize();
+public class ResultsSaveList {
+    @Getter
+    private List<ResultsSaveItem> resultsForSaving = new LinkedList<>();
 }

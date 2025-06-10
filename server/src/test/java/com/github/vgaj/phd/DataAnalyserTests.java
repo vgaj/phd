@@ -28,7 +28,7 @@ import com.github.vgaj.phd.server.analysis.RawDataProcessorUtil;
 import com.github.vgaj.phd.server.result.TransferCount;
 import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
-import com.github.vgaj.phd.server.result.TransferTimestamp;
+import com.github.vgaj.phd.server.data.TransferTimestamp;
 
 import org.junit.jupiter.api.Test;
 

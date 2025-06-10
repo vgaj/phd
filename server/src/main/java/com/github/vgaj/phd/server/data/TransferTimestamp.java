@@ -22,27 +22,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.analysis;
+package com.github.vgaj.phd.server.data;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-public class ResultsSaveXmlMapper {
-    public static XmlMapper getXmlMapper() {
-        JacksonXmlModule xmlModule = new JacksonXmlModule();
+@AllArgsConstructor
+@EqualsAndHashCode
+public class TransferTimestamp {
+    @Getter
+    private Long timestamp;
 
-        // Prevent Jackson from using a wrapper for empty lists
-        xmlModule.setDefaultUseWrapper(false);
+    @Override
+    public String toString() {
+        return String.format("%d", timestamp);
+    }
 
-        XmlMapper xmlMapper = new XmlMapper(xmlModule);
+    public int compareTo(TransferTimestamp other) {
+        return timestamp.compareTo(other.timestamp);
+    }
 
-        // Configure Jackson to only include all properties by default,
-        // otherwise private fields with no getter will not get included.
-        xmlMapper.setVisibility(xmlMapper.getSerializationConfig()
-                .getDefaultVisibilityChecker()
-                .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
-
-        return xmlMapper;
+    public TransferIntervalMinutes subtract(TransferTimestamp other) {
+        return TransferIntervalMinutes.of((int) (timestamp - other.timestamp));
     }
 }

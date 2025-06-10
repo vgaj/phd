@@ -24,10 +24,10 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.data;
 
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
-import com.github.vgaj.phd.server.result.TransferTimestamp;
 
 import lombok.NonNull;
 import org.springframework.stereotype.Component;

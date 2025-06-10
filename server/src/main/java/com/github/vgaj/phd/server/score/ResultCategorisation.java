@@ -22,28 +22,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.result;
+package com.github.vgaj.phd.server.score;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import java.util.Optional;
 
-@AllArgsConstructor
-@EqualsAndHashCode
-public class TransferTimestamp {
-    @Getter
-    private Long timestamp;
+public interface ResultCategorisation {
+    boolean areAllIntervalsTheSame_c11();
 
-    @Override
-    public String toString() {
-        return String.format("%d", timestamp);
-    }
+    boolean areMostIntervalsTheSame_c12();
 
-    public int compareTo(TransferTimestamp other) {
-        return timestamp.compareTo(other.timestamp);
-    }
+    boolean areSomeIntervalsTheSame_c13();
 
-    public TransferIntervalMinutes subtract(TransferTimestamp other) {
-        return TransferIntervalMinutes.of((int) (timestamp - other.timestamp));
-    }
+    boolean areAllTransfersTheSameSize_c21();
+
+    boolean areMostTransfersTheSameSize_c22();
+
+    boolean areSomeTransfersTheSameSize_c23();
+
+    boolean isRuntimeLongEnoughToDecideIfResultIsCurrent();
+
+    boolean isResultCurrent();
+
+    Optional<Integer> getMostCommonInterval();
+
+    Optional<Integer> getCountForMostCommonInterval();
+
+    Optional<Integer> getMostCommonSize();
+
+    Optional<Integer> getCountForMostCommonSize();
 }

@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.analysis;
+package com.github.vgaj.phd.server.result;
 
+import com.github.vgaj.phd.server.analysis.AnalysisCache;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.server.result.AnalysisResultImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

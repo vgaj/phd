@@ -30,14 +30,14 @@ import com.github.vgaj.phd.server.data.DataForAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 import com.github.vgaj.phd.common.query.DisplayContent;
 import com.github.vgaj.phd.common.query.DisplayResult;
 import com.github.vgaj.phd.common.query.DisplayResultLine;
 import com.github.vgaj.phd.server.result.AnalysisResult;
-import com.github.vgaj.phd.server.result.AnalysisScore;
-import com.github.vgaj.phd.server.result.ResultCategorisation;
-import com.github.vgaj.phd.server.result.ResultCategorisationImpl;
+import com.github.vgaj.phd.server.score.AnalysisScore;
+import com.github.vgaj.phd.server.score.ResultCategorisation;
+import com.github.vgaj.phd.server.score.ResultCategorisationImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -22,30 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.data;
+package com.github.vgaj.phd.server.result;
 
-import com.github.vgaj.phd.common.util.ExecutableDetails;
-import org.springframework.stereotype.Component;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 
+import lombok.Getter;
 
-import java.util.HashMap;
-
-@Component
-public class PidToCommandLookup {
-    private HashMap<Integer, String> cache;
-    long nextCacheRefresh = 0;
-
-    String get(int pid) {
-        // Reset the cache after 30 seconds
-        if (System.currentTimeMillis() > nextCacheRefresh) {
-            cache = new HashMap<>();
-            nextCacheRefresh = System.currentTimeMillis() + 30000;
-        }
-
-        if (!cache.containsKey(pid)) {
-            cache.put(pid, ExecutableDetails.lookup(pid));
-        }
-
-        return cache.get(pid);
+public class ResultsSaveItem {
+    public static ResultsSaveItem of(SourceAndDestinationAddress address, AnalysisResultImpl result) {
+        ResultsSaveItem item = new ResultsSaveItem();
+        item.address = address;
+        item.result = result;
+        return item;
     }
+
+    @Getter
+    private SourceAndDestinationAddress address;
+
+    @Getter
+    private AnalysisResultImpl result;
 }

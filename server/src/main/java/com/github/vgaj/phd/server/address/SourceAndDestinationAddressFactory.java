@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.data;
+package com.github.vgaj.phd.server.address;
 
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
@@ -47,7 +47,7 @@ import java.util.stream.Stream;
  */
 @Component
 public class SourceAndDestinationAddressFactory {
-    private MessageInterface messages = Messages.getLogger(this.getClass());
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
     private List<InetAddress> localAddresses = null;
 
     private Stream<InetAddress> getLocalAddressesStream() {

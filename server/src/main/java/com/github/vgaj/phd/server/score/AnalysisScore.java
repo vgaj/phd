@@ -22,24 +22,40 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.analysis;
-
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
-import com.github.vgaj.phd.server.result.AnalysisResultImpl;
+package com.github.vgaj.phd.server.score;
 
 import lombok.Getter;
 
-public class ResultsSaveItem {
-    public static ResultsSaveItem of(SourceAndDestinationAddress address, AnalysisResultImpl result) {
-        ResultsSaveItem item = new ResultsSaveItem();
-        item.address = address;
-        item.result = result;
-        return item;
+/**
+ * Calculate a store of interest for an Analysis Result
+ */
+public class AnalysisScore {
+    @Getter
+    private int score = 0;
+
+    public AnalysisScore(ResultCategorisation resultCategorisation) {
+        if (resultCategorisation.areAllIntervalsTheSame_c11()) {
+            score += 5;
+        } else if (resultCategorisation.areMostIntervalsTheSame_c12()) {
+            score += 4;
+        } else if (resultCategorisation.areSomeIntervalsTheSame_c13()) {
+            score += 2;
+        }
+
+        if (resultCategorisation.areAllTransfersTheSameSize_c21()) {
+            score += 5;
+        } else if (resultCategorisation.areMostTransfersTheSameSize_c22()) {
+            score += 4;
+        } else if (resultCategorisation.areSomeTransfersTheSameSize_c23()) {
+            score += 2;
+        }
+
+        if (resultCategorisation.isRuntimeLongEnoughToDecideIfResultIsCurrent() && !resultCategorisation.isResultCurrent()) {
+            score = score / 2;
+        }
     }
 
-    @Getter
-    private SourceAndDestinationAddress address;
-
-    @Getter
-    private AnalysisResultImpl result;
+    public String toString() {
+        return String.format("%d", score);
+    }
 }

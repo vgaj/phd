@@ -22,9 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.data;
+package com.github.vgaj.phd.server.address;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.vgaj.phd.server.lookup.SourceIpToDnsNameLookup;
+import com.github.vgaj.phd.server.lookup.SourceIpToMacAddressLookup;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

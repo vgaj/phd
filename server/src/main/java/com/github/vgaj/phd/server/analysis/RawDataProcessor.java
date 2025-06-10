@@ -25,11 +25,12 @@ SOFTWARE.
 package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
-import com.github.vgaj.phd.server.data.HostToExecutableLookup;
+import com.github.vgaj.phd.server.data.TransferTimestamp;
+import com.github.vgaj.phd.server.lookup.HostToExecutableLookup;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
-import com.github.vgaj.phd.server.result.*;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 
+import com.github.vgaj.phd.server.result.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

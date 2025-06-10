@@ -22,10 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.result;
+package com.github.vgaj.phd.server.score;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.common.util.Pair;
+import com.github.vgaj.phd.server.result.AnalysisResult;
+import com.github.vgaj.phd.server.result.TransferCount;
+import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
+import com.github.vgaj.phd.server.result.TransferSizeBytes;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.lang.management.ManagementFactory;

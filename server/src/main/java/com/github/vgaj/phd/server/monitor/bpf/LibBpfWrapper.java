@@ -24,8 +24,8 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.monitor.bpf;
 
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddressFactory;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddressFactory;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 

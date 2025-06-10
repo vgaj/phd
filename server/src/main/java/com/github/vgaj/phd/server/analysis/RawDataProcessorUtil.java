@@ -27,7 +27,7 @@ package com.github.vgaj.phd.server.analysis;
 import com.github.vgaj.phd.server.result.TransferCount;
 import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
-import com.github.vgaj.phd.server.result.TransferTimestamp;
+import com.github.vgaj.phd.server.data.TransferTimestamp;
 
 import java.util.*;
 import java.util.stream.Collectors;

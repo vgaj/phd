@@ -25,10 +25,10 @@ SOFTWARE.
 package com.github.vgaj.phd;
 
 import com.github.vgaj.phd.server.analysis.AnalysisCache;
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
-import com.github.vgaj.phd.server.result.*;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 
 import com.github.vgaj.phd.common.util.Pair;
+import com.github.vgaj.phd.server.result.*;
 import org.junit.jupiter.api.Test;
 
 import java.net.UnknownHostException;

@@ -24,11 +24,8 @@ SOFTWARE.
 
 package com.github.vgaj.phd;
 
-import com.github.vgaj.phd.server.analysis.ResultsSaveItem;
-import com.github.vgaj.phd.server.analysis.ResultsSaveList;
-import com.github.vgaj.phd.server.analysis.ResultsSaveXmlMapper;
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.result.*;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;

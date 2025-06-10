@@ -29,7 +29,7 @@ import com.github.vgaj.phd.server.messages.MessageInterface;
 import lombok.Data;
 import org.pcap4j.packet.Packet;
 
-import com.github.vgaj.phd.server.data.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.data.TrafficDataStore;
 

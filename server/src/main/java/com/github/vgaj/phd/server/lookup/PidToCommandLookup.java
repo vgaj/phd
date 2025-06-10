@@ -22,40 +22,30 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.result;
+package com.github.vgaj.phd.server.lookup;
 
-import lombok.Getter;
+import com.github.vgaj.phd.common.util.ExecutableDetails;
+import org.springframework.stereotype.Component;
 
-/**
- * Calculate a store of interest for an Analysis Result
- */
-public class AnalysisScore {
-    @Getter
-    private int score = 0;
 
-    public AnalysisScore(ResultCategorisation resultCategorisation) {
-        if (resultCategorisation.areAllIntervalsTheSame_c11()) {
-            score += 5;
-        } else if (resultCategorisation.areMostIntervalsTheSame_c12()) {
-            score += 4;
-        } else if (resultCategorisation.areSomeIntervalsTheSame_c13()) {
-            score += 2;
+import java.util.HashMap;
+
+@Component
+public class PidToCommandLookup {
+    private HashMap<Integer, String> cache;
+    long nextCacheRefresh = 0;
+
+    String get(int pid) {
+        // Reset the cache after 30 seconds
+        if (System.currentTimeMillis() > nextCacheRefresh) {
+            cache = new HashMap<>();
+            nextCacheRefresh = System.currentTimeMillis() + 30000;
         }
 
-        if (resultCategorisation.areAllTransfersTheSameSize_c21()) {
-            score += 5;
-        } else if (resultCategorisation.areMostTransfersTheSameSize_c22()) {
-            score += 4;
-        } else if (resultCategorisation.areSomeTransfersTheSameSize_c23()) {
-            score += 2;
+        if (!cache.containsKey(pid)) {
+            cache.put(pid, ExecutableDetails.lookup(pid));
         }
 
-        if (resultCategorisation.isRuntimeLongEnoughToDecideIfResultIsCurrent() && !resultCategorisation.isResultCurrent()) {
-            score = score / 2;
-        }
-    }
-
-    public String toString() {
-        return String.format("%d", score);
+        return cache.get(pid);
     }
 }
