@@ -27,6 +27,7 @@ package com.github.vgaj.phd.ui;
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
 import com.github.vgaj.phd.common.query.*;
 
+import com.github.vgaj.phd.ui.model.DisplayResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -46,12 +47,10 @@ import java.util.Collections;
 import java.util.List;
 
 @Controller
-public class PhdUiController
-{
+public class PhdUiController {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private DomainSocketComms makeSocketComms() throws IOException
-    {
+    private DomainSocketComms makeSocketComms() throws IOException {
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
         SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX);
         channel.connect(socketAddress);
@@ -59,20 +58,15 @@ public class PhdUiController
     }
 
     @GetMapping("/")
-    public String index(@RequestParam(name="source", required=false, defaultValue="") String source,
-                        @RequestParam(name="destination", required=false, defaultValue="") String destination,
-                        Model model)
-    {
-        try (DomainSocketComms sockComms = makeSocketComms())
-        {
+    public String index(@RequestParam(name = "source", required = false, defaultValue = "") String source,
+                        @RequestParam(name = "destination", required = false, defaultValue = "") String destination,
+                        Model model) {
+        try (DomainSocketComms sockComms = makeSocketComms()) {
             sockComms.writeSocketMessage(new SummaryResultsQuery());
             SummaryResultsResponse response = sockComms.readSocketMessage(SummaryResultsResponse.class);
-            if (response == null)
-            {
+            if (response == null) {
                 return "No valid response";
-            }
-            else
-            {
+            } else {
                 List<DisplayResultModel> fullResults = new ArrayList<>();
                 Arrays.stream(response.data().results()).forEach(result -> {
                     fullResults.add(new DisplayResultModel(result));
@@ -108,46 +102,34 @@ public class PhdUiController
 
                 return "index";
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return "Error making query, is the service running?  Error: " + e.getMessage();
         }
     }
 
     @GetMapping("/data")
-    public String data(@RequestParam(name="source", required=true) String source, @RequestParam(name="destination", required=true) String destination, Model model)
-    {
+    public String data(@RequestParam(name = "source", required = true) String source, @RequestParam(name = "destination", required = true) String destination, Model model) {
         InetAddress sourceAddress = null;
         InetAddress destinationAddress = null;
-        try
-        {
+        try {
             sourceAddress = InetAddress.getByName(source);
             destinationAddress = InetAddress.getByName(destination);
-        }
-        catch (UnknownHostException e)
-        {
+        } catch (UnknownHostException e) {
             return "Invalid IP address";
         }
 
-        try (DomainSocketComms sockComms = makeSocketComms())
-        {
+        try (DomainSocketComms sockComms = makeSocketComms()) {
             sockComms.writeSocketMessage(new HostHistoryQuery(sourceAddress, destinationAddress));
             HostHistoryResponse response = sockComms.readSocketMessage(HostHistoryResponse.class);
-            if (response == null)
-            {
+            if (response == null) {
                 return "No valid response";
-            }
-            else
-            {
+            } else {
                 model.addAttribute("source", source);
                 model.addAttribute("destination", destination);
                 model.addAttribute("content", response.results());
                 return "data";
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             return "Error making query, is the service running?  Error: " + e.getMessage();
         }
     }

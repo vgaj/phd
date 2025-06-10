@@ -31,7 +31,7 @@ import com.github.vgaj.phd.common.query.ResponseInterface;
 import com.github.vgaj.phd.common.query.SummaryResultsResponse;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.common.util.ExecutableDetails;
-import com.github.vgaj.phd.common.properties.HotSpotModeChecker;
+import com.github.vgaj.phd.common.util.HotSpotModeChecker;
 
 import java.util.Arrays;
 import java.util.Comparator;

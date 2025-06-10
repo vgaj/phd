@@ -22,9 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.common.query;
+package com.github.vgaj.phd.ui.model;
 
-import com.github.vgaj.phd.common.properties.HotSpotModeChecker;
+import com.github.vgaj.phd.common.query.DisplayResult;
+import com.github.vgaj.phd.common.util.HotSpotModeChecker;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.common.util.ExecutableDetails;
 

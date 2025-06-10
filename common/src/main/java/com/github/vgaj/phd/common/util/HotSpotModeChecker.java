@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.common.properties;
+package com.github.vgaj.phd.common.util;
+
+import com.github.vgaj.phd.common.properties.ClientProperties;
 
 import java.io.File;
 

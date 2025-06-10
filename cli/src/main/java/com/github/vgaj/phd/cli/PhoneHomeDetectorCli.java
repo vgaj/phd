@@ -27,7 +27,7 @@ package com.github.vgaj.phd.cli;
 import com.github.vgaj.phd.cli.printer.ResponsePrinterFactory;
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
 import com.github.vgaj.phd.common.properties.ClientProperties;
-import com.github.vgaj.phd.common.properties.HotSpotModeChecker;
+import com.github.vgaj.phd.common.util.HotSpotModeChecker;
 import com.github.vgaj.phd.common.query.*;
 
 import java.io.IOException;
