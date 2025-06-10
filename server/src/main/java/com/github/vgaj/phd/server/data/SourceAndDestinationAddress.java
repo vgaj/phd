@@ -151,13 +151,13 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     }
 
     /**
-     * Use nmap to get the MAC address and type for the source address
+     * Use nmap and dnsmasq to populate more details about the source address
      */
     public void lookupSourceAddressExtraDetails() {
         if (!isSourceAddressClear())  {
-            String detailsFromNmap = SourceIpToMacAddressLookup.lookup(getSourceAddressString());
             String detailsFromDns = SourceIpToDnsNameLookup.lookup(getSourceAddressString());
-            sourceAddressExtraDetails = detailsFromDns != null && !detailsFromDns.isBlank() ? detailsFromDns : detailsFromNmap;
+            String detailsFromNmap = SourceIpToMacAddressLookup.lookup(getSourceAddressString());
+            sourceAddressExtraDetails = detailsFromDns + " - " + detailsFromNmap;
         }
     }
 
