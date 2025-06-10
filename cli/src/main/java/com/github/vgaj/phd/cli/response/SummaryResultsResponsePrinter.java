@@ -34,7 +34,6 @@ import com.github.vgaj.phd.common.util.ExecutableDetails;
 import com.github.vgaj.phd.common.properties.HotSpotModeChecker;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;

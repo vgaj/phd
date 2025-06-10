@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,20 +27,13 @@ package com.github.vgaj.phd.cli.response;
 import com.github.vgaj.phd.cli.RequestResponsePair;
 import com.github.vgaj.phd.common.query.*;
 
-public class ResponsePrinterFactory
-{
-    public static ResponsePrinter get(RequestResponsePair queryDetails, ResponseInterface response)
-    {
-        if (response instanceof DebugLogResponse)
-        {
+public class ResponsePrinterFactory {
+    public static ResponsePrinter get(RequestResponsePair queryDetails, ResponseInterface response) {
+        if (response instanceof DebugLogResponse) {
             return new DebugLogResponsePrinter(response);
-        }
-        else if (response instanceof SummaryResultsResponse)
-        {
+        } else if (response instanceof SummaryResultsResponse) {
             return new SummaryResultsResponsePrinter(queryDetails, response);
-        }
-        else if (response instanceof HostHistoryResponse)
-        {
+        } else if (response instanceof HostHistoryResponse) {
             return new HostHistoryResponsePrinter(response);
         }
         return null;

@@ -31,10 +31,8 @@ import java.net.UnknownHostException;
 
 import org.apache.commons.cli.*;
 
-public class CliArgumentParser
-{
-    public static RequestResponsePair parse(String[] args)
-    {
+public class CliArgumentParser {
+    public static RequestResponsePair parse(String[] args) {
         Options options = new Options();
         Option optionCurrent = new Option("c", "current", false, "Restrict to current results (exclude past patterns that are no longer seen)");
         Option optionVerbose = new Option("v", "verbose", false, "Show verbose information for results");
@@ -52,17 +50,13 @@ public class CliArgumentParser
         CommandLine cmd = null;
 
         boolean printHelpAndReturn = false;
-        try
-        {
+        try {
             cmd = parser.parse(options, args);
-        }
-        catch (ParseException e)
-        {
+        } catch (ParseException e) {
             printHelpAndReturn = true;
         }
 
-        if (printHelpAndReturn || cmd.hasOption(optionHelp))
-        {
+        if (printHelpAndReturn || cmd.hasOption(optionHelp)) {
             //new HelpFormatter().printHelp("phone-home-detector", options, true);
             System.out.println("Usage: phone-home-detector [-c] [-v]");
             System.out.println(" No options      Show overall results");
@@ -78,13 +72,11 @@ public class CliArgumentParser
             return null;
         }
 
-        if (cmd.hasOption(optionDebug))
-        {
-            return new RequestResponsePair( new DebugLogQuery(), DebugLogResponse.class, false, false);
+        if (cmd.hasOption(optionDebug)) {
+            return new RequestResponsePair(new DebugLogQuery(), DebugLogResponse.class, false, false);
         }
 
-        if (cmd.hasOption(optionAddress))
-        {
+        if (cmd.hasOption(optionAddress)) {
             String enteredAddress = cmd.getOptionValue(optionAddress);
 
             // Source and destination are expected to be entered in the following format 192.168.1.2:8.8.8.8
@@ -92,8 +84,8 @@ public class CliArgumentParser
                 System.out.println(enteredAddress + " is not a source and destination pair in the format 192.168.1.2:8.8.8.8");
                 return null;
             }
-            String sourceAddress = enteredAddress.substring(0,enteredAddress.indexOf(":"));
-            String destinationAddress = enteredAddress.substring(enteredAddress.indexOf(":")+1);
+            String sourceAddress = enteredAddress.substring(0, enteredAddress.indexOf(":"));
+            String destinationAddress = enteredAddress.substring(enteredAddress.indexOf(":") + 1);
 
             String ipv4Pattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
             if (!sourceAddress.matches(ipv4Pattern) || !destinationAddress.matches(ipv4Pattern)) {
@@ -105,13 +97,13 @@ public class CliArgumentParser
             try {
                 inetAddressSource = InetAddress.getByName(sourceAddress);
                 inetAddressDestination = InetAddress.getByName(destinationAddress);
-            }  catch (UnknownHostException e) {
+            } catch (UnknownHostException e) {
                 System.out.println(enteredAddress + " contains an invalid address");
                 return null;
             }
-            return new RequestResponsePair( new HostHistoryQuery(inetAddressSource, inetAddressDestination), HostHistoryResponse.class, false,false);
+            return new RequestResponsePair(new HostHistoryQuery(inetAddressSource, inetAddressDestination), HostHistoryResponse.class, false, false);
         }
 
-        return new RequestResponsePair( new SummaryResultsQuery(), SummaryResultsResponse.class, cmd.hasOption(optionVerbose), cmd.hasOption(optionCurrent));
+        return new RequestResponsePair(new SummaryResultsQuery(), SummaryResultsResponse.class, cmd.hasOption(optionVerbose), cmd.hasOption(optionCurrent));
     }
 }

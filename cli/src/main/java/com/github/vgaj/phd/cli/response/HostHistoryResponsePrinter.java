@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2022-2024 Viru Gajanayake
+Copyright (c) 2022-2025 Viru Gajanayake
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,22 +26,20 @@ package com.github.vgaj.phd.cli.response;
 
 import com.github.vgaj.phd.common.query.*;
 
-public class HostHistoryResponsePrinter implements ResponsePrinter
-{
+public class HostHistoryResponsePrinter implements ResponsePrinter {
     private ResponseInterface response;
-    public HostHistoryResponsePrinter(ResponseInterface response)
-    {
+
+    public HostHistoryResponsePrinter(ResponseInterface response) {
         this.response = response;
     }
+
     @Override
-    public void print()
-    {
+    public void print() {
         HostHistoryResponse detailedResponse = (HostHistoryResponse) response;
         StringBuilder sb = new StringBuilder();
-        for (String r : detailedResponse.results())
-        {
+        for (String r : detailedResponse.results()) {
             sb.append(r).append(System.lineSeparator());
-        };
+        }
         System.out.println(sb);
     }
 }

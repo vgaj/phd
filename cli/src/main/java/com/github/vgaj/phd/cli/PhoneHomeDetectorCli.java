@@ -35,13 +35,10 @@ import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
 import java.nio.channels.SocketChannel;
 
-public class PhoneHomeDetectorCli
-{
-    public static void main(String[] args)
-    {
+public class PhoneHomeDetectorCli {
+    public static void main(String[] args) {
         RequestResponsePair queryDetails = CliArgumentParser.parse(args);
-        if (queryDetails == null)
-        {
+        if (queryDetails == null) {
             return;
         }
 
@@ -52,45 +49,33 @@ public class PhoneHomeDetectorCli
 
         UnixDomainSocketAddress socketAddress = UnixDomainSocketAddress.of(DomainSocketComms.SOCKET_PATH);
         SocketChannel channel = null;
-        try
-        {
+        try {
             channel = SocketChannel.open(StandardProtocolFamily.UNIX);
             channel.connect(socketAddress);
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             System.err.println("Failed to connect to service. Is it running? Error: " + e);
             return;
         }
 
         DomainSocketComms sockComms = new DomainSocketComms(channel);
-        try
-        {
+        try {
             sockComms.writeSocketMessage(queryDetails.request());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             System.err.println("Failed to make request. Error: " + e);
             return;
         }
 
         ResponseInterface response;
-        try
-        {
+        try {
             response = sockComms.readSocketMessage(queryDetails.responseType());
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             System.err.println("Failed to read response. Error: " + e);
             return;
         }
-        if (response == null)
-        {
+        if (response == null) {
             System.err.println("Did not receive a response");
-        }
-        else
-        {
+        } else {
             ResponsePrinterFactory.get(queryDetails, response).print();
         }
-  }
+    }
 }
