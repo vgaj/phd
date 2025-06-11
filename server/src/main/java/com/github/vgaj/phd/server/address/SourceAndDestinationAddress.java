@@ -25,8 +25,11 @@ SOFTWARE.
 package com.github.vgaj.phd.server.address;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.vgaj.phd.common.util.HotSpotModeChecker;
 import com.github.vgaj.phd.server.lookup.SourceIpToDnsNameLookup;
 import com.github.vgaj.phd.server.lookup.SourceIpToMacAddressLookup;
+import com.github.vgaj.phd.server.messages.MessageInterface;
+import com.github.vgaj.phd.server.messages.Messages;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,6 +42,8 @@ import java.util.stream.IntStream;
 
 @NoArgsConstructor
 public class SourceAndDestinationAddress implements Comparable<SourceAndDestinationAddress> {
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
+
     /**
      * The source address. If all octets are 0 that means it is local.
      * It is done this way to enable easy deserialisation
@@ -157,7 +162,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
      * Use nmap and dnsmasq to populate more details about the source address
      */
     public void lookupSourceAddressExtraDetails() {
-        if (!isSourceAddressClear()) {
+        if (!isSourceAddressClear() && HotSpotModeChecker.isHotSpot()) {
             String detailsFromDns = SourceIpToDnsNameLookup.lookup(getSourceAddressString());
             String detailsFromNmap = SourceIpToMacAddressLookup.lookup(getSourceAddressString());
             sourceAddressExtraDetails = detailsFromDns + " - " + detailsFromNmap;
