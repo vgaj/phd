@@ -28,8 +28,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.vgaj.phd.common.util.HotSpotModeChecker;
 import com.github.vgaj.phd.server.lookup.SourceIpToDnsNameLookup;
 import com.github.vgaj.phd.server.lookup.SourceIpToMacAddressLookup;
-import com.github.vgaj.phd.server.messages.MessageInterface;
-import com.github.vgaj.phd.server.messages.Messages;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -42,7 +40,6 @@ import java.util.stream.IntStream;
 
 @NoArgsConstructor
 public class SourceAndDestinationAddress implements Comparable<SourceAndDestinationAddress> {
-    private final MessageInterface messages = Messages.getLogger(this.getClass());
 
     /**
      * The source address. If all octets are 0 that means it is local.

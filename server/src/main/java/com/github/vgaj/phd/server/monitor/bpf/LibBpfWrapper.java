@@ -114,8 +114,8 @@ public class LibBpfWrapper {
         return new String(info.name, StandardCharsets.UTF_8);
     }
 
-    public int getMapFdByName(String name) {
-        int returnFd = -1;
+    public List<Integer> getAllMapFdsByName(String name) {
+        List<Integer> fdList = new ArrayList<>();
         try {
             int id = 0;
             IntByReference nextId = new IntByReference();
@@ -127,8 +127,7 @@ public class LibBpfWrapper {
                 String mapName = getMapName(thisFd);
                 if (mapName.trim().equalsIgnoreCase(name.trim())) {
                     messages.addDebug("Found matching map id: " + id);
-                    // If there is more than one with the same name then use the last one
-                    returnFd = thisFd;
+                    fdList.add(thisFd);
                 }
             }
         } catch (LastErrorException e) {
@@ -137,7 +136,7 @@ public class LibBpfWrapper {
                 messages.addError("Native error occurred when looking for map " + name, e);
             }
         }
-        return returnFd;
+        return fdList;
     }
 
     public List<Pair<SourceAndDestinationAddress, Integer>> getAddressToCountData(int mapFd) {

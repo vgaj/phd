@@ -41,6 +41,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -65,21 +66,24 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
     @Value("${phd.bpf.map.ip.pid}")
     private String bpf_map_ip_pid;
 
-    private Set<SourceAndDestinationAddress> addressesToIgnore = new ConcurrentSkipListSet<SourceAndDestinationAddress>();
+    private final Set<SourceAndDestinationAddress> addressesToIgnore = new ConcurrentSkipListSet<SourceAndDestinationAddress>();
 
-    int mapFdIpBytes;
+    List<Integer> mapIpBytesList;
     int mapFdIpPid;
 
     // Occurs after @PostConstruct
     @EventListener(ApplicationReadyEvent.class)
     public void load() {
-        mapFdIpBytes = libBpfWrapper.getMapFdByName(bpf_map_ip_bytes);
-        if (mapFdIpBytes == -1) {
+        mapIpBytesList = libBpfWrapper.getAllMapFdsByName(bpf_map_ip_bytes);
+        if (mapIpBytesList.isEmpty()) {
             messages.addError("Map " + bpf_map_ip_bytes + " was not loaded");
         }
-        mapFdIpPid = libBpfWrapper.getMapFdByName(bpf_map_ip_pid);
-        if (mapFdIpPid == -1) {
+        List<Integer> mapIpPidList = libBpfWrapper.getAllMapFdsByName(bpf_map_ip_pid);
+        if (!mapIpPidList.isEmpty()) {
+            mapFdIpPid = mapIpPidList.get(0);
+        } else {
             messages.addError("Map " + bpf_map_ip_pid + " was not loaded");
+            mapFdIpPid = -1;
         }
     }
 
@@ -91,11 +95,12 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
     @Scheduled(cron = "59 * * * * *")
     public void collectData() {
         long start = System.currentTimeMillis();
-        Long epochMinute = EpochMinuteUtil.now();
+        long epochMinute = EpochMinuteUtil.now();
 
-        List<Pair<SourceAndDestinationAddress, Integer>> ipToBytesForLastMinute = libBpfWrapper.getAddressToCountData(mapFdIpBytes);
+        List<Pair<SourceAndDestinationAddress, Integer>> ipToBytesForLastMinute = new ArrayList<>();
+        mapIpBytesList.forEach(id -> ipToBytesForLastMinute.addAll(libBpfWrapper.getAddressToCountData(id)));
         List<Pair<SourceAndDestinationAddress, Integer>> ipToPidForLastMinute = libBpfWrapper.getAddressToPidData(mapFdIpPid);
-        messages.addMessage("Total time (ms) to get data: " + (System.currentTimeMillis() - start));
+        messages.addDebug("Total time (ms) to get data: " + (System.currentTimeMillis() - start));
 
         // Store count data
         ipToBytesForLastMinute.forEach(entry ->
@@ -111,7 +116,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
             hostToExecutableLookup.addData(entry.getKey(), entry.getValue());
         });
 
-        messages.addMessage("Total time (ms) to process: " + (System.currentTimeMillis() - start));
+        messages.addDebug("Total time (ms) to process: " + (System.currentTimeMillis() - start));
     }
 
     @Override
