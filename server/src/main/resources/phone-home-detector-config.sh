@@ -82,6 +82,12 @@ if [[ -z "$hotspotnic_content" ]]; then
     echo "Using NIC: $selected_device"
 fi
 
+systemctl stop phone-home-detector-ui
+while systemctl is-active --quiet phone-home-detector-ui; do
+    echo "Waiting for phone-home-detector-ui to stop..."
+    sleep 5
+done
+
 systemctl stop phone-home-detector
 while systemctl is-active --quiet phone-home-detector; do
     echo "Waiting for phone-home-detector to stop..."
@@ -102,5 +108,6 @@ if [[ -n "$selected_device" ]]; then
 fi
 
 systemctl start phone-home-detector
+systemctl start phone-home-detector-ui
 
 echo "Change completed"
