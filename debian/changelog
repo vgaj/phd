@@ -1,3 +1,10 @@
+phone-home-detector (0.1.14) noble; urgency=medium
+
+  * Improvements to identify source address
+  * Support multiple NICs in workstation mode
+
+ -- Viru Gajanayake <viru.gajanayake@yahoo.com>  Sat, 14 Jun 2025 07:00:00 +0930
+
 phone-home-detector (0.1.13) noble; urgency=medium
 
   * Showing name from DHCP as source address
