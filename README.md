@@ -20,6 +20,10 @@ To query the results simply run:
 ```
 phone-home-detector
 ```
+To see more options run:
+```
+phone-home-detector -?
+```
 There is also a simple web interface available at http://localhost:9080/
 
 ## Hotspot mode
@@ -30,6 +34,8 @@ For this you need to run on a machine with Wi-Fi and a separate internet connect
 The idea is to create a Wi-Fi hotspot sharing the internet connection from the other NIC.
 Then connect any machines or devices that you want to monitor to the hotspot.
 Phone Home Detector running in hotspot mode will monitor the traffic to identify patterns.
+
+![Diagram showing how Phone Home Detector is setup](phone-home-detector.png)
 
 ## Hotspot mode setup
 Note that this requires **Ubuntu Workstation 24.04**
@@ -71,3 +77,6 @@ The following distributions and kernel versions have been tested:
 
 ## Known Issues
 * No IPv6 support
+
+## Other
+If you find this useful please * this repo
