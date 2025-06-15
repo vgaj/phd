@@ -41,7 +41,7 @@ Phone Home Detector running in hotspot mode will monitor the traffic to identify
 Note that this requires **Ubuntu Workstation 24.04**
 
 Standard OS mechanisms are used to set up a hotspot:
-* Settings -> WiFi -> Turn On Wi-Fi Hotspot...
+* Settings -> Wi-Fi -> Turn On Wi-Fi Hotspot...
 * Enter Network Name and Password
 * Click Turn On
 
@@ -77,6 +77,9 @@ The following distributions and kernel versions have been tested:
 
 ## Known Issues
 * No IPv6 support
+
+## FAQ
+Please see [here](FAQ.md)
 
 ## Other
 If you find this useful please * this repo
