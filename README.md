@@ -3,8 +3,17 @@
 This application monitors network traffic to identify programs that are "phoning home" to check for updates etc.
 It aims to be very lightweight by using a BPF program in the kernel to track the network traffic, and then analysing it in a Java userspace program.
 
+The base installation looks for traffic originating from the local machine.
+It is also possible to use the Phone Home Detector in **hotspot mode** where it will identify traffic originating from other machines and devices in your home.
+For this you need to run on a machine with a Wi-Fi NIC and a separate internet connection (probably wired ethernet).
+
+The idea is to create a Wi-Fi hotspot sharing the internet connection from the other NIC.
+Then connect any machines or devices that you want to monitor to the hotspot.
+Phone Home Detector running in hotspot mode will monitor the traffic to identify patterns.
+
+![Diagram showing how Phone Home Detector is setup](phone-home-detector.png)
 ## Installation and usage
-Currently, the Phone Home Detector is only packaged for Ubuntu 24.04.
+Currently, the Phone Home Detector is only packaged for **Ubuntu 24.04**.
 To install first add the PPA and ensure it is updated:
 ```
 sudo add-apt-repository ppa:viru7/phd
@@ -26,19 +35,14 @@ phone-home-detector -?
 ```
 There is also a simple web interface available at http://localhost:9080/
 
-## Hotspot mode
-The previous (base) installation looks for traffic originating from the local machine.
-It is also possible to use the Phone Home Detector in hotspot mode where it will identify traffic originating from other machines and devices in your home.
-For this you need to run on a machine with Wi-Fi and a separate internet connection (probably wired ethernet).
-
-The idea is to create a Wi-Fi hotspot sharing the internet connection from the other NIC.
-Then connect any machines or devices that you want to monitor to the hotspot.
-Phone Home Detector running in hotspot mode will monitor the traffic to identify patterns.
-
-![Diagram showing how Phone Home Detector is setup](phone-home-detector.png)
-
 ## Hotspot mode setup
-Note that this requires **Ubuntu Workstation 24.04**
+Note that this requires **Ubuntu Server 24.04** with the GUI installed using:
+```
+apt install ubuntu-desktop
+```
+You can also use **Ubuntu Workstation 24.04**. 
+However, on more than one occasion I have found that bpftool (which this project is dependent on) fails to work after an upgrade. 
+Ubuntu Server is not setup with HWE so the kernel version is fixed.
 
 Standard OS mechanisms are used to set up a hotspot:
 * Settings -> Wi-Fi -> Turn On Wi-Fi Hotspot...
