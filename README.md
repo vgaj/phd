@@ -59,12 +59,42 @@ Note that you will need to know the name of the Wi-Fi device that is being used 
 sudo phone-home-detector -s
 ```
 The command line application or web interface can be used to view the results as before.
+Here is an example of the output.
+```
+Phone Home Detector - 0.1.14 - hotspot mode (use -? for options)
+Source 10.42.0.12
+  91.189.91.49 (blackcat.canonical.com)
+    all transfers are 309 bytes
+  91.189.91.48 (amyrose.canonical.com)
+    some intervals are the same
+    some data sizes are repeated
+  185.125.190.18 (is-content-cache-2.ps5.canonical.com)
+    some intervals are the same
+    some data sizes are repeated
+  185.125.190.96 (ubuntu-content-cache-1.ps5.canonical.com)
+    some intervals are the same
+    some data sizes are repeated
+  185.125.190.98 (ubuntu-content-cache-3.ps5.canonical.com)
+    some intervals are the same
+    some data sizes are repeated
+  91.189.91.96 (ubuntu-content-cache-1.ps6.canonical.com)
+    some intervals are the same
+    some data sizes are repeated
+  182.161.73.175
+    all intervals are 2 minutes
+  91.189.91.97 (ubuntu-content-cache-2.ps6.canonical.com)
+    some intervals are the same
+    some data sizes are repeated
+  91.189.91.98 (ubuntu-content-cache-3.ps6.canonical.com)
+    some intervals are the same
+    some data sizes are repeated
+```
 
 ## Method
 The application works by looking at the data sent to each IP address in one minute blocks.
 It then looks for patterns in the interval or size of data sent.
 
-The data is captured by a BPF program in the kernel and analysed by a userspace Java program.
+The data is captured by a BPF program in the kernel and analysed by a Java program in userspace.
 In workstation mode it captures outgoing traffic and in hotspot mode it captures incoming traffic on the specified NIC.
 In workstation mode it also runs an additional BPF program to attempt to identify the process responsible for the data. 
 
