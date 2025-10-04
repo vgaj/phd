@@ -25,12 +25,12 @@ SOFTWARE.
 package com.github.vgaj.phd.server.monitor.bpf;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
-import com.github.vgaj.phd.server.lookup.HostToExecutableLookup;
-import com.github.vgaj.phd.server.data.TrafficDataStore;
+import com.github.vgaj.phd.common.util.Pair;
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.data.TrafficDataRecorder;
+import com.github.vgaj.phd.server.lookup.HostToExecutableLookup;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.common.util.Pair;
 import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,10 +49,17 @@ import java.util.concurrent.ConcurrentSkipListSet;
 @Component
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "true", matchIfMissing = true)
 public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
-    private MessageInterface messages = Messages.getLogger(this.getClass());
+
+    private final Set<SourceAndDestinationAddress> addressesToIgnore = new ConcurrentSkipListSet<SourceAndDestinationAddress>();
+
+    List<Integer> mapIpBytesList;
+
+    int mapFdIpPid;
+
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
-    private TrafficDataStore trafficDataStore;
+    private List<TrafficDataRecorder> trafficDataRecorders;
 
     @Autowired
     private HostToExecutableLookup hostToExecutableLookup;
@@ -65,11 +72,6 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
 
     @Value("${phd.bpf.map.ip.pid}")
     private String bpf_map_ip_pid;
-
-    private final Set<SourceAndDestinationAddress> addressesToIgnore = new ConcurrentSkipListSet<SourceAndDestinationAddress>();
-
-    List<Integer> mapIpBytesList;
-    int mapFdIpPid;
 
     // Occurs after @PostConstruct
     @EventListener(ApplicationReadyEvent.class)
@@ -106,7 +108,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
         ipToBytesForLastMinute.forEach(entry ->
         {
             if (!addressesToIgnore.contains(entry.getKey())) {
-                trafficDataStore.addData(entry.getKey(), entry.getValue(), epochMinute);
+                trafficDataRecorders.forEach(recorder -> recorder.addData(entry.getKey(), entry.getValue(), epochMinute));
             }
         });
 

@@ -41,7 +41,8 @@ import java.util.concurrent.ConcurrentMap;
  * Store of traffic data for each host
  */
 @Component
-public class TrafficDataStore {
+public class TrafficDataStore implements TrafficDataRecorder
+{
     private MessageInterface messages = Messages.getLogger(this.getClass());
 
     // Stats for each host
