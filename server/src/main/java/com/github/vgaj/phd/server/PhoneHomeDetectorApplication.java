@@ -31,7 +31,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 public class PhoneHomeDetectorApplication {
-	public static void main(String[] args) {
-		SpringApplication.run(PhoneHomeDetectorApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(PhoneHomeDetectorApplication.class, args);
+    }
 }

@@ -27,7 +27,7 @@ package com.github.vgaj.phd.server.analysis;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.server.data.TransferTimestamp;
 import com.github.vgaj.phd.server.lookup.HostToExecutableLookup;
-import com.github.vgaj.phd.server.data.TrafficDataStore;
+import com.github.vgaj.phd.server.store.TrafficDataStore;
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 
 import com.github.vgaj.phd.server.result.*;

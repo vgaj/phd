@@ -31,7 +31,7 @@ import org.pcap4j.packet.Packet;
 
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.server.data.TrafficDataStore;
+import com.github.vgaj.phd.server.store.TrafficDataStore;
 
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;

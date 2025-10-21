@@ -26,7 +26,6 @@ package com.github.vgaj.phd.server.query;
 
 import com.github.vgaj.phd.common.ipc.DomainSocketComms;
 import com.github.vgaj.phd.common.query.*;
-
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,15 +44,18 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Responsible for accepting request from domain socket and sending the response
+ */
 @Component
-public class ExternalQueryTask implements Runnable {
-    private MessageInterface messages = Messages.getLogger(this.getClass());
+public class ExternalRequestHandler implements Runnable {
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
 
     private Thread queryThread;
     private boolean isShuttingDown = false;
 
     @Autowired
-    private QueryLogic query;
+    private ResultsQueryProcessor query;
 
     // Occurs after @PostConstruct
     @EventListener(ApplicationReadyEvent.class)
@@ -133,7 +135,9 @@ public class ExternalQueryTask implements Runnable {
                                         sockComms.writeSocketMessage(response);
                                     } else if (request instanceof HostHistoryQuery) {
                                         messages.addMessage("Received a detailed request.");
-                                        HostHistoryResponse response = new HostHistoryResponse(query.getData(((HostHistoryQuery) request).source(), ((HostHistoryQuery) request).destination()).toArray(new String[0]));
+                                        HostHistoryResponse response = new HostHistoryResponse(
+                                                query.getData(((HostHistoryQuery) request).source(), ((HostHistoryQuery) request).destination())
+                                                        .toArray(new String[0]));
                                         sockComms.writeSocketMessage(response);
                                     } else if (request instanceof DebugLogQuery) {
                                         messages.addMessage("Received a debug log request.");

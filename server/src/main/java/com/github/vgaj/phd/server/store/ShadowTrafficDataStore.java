@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.data;
+package com.github.vgaj.phd.server.store;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
@@ -39,6 +39,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+/**
+ * This is a mechanism to store a copy of the data in ElasticSearch for analysis purposes during development
+ */
 @Component
 @ConditionalOnProperty("phd.elastic.store.index.url")
 public class ShadowTrafficDataStore implements TrafficDataRecorder {

@@ -24,21 +24,20 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.query;
 
+import com.github.vgaj.phd.common.query.DisplayContent;
+import com.github.vgaj.phd.common.query.DisplayResult;
+import com.github.vgaj.phd.common.query.DisplayResultLine;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
+import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.analysis.AnalysisCache;
 import com.github.vgaj.phd.server.data.DataForAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
-import com.github.vgaj.phd.server.data.TrafficDataStore;
-import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
-import com.github.vgaj.phd.common.query.DisplayContent;
-import com.github.vgaj.phd.common.query.DisplayResult;
-import com.github.vgaj.phd.common.query.DisplayResultLine;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 import com.github.vgaj.phd.server.score.AnalysisScore;
 import com.github.vgaj.phd.server.score.ResultCategorisation;
 import com.github.vgaj.phd.server.score.ResultCategorisationImpl;
-
+import com.github.vgaj.phd.server.store.TrafficDataStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -47,16 +46,16 @@ import java.net.InetAddress;
 import java.util.*;
 
 /**
- * This class is responsible for generating the model of the result of the analysis
+ * This class is responsible for generating the model of the analysis results 
  * which can be sent to the user interface applications (web or cli) where it
  * is formatted to display to the user
  */
 @Component
-public class QueryLogic {
+public class ResultsQueryProcessor {
     @Autowired
     private TrafficDataStore trafficDataStore;
 
-    private MessageInterface messages = Messages.getLogger(this.getClass());
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
     private AnalysisCache analyserCache;
@@ -160,7 +159,7 @@ public class QueryLogic {
             var data = dataForAddress.getByteCountPerMinute().entrySet();
             int dataLength = data.size();
             data.stream()
-                    .sorted(Comparator.comparing(e -> ((Long) e.getKey())))
+                    .sorted(Comparator.comparing(e -> e.getKey()))
                     .skip(maxDataToShowForHost < dataLength ? dataLength - maxDataToShowForHost : 0)
                     .limit(maxDataToShowForHost)
                     .map(e -> EpochMinuteUtil.toString(e.getKey()) + " : " + e.getValue() + " bytes")

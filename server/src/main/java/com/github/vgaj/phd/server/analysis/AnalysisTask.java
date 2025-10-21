@@ -25,7 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
-import com.github.vgaj.phd.server.data.TrafficDataStore;
+import com.github.vgaj.phd.server.store.TrafficDataStore;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.AnalysisResult;
@@ -40,7 +40,7 @@ import java.util.Optional;
 @Component
 public class AnalysisTask {
     @Autowired
-    AnalysisCache analysisCache;
+    private AnalysisCache analysisCache;
 
     @Autowired
     private TrafficDataStore trafficDataStore;

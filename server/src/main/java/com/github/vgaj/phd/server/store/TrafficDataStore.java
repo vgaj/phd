@@ -22,13 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.data;
+package com.github.vgaj.phd.server.store;
 
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.data.DataForAddress;
+import com.github.vgaj.phd.server.data.TransferTimestamp;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.TransferSizeBytes;
-
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
 
@@ -41,51 +42,49 @@ import java.util.concurrent.ConcurrentMap;
  * Store of traffic data for each host
  */
 @Component
-public class TrafficDataStore implements TrafficDataRecorder
-{
-    private MessageInterface messages = Messages.getLogger(this.getClass());
-
+public class TrafficDataStore implements TrafficDataRecorder {
     // Stats for each host
-    private final ConcurrentMap<SourceAndDestinationAddress, DataForAddress> data = new ConcurrentHashMap<>();
+    private final ConcurrentMap<SourceAndDestinationAddress, DataForAddress> dataStore = new ConcurrentHashMap<>();
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
 
     public void addData(@NonNull SourceAndDestinationAddress host, int length, long epochMinute) {
-        if (!data.containsKey(host)) {
+        if (!dataStore.containsKey(host)) {
             try {
                 host.lookupDestinationHost();
                 host.lookupSourceAddressExtraDetails();
                 messages.addDebug("Adding destination: " + host.getDesinationHostString());
 
-                data.put(host, new DataForAddress());
+                dataStore.put(host, new DataForAddress());
             } catch (UnknownHostException e) {
                 messages.addError("Failed to lookup address", e);
             }
         }
         //messages.addMessage("Received " + length + " bytes for " + host.getAddressString());
-        data.get(host).addBytes(length, epochMinute);
+        dataStore.get(host).addBytes(length, epochMinute);
     }
 
     public ArrayList<Map.Entry<TransferTimestamp, TransferSizeBytes>> getCopyOfPerMinuteData(SourceAndDestinationAddress address) {
         ArrayList<Map.Entry<TransferTimestamp, TransferSizeBytes>> entries = new ArrayList<>();
-        data.get(address).getPerMinuteData().forEach(e -> entries.add(
+        dataStore.get(address).getPerMinuteData().forEach(e -> entries.add(
                 Map.entry(new TransferTimestamp(e.getKey()), new TransferSizeBytes(e.getValue()))));
         return entries;
     }
 
     public DataForAddress getDataForAddress(SourceAndDestinationAddress address) {
-        return data.get(address);
+        return dataStore.get(address);
     }
 
     public List<SourceAndDestinationAddress> getAddresses() {
         List<SourceAndDestinationAddress> addresses = new LinkedList<>();
-        data.keySet().forEach(a -> addresses.add(a));
+        dataStore.keySet().forEach(a -> addresses.add(a));
         return addresses;
     }
 
     public List<SourceAndDestinationAddress> getAddressesWithDataSince(long epochMinute) {
         List<SourceAndDestinationAddress> addresses = new LinkedList<>();
-        data.keySet().forEach(address ->
+        dataStore.keySet().forEach(address ->
         {
-            DataForAddress addressData = data.get(address);
+            DataForAddress addressData = dataStore.get(address);
             if (addressData != null && addressData.getLatestEpochMinute() >= epochMinute) {
                 addresses.add(address);
             }
@@ -94,7 +93,7 @@ public class TrafficDataStore implements TrafficDataRecorder
     }
 
     public void cleanupIgnoredAddresses(Set<SourceAndDestinationAddress> addressesToExclude) {
-        addressesToExclude.forEach(address -> data.remove(address));
-        messages.addDebug("Size of Monitor Data is now " + data.size());
+        addressesToExclude.forEach(address -> dataStore.remove(address));
+        messages.addDebug("Size of Monitor Data is now " + dataStore.size());
     }
 }

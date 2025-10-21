@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-package com.github.vgaj.phd.server.data;
+package com.github.vgaj.phd.server.store;
 
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 import lombok.NonNull;

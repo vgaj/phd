@@ -25,7 +25,7 @@ SOFTWARE.
 package com.github.vgaj.phd.server.cleanup;
 
 import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
-import com.github.vgaj.phd.server.data.TrafficDataStore;
+import com.github.vgaj.phd.server.store.TrafficDataStore;
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
