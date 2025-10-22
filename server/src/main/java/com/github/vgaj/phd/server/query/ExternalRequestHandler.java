@@ -155,6 +155,9 @@ public class ExternalRequestHandler implements Runnable {
                             } catch (IOException connectionException) {
                                 messages.addError("Error communicating with client", connectionException);
                                 break;
+                            } catch (Throwable otherError) {
+                                messages.addError("Error processing request", otherError);
+                                break;
                             }
                         }
                     }).start();

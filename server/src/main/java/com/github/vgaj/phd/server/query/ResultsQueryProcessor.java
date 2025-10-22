@@ -107,17 +107,17 @@ public class ResultsQueryProcessor {
                 result.getTransferSizeCount().forEach(r ->
                         sizeSubMessages.add(r.getKey() + " bytes, " + r.getValue() + " times"));
                 if (resultCategorisation.areAllIntervalsTheSame_c11()) {
-                    resultLines.add(new DisplayResultLine("all intervals are " + resultCategorisation.getMostCommonInterval().get() + " minutes", new String[0]));
+                    resultLines.add(new DisplayResultLine("all intervals are " + resultCategorisation.getMostCommonInterval().orElse(0) + " minutes", new String[0]));
                 } else if (resultCategorisation.areMostIntervalsTheSame_c12()) {
-                    resultLines.add(new DisplayResultLine("most intervals are " + resultCategorisation.getMostCommonInterval().get() + " minutes", intervalSubMessages.toArray(new String[0])));
+                    resultLines.add(new DisplayResultLine("most intervals are " + resultCategorisation.getMostCommonInterval().orElse(0) + " minutes", intervalSubMessages.toArray(new String[0])));
                 } else if (resultCategorisation.areSomeIntervalsTheSame_c13()) {
                     DisplayResultLine resultLine = new DisplayResultLine("some intervals are the same", intervalSubMessages.toArray(new String[0]));
                     resultLines.add(resultLine);
                 }
                 if (resultCategorisation.areAllTransfersTheSameSize_c21()) {
-                    resultLines.add(new DisplayResultLine("all transfers are " + resultCategorisation.getMostCommonSize().get() + " bytes", new String[0]));
+                    resultLines.add(new DisplayResultLine("all transfers are " + resultCategorisation.getMostCommonSize().orElse(0) + " bytes", new String[0]));
                 } else if (resultCategorisation.areMostTransfersTheSameSize_c22()) {
-                    resultLines.add(new DisplayResultLine("most transfers are " + resultCategorisation.getMostCommonSize().get() + " bytes", sizeSubMessages.toArray(new String[0])));
+                    resultLines.add(new DisplayResultLine("most transfers are " + resultCategorisation.getMostCommonSize().orElse(0) + " bytes", sizeSubMessages.toArray(new String[0])));
                 } else if (resultCategorisation.areSomeTransfersTheSameSize_c23()) {
                     DisplayResultLine resultLine = new DisplayResultLine("some data sizes are repeated", sizeSubMessages.toArray(new String[0]));
                     resultLines.add(resultLine);
