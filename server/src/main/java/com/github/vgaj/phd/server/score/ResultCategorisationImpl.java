@@ -26,6 +26,8 @@ package com.github.vgaj.phd.server.score;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.common.util.Pair;
+import com.github.vgaj.phd.server.messages.MessageInterface;
+import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 import com.github.vgaj.phd.server.result.TransferCount;
 import com.github.vgaj.phd.server.result.TransferIntervalMinutes;
@@ -37,6 +39,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ResultCategorisationImpl implements ResultCategorisation {
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
 
     /**
      * The minimum number of pairs of transmissions at an interval that is of interest
@@ -69,23 +72,23 @@ public class ResultCategorisationImpl implements ResultCategorisation {
     }
 
     ////////////////////
-    // Interval Rules
-
-    /// /////////////////
+    /// Interval Rules
+    ////////////////////
 
     @Override
     public boolean areAllIntervalsTheSame_c11() {
-        return getRepeatedTransferIntervalsStream().count() == 1;
+        return result.getIntervalCount().size() == 1 &&
+                result.getIntervalCount().get(0).getValue().getCount() >= minCountAtInterval;
     }
 
     @Override
     public boolean areMostIntervalsTheSame_c12() {
-        int count = result.getIntervalCount().stream().mapToInt(pair -> pair.getValue().getCount()).sum();
+        int totalCount = result.getIntervalCount().stream().mapToInt(pair -> pair.getValue().getCount()).sum();
         Optional<Integer> countForMostCommonInterval = getCountForMostCommonInterval();
 
-        if (count > 0 && countForMostCommonInterval.isPresent()) {
+        if (totalCount > 0 && countForMostCommonInterval.isPresent()) {
             // Check if 80% are the same interval - note 80% is based on observations
-            return ((double) countForMostCommonInterval.get() / count) > ((double) percentageOfIntervalsNeededForMostToBeSame / 100);
+            return ((double) countForMostCommonInterval.get() / totalCount) > ((double) percentageOfIntervalsNeededForMostToBeSame / 100);
         }
         return false;
     }
@@ -100,22 +103,22 @@ public class ResultCategorisationImpl implements ResultCategorisation {
     }
 
     /////////////////
-    // Size Rules
-
-    /// //////////////
+    /// Size Rules
+    /////////////////
 
     @Override
     public boolean areAllTransfersTheSameSize_c21() {
-        return getRepeatedTransferSizeStream().count() == 1;
+        return result.getTransferSizeCount().size() == 1 &&
+                result.getTransferSizeCount().get(0).getValue().getCount() >= minCountOfSameSize;
     }
 
     @Override
     public boolean areMostTransfersTheSameSize_c22() {
-        int count = result.getTransferSizeCount().stream().mapToInt(pair -> pair.getValue().getCount()).sum();
+        int totalCount = result.getTransferSizeCount().stream().mapToInt(pair -> pair.getValue().getCount()).sum();
         Optional<Integer> countForMostCommonSize = getCountForMostCommonSize();
-        if (count > 0 && countForMostCommonSize.isPresent()) {
+        if (totalCount > 0 && countForMostCommonSize.isPresent()) {
             // Check if 80% are the same size - note 80% is based on observations
-            return ((double) countForMostCommonSize.get() / count) > ((double) percentageOfSizesNeededForMostToBeSame / 100);
+            return ((double) countForMostCommonSize.get() / totalCount) > ((double) percentageOfSizesNeededForMostToBeSame / 100);
         }
         return false;
     }
