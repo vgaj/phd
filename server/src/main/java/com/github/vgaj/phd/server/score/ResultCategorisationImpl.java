@@ -37,6 +37,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ResultCategorisationImpl implements ResultCategorisation {
+
     /**
      * The minimum number of pairs of transmissions at an interval that is of interest
      */
@@ -207,7 +208,7 @@ public class ResultCategorisationImpl implements ResultCategorisation {
 
         long minutesSinceLastSeen = EpochMinuteUtil.now() - result.getLastSeenEpochMinute();
 
-        return mostCommonInterval.isEmpty() || (minutesSinceLastSeen < (mostCommonInterval.get() + 2));
+        return mostCommonInterval.isPresent() && (minutesSinceLastSeen < (mostCommonInterval.get() + 2));
     }
 
 }
