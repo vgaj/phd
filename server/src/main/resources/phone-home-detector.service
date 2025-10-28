@@ -30,3 +30,4 @@ ExecStop=/usr/share/phone-home-detector/phone-home-detector-service-stop.sh
 
 [Install]
 WantedBy=multi-user.target
+Alias=phd.service

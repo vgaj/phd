@@ -33,3 +33,4 @@ KillSignal=SIGTERM
 
 [Install]
 WantedBy=multi-user.target
+Alias=phd-ui.service
