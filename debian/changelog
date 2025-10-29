@@ -1,3 +1,11 @@
+phone-home-detector (0.1.15) noble; urgency=medium
+
+  * Bug fixes
+  * Added a dev option to push to elastic search
+  * Updated dependencies
+
+ -- Viru Gajanayake <viru.gajanayake@yahoo.com>  Wed, 29 Oct 2025 11:00:00 +0930
+
 phone-home-detector (0.1.14) noble; urgency=medium
 
   * Improvements to identify source address
