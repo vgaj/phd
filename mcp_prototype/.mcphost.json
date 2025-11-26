@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "data-sizes": {
+      "type": "local",
+      "command": ["python3", "-u", "/tmp/mcp_server.py"]
+    }
+  }
+}
