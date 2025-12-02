@@ -25,6 +25,7 @@ Description=Phone Home Detector
 After=multi-user.target
 
 [Service]
+WorkingDirectory=/usr/share/phone-home-detector
 ExecStart=/usr/share/phone-home-detector/phone-home-detector-service-start.sh
 ExecStop=/usr/share/phone-home-detector/phone-home-detector-service-stop.sh
 
