@@ -1,4 +1,5 @@
 import logging
+import subprocess
 
 from fastmcp import FastMCP
 from mcp.types import TextContent 
@@ -25,8 +26,9 @@ def create_server():
     #@mcp.tool(name=tool_name,description=tool_description)
     @mcp.tool(name=tool_name)
     def get_sizes(ip_address: str = "") -> TextContent:
-        logger.info(f"Searching for query: '{ip_address}'")           
-        return TextContent(type="text", text="32,33,33,33,32,33")
+        logger.info(f"Searching for query: '{ip_address}'")
+        result = subprocess.check_output( ["./elastic_query_sizes_for_address.sh", ip_address], text=True)
+        return TextContent(type="text", text=result)
 
     return mcp
 

@@ -21,9 +21,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if [ "$UID" -ne 0 ]; then
-    echo "This needs to be run as root"
-    exit 1
+if [[ $# -lt 1 ]]; then
+  echo "Usage: $0 <DESTINATION_IP>"
+  exit 1
 fi
 
-docker run -d --name es -p 9200:9200 -e "discovery.type=single-node" -e "xpack.security.enabled=false" -e "cluster.routing.allocation.disk.threshold_enabled=false" docker.elastic.co/elasticsearch/elasticsearch:9.1.4
+DESTINATION_IP="$1"
+
+curl --no-progress-meter -X GET "localhost:9200/monitor_index/_search" \
+  -H 'Content-Type: application/json' -d @<(cat <<EOF
+{
+  "_source": ["length","epochMinute"],
+  "query": {
+    "match": {
+      "destination": "${DESTINATION_IP}"
+    }
+  }
+}
+EOF
+) | jq -r '[.hits.hits[]._source.length] | @csv'
