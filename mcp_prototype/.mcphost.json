@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "data-sizes": {
+    "network-data": {
       "type": "local",
       "command": ["python3", "-u", "/tmp/mcp_server.py"]
     }

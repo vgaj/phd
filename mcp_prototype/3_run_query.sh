@@ -21,5 +21,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-#!/bin/bash
-~/go/bin/mcphost -m openai:gpt-4 -p "examine the data sizes sent to IP address 11.22.33.44 using the get_data_sizes_for_ip_address tool and determine if there is a pattern. do not use mathematical operations such as means to find patterns" 
+~/go/bin/mcphost -m openai:gpt-4 -p "examine the data sizes sent to IP address 11.22.33.44 using the get_data_sizes_for_ip_address tool and the intervals what which they are sent using the get_intervals_for_ip_address. determine if there is a pattern. do not use mathematical operations such as means to find patterns"

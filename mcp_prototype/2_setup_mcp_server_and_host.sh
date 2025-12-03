@@ -28,4 +28,3 @@ cp .mcphost.json ~/
 cp mcp_server.py /tmp
 cp elastic_query_sizes_for_address.sh /tmp
 cp elastic_query_intervals_for_address.sh /tmp
-

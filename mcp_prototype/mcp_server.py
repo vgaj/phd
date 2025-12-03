@@ -51,14 +51,13 @@ def create_server():
     mcp = FastMCP(name=server_name,
                   instructions=server_instructions)
 
-    #@mcp.tool(name=tool_name,description=tool_description)
-    @mcp.tool(name=tool_name_sizes)
+    @mcp.tool(name=tool_name_sizes, description=tool_description_sizes)
     def get_sizes(ip_address: str = "") -> TextContent:
         logger.info(f"Searching sizes for: '{ip_address}'")
         result = subprocess.check_output( ["/tmp/elastic_query_sizes_for_address.sh", ip_address], text=True)
         return TextContent(type="text", text=result)
 
-    @mcp.tool(name=tool_name_intervals)
+    @mcp.tool(name=tool_name_intervals, description=tool_description_intervals)
     def get_intervals(ip_address: str = "") -> TextContent:
         logger.info(f"Searching intervals for: '{ip_address}'")
         result = subprocess.check_output( ["/tmp/elastic_query_intervals_for_address.sh", ip_address], text=True)
