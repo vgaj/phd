@@ -26,3 +26,6 @@ pip3 install fastmcp --break-system-packages
 go install github.com/mark3labs/mcphost@latest
 cp .mcphost.json ~/
 cp mcp_server.py /tmp
+cp elastic_query_sizes_for_address.sh /tmp
+cp elastic_query_intervals_for_address.sh /tmp
+

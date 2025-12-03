@@ -28,7 +28,15 @@ fi
 
 DESTINATION_IP="$1"
 
-curl -s 'localhost:9200/monitor_index/_search' \
+curl -s "localhost:9200/monitor_index/_search" \
   -H 'Content-Type: application/json' \
-  -d '{"_source":["length"],"query":{"match":{"destination":"'"$DESTINATION_IP"'"}}}' \
-| jq -r '[.hits.hits[]._source.length] | @csv'
+  -d @- <<EOF | jq -r '
+    .hits.hits
+    | map(._source.epochMinute)
+    | sort
+    | . as $a
+    | [range(1;length) | $a[.] - $a[.-1]]
+    | @csv
+'
+{"_source":["epochMinute"],"query":{"match":{"destination":"$DESTINATION_IP"}}}
+EOF

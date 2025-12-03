@@ -21,14 +21,5 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if [[ $# -lt 1 ]]; then
-  echo "Usage: $0 <DESTINATION_IP>"
-  exit 1
-fi
-
-DESTINATION_IP="$1"
-
-curl -s 'localhost:9200/monitor_index/_search' \
-  -H 'Content-Type: application/json' \
-  -d '{"_source":["length"],"query":{"match":{"destination":"'"$DESTINATION_IP"'"}}}' \
-| jq -r '[.hits.hits[]._source.length] | @csv'
+#!/bin/bash
+~/go/bin/mcphost -m openai:gpt-4 -p "examine the data sizes sent to IP address 11.22.33.44 using the get_data_sizes_for_ip_address tool and determine if there is a pattern. do not use mathematical operations such as means to find patterns" 
