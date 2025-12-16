@@ -25,6 +25,8 @@ SOFTWARE.
 package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.messages.MessageInterface;
+import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.AnalysisResult;
 
 import org.springframework.stereotype.Component;
@@ -37,15 +39,23 @@ import java.util.concurrent.ConcurrentMap;
 
 @Component
 public class AnalysisCache {
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
+
     private final ConcurrentMap<SourceAndDestinationAddress, AnalysisResult> currentResults = new ConcurrentHashMap<>();
     private final ConcurrentMap<SourceAndDestinationAddress, AnalysisResult> previousResults = new ConcurrentHashMap<>();
 
     public void putCurrentResult(SourceAndDestinationAddress address, AnalysisResult result) {
-        currentResults.put(address, result);
+        if (currentResults.put(address, result) != null) {
+            messages.addDebug("Updating analysis result for " + address.getSourceAndDestinationAddressString());
+        } else {
+            messages.addDebug("Adding analysis result for " + address.getSourceAndDestinationAddressString());
+        }
     }
 
     public void removeCurrentResult(SourceAndDestinationAddress address) {
-        currentResults.remove(address);
+        if (currentResults.remove(address) != null) {
+            messages.addDebug("Removing analysis result for " + address.getSourceAndDestinationAddressString());
+        }
     }
 
     public void putPreviousResult(SourceAndDestinationAddress address, AnalysisResult result) {

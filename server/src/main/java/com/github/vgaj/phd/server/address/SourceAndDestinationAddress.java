@@ -57,7 +57,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
     private boolean destinationLookupAttempted = false;
 
     @Getter
-    private String reverseDesinationHostname = null;
+    private String reverseDestinationHostname = null;
 
     @Getter
     private String sourceAddressExtraDetails = null;
@@ -123,6 +123,11 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
         return getAddressString(srcOctets);
     }
 
+    @JsonIgnore
+    public String getSourceAndDestinationAddressString() {
+        return getSourceAddressString() + " -> " + getDesinationHostString();
+    }
+
     private static String getAddressString(byte[] octetsToPrint) {
         StringBuilder ip = new StringBuilder();
         for (int i = 0; i < octetsToPrint.length; i++) {
@@ -150,7 +155,7 @@ public class SourceAndDestinationAddress implements Comparable<SourceAndDestinat
             if (destinationHostname != null) {
                 List<String> parts = Arrays.asList(destinationHostname.split("\\."));
                 Collections.reverse(parts);
-                reverseDesinationHostname = String.join(".", parts);
+                reverseDestinationHostname = String.join(".", parts);
             }
         }
     }

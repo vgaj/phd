@@ -44,13 +44,13 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @ConditionalOnProperty(name = "phd.use.bpf", havingValue = "true", matchIfMissing = true)
 public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
 
-    private final Set<SourceAndDestinationAddress> addressesToIgnore = new ConcurrentSkipListSet<SourceAndDestinationAddress>();
+    private final Set<SourceAndDestinationAddress> addressesToIgnore = ConcurrentHashMap.newKeySet();
 
     List<Integer> mapIpBytesList;
 
@@ -94,6 +94,8 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
     public void unload() {
     }
 
+    // 59th second of every minute
+    // We assume the scheduled traffic we are interested in will occur on the minute
     @Scheduled(cron = "59 * * * * *")
     public void collectData() {
         long start = System.currentTimeMillis();
@@ -118,7 +120,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
             hostToExecutableLookup.addData(entry.getKey(), entry.getValue());
         });
 
-        messages.addDebug("Total time (ms) to process: " + (System.currentTimeMillis() - start));
+        messages.addDebug("Total time (ms) to get and store: " + (System.currentTimeMillis() - start));
     }
 
     @Override
@@ -128,7 +130,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
         {
             try {
                 if (addressesToIgnore.add(a)) {
-                    messages.addDebug("Not monitoring " + a.getDesinationAddressString());
+                    messages.addDebug("Not monitoring " + a.getSourceAndDestinationAddressString());
                 }
             } catch (Throwable t) {
                 messages.addError("Failed to add address to ignore", t);

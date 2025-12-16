@@ -75,10 +75,10 @@ public class ResultsQueryProcessor {
         Collections.sort(addresses, new Comparator<SourceAndDestinationAddress>() {
             @Override
             public int compare(SourceAndDestinationAddress e1, SourceAndDestinationAddress e2) {
-                if (e1 == null || e1.getReverseDesinationHostname() == null || e2 == null || e2.getReverseDesinationHostname() == null) {
+                if (e1 == null || e1.getReverseDestinationHostname() == null || e2 == null || e2.getReverseDestinationHostname() == null) {
                     return 0;
                 } else {
-                    return e1.getReverseDesinationHostname().compareTo(e2.getReverseDesinationHostname());
+                    return e1.getReverseDestinationHostname().compareTo(e2.getReverseDestinationHostname());
                 }
             }
         });

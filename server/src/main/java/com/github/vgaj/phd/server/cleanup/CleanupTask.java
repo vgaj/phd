@@ -31,12 +31,14 @@ import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 @Component
+@ConditionalOnProperty(name = "phd.cleanup", havingValue = "true", matchIfMissing = true)
 public class CleanupTask {
     @Autowired
     private RawDataProcessorInterface rawDataProcessor;
@@ -47,10 +49,13 @@ public class CleanupTask {
     @Autowired
     private TrafficDataStore data;
 
-    private MessageInterface messages = Messages.getLogger(this.getClass());
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
 
-    @Scheduled(cron = "30 * * * * *")
+    // 10th second of every minute
+    @Scheduled(cron = "10 * * * * *")
     public void removeFrequentAddresses() {
+        long start = System.currentTimeMillis();
+
         // Get addresses to ignore based on currently receiving data
         Set<SourceAndDestinationAddress> addressesToIgnore = rawDataProcessor.getAddressesToIgnore();
 
@@ -59,5 +64,7 @@ public class CleanupTask {
 
         // Remove addressees from stored data
         data.cleanupIgnoredAddresses(addressesToIgnore);
+
+        messages.addDebug("Total time (ms) to cleanup: " + (System.currentTimeMillis() - start));
     }
 }

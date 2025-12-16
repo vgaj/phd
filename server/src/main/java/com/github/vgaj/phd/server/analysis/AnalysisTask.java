@@ -25,13 +25,11 @@ SOFTWARE.
 package com.github.vgaj.phd.server.analysis;
 
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
-import com.github.vgaj.phd.server.store.TrafficDataStore;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.result.AnalysisResult;
-
+import com.github.vgaj.phd.server.store.TrafficDataStore;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -45,18 +43,18 @@ public class AnalysisTask {
     @Autowired
     private TrafficDataStore trafficDataStore;
 
-    private MessageInterface messages = Messages.getLogger(this.getClass());
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
 
     @Autowired
     private RawDataProcessorInterface analyser;
 
-    @Value("${phd.analysis.interval.ms}")
-    private Integer analysisIntervalMs;
-
-    @Scheduled(fixedRateString = "${phd.analysis.interval.ms}", initialDelayString = "${phd.analysis.interval.ms}")
+    // 40th second of every minute
+    @Scheduled(cron = "40 * * * * *")
     public void processRawData() {
+        long start = System.currentTimeMillis();
+
         // Only process new data
-        long epochMinuteReference = EpochMinuteUtil.now() - (long) Math.ceil((double) analysisIntervalMs / 60000);
+        long epochMinuteReference = EpochMinuteUtil.now() - 1;
 
         trafficDataStore.getAddressesWithDataSince(epochMinuteReference).forEach(address ->
         {
@@ -67,6 +65,6 @@ public class AnalysisTask {
                 analysisCache.removeCurrentResult(address);
             }
         });
+        messages.addDebug("Total time (ms) to analyse: " + (System.currentTimeMillis() - start));
     }
-
 }

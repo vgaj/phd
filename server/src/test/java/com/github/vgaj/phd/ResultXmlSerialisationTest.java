@@ -133,7 +133,7 @@ public class ResultXmlSerialisationTest {
         lookupAttemptedField.setAccessible(true);
         assert (boolean) lookupAttemptedField.get(fromXml);
 
-        assert fromXml.getReverseDesinationHostname().equals("google.dns");
+        assert fromXml.getReverseDestinationHostname().equals("google.dns");
     }
 
     @Test
@@ -161,7 +161,7 @@ public class ResultXmlSerialisationTest {
         ResultsSaveList fromXml = ResultsSaveXmlMapper.getXmlMapper().readValue(xml, ResultsSaveList.class);
 
         // Assert
-        assert fromXml.getResultsForSaving().get(0).getAddress().getReverseDesinationHostname().equals(address.getReverseDesinationHostname());
+        assert fromXml.getResultsForSaving().get(0).getAddress().getReverseDestinationHostname().equals(address.getReverseDestinationHostname());
         assert fromXml.getResultsForSaving().get(0).getResult().getLastSeenEpochMinute() == lastSeen;
         assert fromXml.getResultsForSaving().get(0).getResult().getIntervalCount().get(0).getKey().getInterval() == 1;
         assert fromXml.getResultsForSaving().get(0).getResult().getIntervalCount().get(0).getValue().getCount() == 2;

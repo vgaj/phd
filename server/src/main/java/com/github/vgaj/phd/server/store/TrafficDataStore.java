@@ -35,8 +35,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.UnknownHostException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
 
 /**
  * Store of traffic data for each host
@@ -47,17 +46,41 @@ public class TrafficDataStore implements TrafficDataRecorder {
     private final ConcurrentMap<SourceAndDestinationAddress, DataForAddress> dataStore = new ConcurrentHashMap<>();
     private final MessageInterface messages = Messages.getLogger(this.getClass());
 
+    ExecutorService backgroundHostDetailsExecutor;
+
+    public TrafficDataStore() {
+        backgroundHostDetailsExecutor = new ThreadPoolExecutor(
+                10,
+                10,
+                0L, TimeUnit.MILLISECONDS,
+                new ArrayBlockingQueue<>(1000),
+                new ThreadPoolExecutor.AbortPolicy()
+        );
+    }
+
+    private void queueHostDetailsLookup(SourceAndDestinationAddress host) {
+        try {
+            // The details that this looks up are only used for display purposes and these
+            // are time-consuming to execute so we do that in background threads.
+            backgroundHostDetailsExecutor.submit(() -> {
+                        try {
+                            host.lookupDestinationHost();
+                            host.lookupSourceAddressExtraDetails();
+                            messages.addDebug("Adding " + host.getSourceAndDestinationAddressString());
+                        } catch (UnknownHostException e) {
+                            messages.addError("Failed to lookup address for " + host.getSourceAndDestinationAddressString(), e);
+                        }
+                    }
+            );
+        } catch (RejectedExecutionException ex) {
+            messages.addError("Unable to queue host details lookup for " + host.getSourceAndDestinationAddressString());
+        }
+    }
+
     public void addData(@NonNull SourceAndDestinationAddress host, int length, long epochMinute) {
         if (!dataStore.containsKey(host)) {
-            try {
-                host.lookupDestinationHost();
-                host.lookupSourceAddressExtraDetails();
-                messages.addDebug("Adding destination: " + host.getDesinationHostString());
-
-                dataStore.put(host, new DataForAddress());
-            } catch (UnknownHostException e) {
-                messages.addError("Failed to lookup address", e);
-            }
+            queueHostDetailsLookup(host);
+            dataStore.put(host, new DataForAddress());
         }
         //messages.addMessage("Received " + length + " bytes for " + host.getAddressString());
         dataStore.get(host).addBytes(length, epochMinute);

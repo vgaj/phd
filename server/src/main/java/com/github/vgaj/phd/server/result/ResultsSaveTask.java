@@ -74,8 +74,10 @@ public class ResultsSaveTask {
     }
 
     @EventListener(ContextClosedEvent.class) // Occurs before @PreDestroy
-    @Scheduled(fixedDelayString = "${phd.save.interval.ms}", initialDelayString = "${phd.save.interval.ms}")
+    // Save every hour, on the hour after the processing for the minute is complete
+    @Scheduled(cron = "50 0 * * * *")
     public void save() {
+        long start = System.currentTimeMillis();
         messages.addMessage("Saving results to XML...");
         Path xmlFile = Path.of(xmlFilePath);
         ResultsSaveList toXml = new ResultsSaveList();
@@ -89,5 +91,6 @@ public class ResultsSaveTask {
         } catch (IOException e) {
             messages.addError("Error writing xml results file: " + xmlFilePath, e);
         }
+        messages.addDebug("Total time (ms) to save: " + (System.currentTimeMillis() - start));
     }
 }
