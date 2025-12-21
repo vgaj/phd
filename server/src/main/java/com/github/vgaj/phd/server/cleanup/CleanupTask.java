@@ -24,22 +24,26 @@ SOFTWARE.
 
 package com.github.vgaj.phd.server.cleanup;
 
-import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
-import com.github.vgaj.phd.server.store.TrafficDataStore;
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
+import com.github.vgaj.phd.server.analysis.AnalysisCache;
+import com.github.vgaj.phd.server.analysis.RawDataProcessorInterface;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
+import com.github.vgaj.phd.server.store.TrafficDataStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Component
 @ConditionalOnProperty(name = "phd.cleanup", havingValue = "true", matchIfMissing = true)
 public class CleanupTask {
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
     @Autowired
     private RawDataProcessorInterface rawDataProcessor;
 
@@ -48,16 +52,29 @@ public class CleanupTask {
 
     @Autowired
     private TrafficDataStore data;
+    @Autowired
+    private AnalysisCache analysisCache;
 
-    private final MessageInterface messages = Messages.getLogger(this.getClass());
-
-    // 10th second of every minute
-    @Scheduled(cron = "10 * * * * *")
+    // 30th second of every minute
+    @Scheduled(cron = "30 * * * * *")
     public void removeFrequentAddresses() {
         long start = System.currentTimeMillis();
 
         // Get addresses to ignore based on currently receiving data
-        Set<SourceAndDestinationAddress> addressesToIgnore = rawDataProcessor.getAddressesToIgnore();
+        Set<SourceAndDestinationAddress> candidateAddressesToIgnore = rawDataProcessor.getAddressesToIgnore();
+
+        // Exclude ones which have an identified pattern
+        List<SourceAndDestinationAddress> addressesWithAnalysisResults = analysisCache.getAddresses();
+        HashSet<SourceAndDestinationAddress> addressesToIgnore = new HashSet<>();
+        candidateAddressesToIgnore.forEach(addr -> {
+                    if (!addressesWithAnalysisResults.contains(addr)) {
+                        addressesToIgnore.add(addr);
+                    } else {
+                        messages.addDebug("Not ignoring the following as it has a pattern. "
+                                + addr.getSourceAndDestinationAddressString());
+                    }
+                }
+        );
 
         // Add to list to ignore when monitoring
         monitor.updateFilter(addressesToIgnore);
