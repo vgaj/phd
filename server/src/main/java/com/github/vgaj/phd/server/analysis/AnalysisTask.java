@@ -37,14 +37,11 @@ import java.util.Optional;
 
 @Component
 public class AnalysisTask {
+    private final MessageInterface messages = Messages.getLogger(this.getClass());
     @Autowired
     private AnalysisCache analysisCache;
-
     @Autowired
     private TrafficDataStore trafficDataStore;
-
-    private final MessageInterface messages = Messages.getLogger(this.getClass());
-
     @Autowired
     private RawDataProcessorInterface analyser;
 
@@ -56,8 +53,7 @@ public class AnalysisTask {
         // Only process new data
         long epochMinuteReference = EpochMinuteUtil.now() - 1;
 
-        trafficDataStore.getAddressesWithDataSince(epochMinuteReference).forEach(address ->
-        {
+        trafficDataStore.getAddressesWithDataSince(epochMinuteReference).forEach(address -> {
             Optional<AnalysisResult> result = analyser.processRawData(address);
             if (result.isPresent()) {
                 analysisCache.putCurrentResult(address, result.get());

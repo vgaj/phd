@@ -82,7 +82,7 @@ public class TrafficDataStore implements TrafficDataRecorder {
             queueHostDetailsLookup(host);
             dataStore.put(host, new DataForAddress());
         }
-        //messages.addMessage("Received " + length + " bytes for " + host.getAddressString());
+        //messages.addMessage("Received " + length + " bytes for " + host.getSourceAndDestinationAddressString());
         dataStore.get(host).addBytes(length, epochMinute);
     }
 

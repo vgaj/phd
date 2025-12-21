@@ -27,11 +27,11 @@ package com.github.vgaj.phd.server.monitor.bpf;
 import com.github.vgaj.phd.common.util.EpochMinuteUtil;
 import com.github.vgaj.phd.common.util.Pair;
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
-import com.github.vgaj.phd.server.store.TrafficDataRecorder;
 import com.github.vgaj.phd.server.lookup.HostToExecutableLookup;
 import com.github.vgaj.phd.server.messages.MessageInterface;
 import com.github.vgaj.phd.server.messages.Messages;
 import com.github.vgaj.phd.server.monitor.MonitorTaskFilterUpdateInterface;
+import com.github.vgaj.phd.server.store.TrafficDataRecorder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -51,13 +51,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
 
     private final Set<SourceAndDestinationAddress> addressesToIgnore = ConcurrentHashMap.newKeySet();
-
-    List<Integer> mapIpBytesList;
-
-    int mapFdIpPid;
-
     private final MessageInterface messages = Messages.getLogger(this.getClass());
-
+    List<Integer> mapIpBytesList;
+    int mapFdIpPid;
     @Autowired
     private List<TrafficDataRecorder> trafficDataRecorders;
 
@@ -107,16 +103,14 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
         messages.addDebug("Total time (ms) to get data: " + (System.currentTimeMillis() - start));
 
         // Store count data
-        ipToBytesForLastMinute.forEach(entry ->
-        {
+        ipToBytesForLastMinute.forEach(entry -> {
             if (!addressesToIgnore.contains(entry.getKey())) {
                 trafficDataRecorders.forEach(recorder -> recorder.addData(entry.getKey(), entry.getValue(), epochMinute));
             }
         });
 
         // Store process data
-        ipToPidForLastMinute.forEach(entry ->
-        {
+        ipToPidForLastMinute.forEach(entry -> {
             hostToExecutableLookup.addData(entry.getKey(), entry.getValue());
         });
 
@@ -126,8 +120,7 @@ public class BpfMonitorTask implements MonitorTaskFilterUpdateInterface {
     @Override
     public void updateFilter(Set<SourceAndDestinationAddress> addressesToExclude) {
         int sizeBefore = addressesToIgnore.size();
-        addressesToExclude.forEach(a ->
-        {
+        addressesToExclude.forEach(a -> {
             try {
                 if (addressesToIgnore.add(a)) {
                     messages.addDebug("Not monitoring " + a.getSourceAndDestinationAddressString());

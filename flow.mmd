@@ -1,0 +1,13 @@
+flowchart TD
+    XDP[Kernel] --> BPF((BPF program))
+    BPF --> MAP[phd_ip_to_bytes]
+    MAP --> MON((BpfMonitorTask))
+    MON --> TDS[TrafficDataStore]
+    TDS --> CUT((CleanupTask))
+    CUT --> IGN[addressesToIgnore]
+    IGN --> MON
+    TDS --> ANA((AnalysisTask))
+    ANA --> ACA[AnalysisCache]
+    ACA --> CUT
+    ACA --> RST((ResultsSaveTask))
+    RST --> XML[XML Results]
