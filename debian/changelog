@@ -1,3 +1,10 @@
+phone-home-detector (0.1.16) noble; urgency=medium
+
+  * Scheduling and threading improvements
+  * Stopped ignoring addresses for which there is a pattern
+
+ -- Viru Gajanayake <viru.gajanayake@yahoo.com>  Mon, 22 Dec 2025 04:00:00 +0930
+
 phone-home-detector (0.1.15) noble; urgency=medium
 
   * Bug fixes
