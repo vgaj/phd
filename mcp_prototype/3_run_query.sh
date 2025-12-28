@@ -21,4 +21,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-~/go/bin/mcphost -m openai:gpt-4 -p "examine the data sizes sent to IP address 11.22.33.44 using the get_data_sizes_for_ip_address tool and the intervals what which they are sent using the get_intervals_for_ip_address. determine if there is a pattern. do not use mathematical operations such as means to find patterns"
+# Note: 91.189.91.49 is the IP address for blackcat.canonical.com, nothing important is getting leaked here
+
+~/go/bin/mcphost -m openai:gpt-4 -p "examine the data sizes sent to IP address 91.189.91.49 using the get_data_sizes_for_ip_address tool and the intervals what which they are sent using the get_intervals_for_ip_address. determine if there is a pattern. do not use mathematical operations such as means to find patterns. provide the summary in one sentence."

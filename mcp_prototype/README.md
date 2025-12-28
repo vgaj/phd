@@ -9,3 +9,7 @@ A copy of all data is stored in persistent storage, which can be queried by an M
 3. Set up the data to be queried via an MCP server.
 4. Add credentials for the LLM (tested with OpenAI GPT-4) ```export OPENAI_API_KEY='your-openai-key'```
 5. Query the data using ```.\3_run_query.sh``` as an example
+
+## Output
+Here is an example of the output that it produces:
+```The data sizes sent to IP address 91.189.91.49 are mostly consistent at 200, after an initial size of 168, and the intervals at which they are sent vary without any apparent pattern.```
