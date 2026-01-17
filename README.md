@@ -14,13 +14,9 @@ Phone Home Detector running in hotspot mode will monitor the traffic to identify
 ![Diagram showing how Phone Home Detector is setup](phone-home-detector.png)
 ## Installation and usage
 Currently, the Phone Home Detector is only packaged for **Ubuntu 24.04**.
-To install first add the PPA and ensure it is updated:
+To install add the PPA and install:
 ```
 sudo add-apt-repository -y ppa:viru7/phd
-sudo apt update && sudo apt upgrade -y && sudo reboot
-```
-Then install: 
-```
 sudo apt install -y phone-home-detector
 ```
 Note this can take a while as it has to install dependencies, notably Java and Clang.
