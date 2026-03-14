@@ -133,6 +133,12 @@
         <version>${revision}</version>
       </dependency>
 
+      <dependency>
+        <groupId>com.github.vgaj.phd</groupId>
+        <artifactId>phd-ui-react</artifactId>
+        <version>${revision}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -164,6 +170,11 @@
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.3.1</version>
         </plugin>
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>1.15.1</version>
+        </plugin>
 
       </plugins>
     </pluginManagement>
@@ -174,5 +185,6 @@
     <module>common</module>
     <module>cli</module>
     <module>ui</module>
+    <module>ui-react</module>
   </modules>
 </project>

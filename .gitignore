@@ -35,3 +35,9 @@ build/
 /debian/debhelper-build-stamp
 /debian/.debhelper/
 /debian/phone-home-detector/
+
+### ui-react frontend ###
+/ui-react/src/main/resources/static/*
+/ui-react/frontend/node_modules/
+/ui-react/frontend/node/
+/ui-react/frontend/package-lock.json
