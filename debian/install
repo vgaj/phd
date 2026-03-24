@@ -1,5 +1,5 @@
 server/target/phd-server.jar /usr/share/phone-home-detector
-ui/target/phd-ui.jar /usr/share/phone-home-detector
+ui-react/target/phd-ui-react.jar /usr/share/phone-home-detector
 cli/target/phd-cli-jar-with-dependencies.jar /usr/share/phone-home-detector
 server/src/main/bpf/phone_home_detector_bpf_count.c /usr/share/phone-home-detector
 server/src/main/bpf/phone_home_detector_bpf_pid.c /usr/share/phone-home-detector

@@ -32,9 +32,9 @@ case "$1" in
         adduser --quiet --system --group --no-create-home --shell /sbin/nologin phone-home-detector-ui
 
         # Ensure the log directory exists for the UI that can't create it
-        if [ ! -d "/var/log/phone-phone-detector-ui" ]; then
-          mkdir -p "/var/log/phone-phone-detector-ui"
-          chown phone-home-detector-ui /var/log/phone-phone-detector-ui
+        if [ ! -d "/var/log/phone-home-detector-ui" ]; then
+          mkdir -p "/var/log/phone-home-detector-ui"
+          chown phone-home-detector-ui /var/log/phone-home-detector-ui
         fi
 
         deb-systemd-invoke enable phone-home-detector

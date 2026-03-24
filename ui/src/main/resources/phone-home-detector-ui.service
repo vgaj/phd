@@ -28,7 +28,7 @@ After=network.target
 User=phone-home-detector-ui
 Group=phone-home-detector-ui
 WorkingDirectory=/usr/share/phone-home-detector
-ExecStart=/usr/bin/java -Djava.net.preferIPv4Stack=true -jar /usr/share/phone-home-detector/phd-ui.jar
+ExecStart=/usr/bin/java -Djava.net.preferIPv4Stack=true -jar /usr/share/phone-home-detector/phd-ui-react.jar
 KillSignal=SIGTERM
 
 [Install]
