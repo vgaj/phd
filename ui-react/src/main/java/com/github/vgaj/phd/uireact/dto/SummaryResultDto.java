@@ -34,7 +34,5 @@ public record SummaryResultDto(
         String lastSeen,
         String isCurrent,
         String score,
-        int totalBytes,
-        int totalTimes,
         List<String> details
 ) {}

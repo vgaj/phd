@@ -10,8 +10,6 @@ export interface SummaryResult {
   lastSeen: string;
   isCurrent: string;
   score: string;
-  totalBytes: number;
-  totalTimes: number;
   details: string[];
 }
 
@@ -24,10 +22,6 @@ export interface HostHistoryResponse {
   source: string;
   destination: string;
   history: string[];
-}
-
-export interface DebugLogResponse {
-  log: string[];
 }
 
 export async function fetchSummary(): Promise<SummaryResponse> {
@@ -43,8 +37,3 @@ export async function fetchHistory(source: string, destination: string): Promise
   return res.json();
 }
 
-export async function fetchDebugLog(): Promise<DebugLogResponse> {
-  const res = await fetch('/api/debug-log');
-  if (!res.ok) throw new Error(`Failed to fetch debug log: ${res.status}`);
-  return res.json();
-}

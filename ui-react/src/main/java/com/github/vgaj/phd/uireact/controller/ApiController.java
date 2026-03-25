@@ -99,24 +99,6 @@ public class ApiController {
         }
     }
 
-    @GetMapping("/debug-log")
-    public ResponseEntity<DebugLogResponseDto> getDebugLog() {
-        try (DomainSocketComms comms = ipcService.connect()) {
-            comms.writeSocketMessage(new DebugLogQuery());
-            DebugLogResponse response = comms.readSocketMessage(DebugLogResponse.class);
-            if (response == null) {
-                return ResponseEntity.status(502).build();
-            }
-            List<String> log = response.log() != null
-                    ? Arrays.asList(response.log())
-                    : List.of();
-            return ResponseEntity.ok(new DebugLogResponseDto(log));
-        } catch (Exception e) {
-            logger.error("IPC error on /api/debug-log", e);
-            return ResponseEntity.status(503).build();
-        }
-    }
-
     private SummaryResultDto toDto(DisplayResult result) {
         String source;
         if (HotSpotModeChecker.isHotSpot()) {
@@ -149,8 +131,6 @@ public class ApiController {
                 EpochMinuteUtil.toString(result.lastSeenEpochMinute()),
                 result.isCurrent() ? "Yes" : "No",
                 String.valueOf(result.score()),
-                result.totalBytes(),
-                result.totalTimes(),
                 details
         );
     }
