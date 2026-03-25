@@ -1,49 +1,66 @@
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import Slider from '@mui/material/Slider';
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
-import { FilterState, Bounds } from '../hooks/useFilters';
+import { FilterState, LastSeenWindow } from '../hooks/useFilters';
 
 interface Props {
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
-  bounds: Bounds;
+  sourceOptions: string[];
+  destinationOptions: string[];
   resultCount: number;
   totalCount: number;
 }
 
-export default function FilterBar({ filters, setFilters, bounds, resultCount, totalCount }: Props) {
+export default function FilterBar({ filters, setFilters, sourceOptions, destinationOptions, resultCount, totalCount }: Props) {
   const resetFilters = () => {
     setFilters(prev => ({
       ...prev,
-      textSearch: '',
+      source: '',
+      destination: '',
       currentOnly: false,
-      scoreRange: bounds.score,
-      bytesRange: bounds.bytes,
-      timesRange: bounds.times,
+      minScore: 0,
+      lastSeenWindow: 'all',
     }));
   };
 
   return (
     <Paper sx={{ p: 2, mb: 2 }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
-        <TextField
-          size="small"
-          label="Search source / destination"
-          value={filters.textSearch}
-          onChange={e => setFilters(prev => ({ ...prev, textSearch: e.target.value }))}
-          sx={{ minWidth: 240 }}
-        />
+
+        <FormControl size="small" sx={{ minWidth: 180 }}>
+          <InputLabel>Source</InputLabel>
+          <Select
+            label="Source"
+            value={filters.source}
+            onChange={e => setFilters(prev => ({ ...prev, source: e.target.value }))}
+          >
+            {sourceOptions.map(opt => (
+              <MenuItem key={opt} value={opt}>{opt === '' ? 'All' : opt}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl size="small" sx={{ minWidth: 180 }}>
+          <InputLabel>Destination</InputLabel>
+          <Select
+            label="Destination"
+            value={filters.destination}
+            onChange={e => setFilters(prev => ({ ...prev, destination: e.target.value }))}
+          >
+            {destinationOptions.map(opt => (
+              <MenuItem key={opt} value={opt}>{opt === '' ? 'All' : opt}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
         <FormControlLabel
           control={
@@ -55,86 +72,48 @@ export default function FilterBar({ filters, setFilters, bounds, resultCount, to
           label="Active only"
         />
 
-        <RangeFilter
-          label="Score range"
-          value={filters.scoreRange}
-          min={bounds.score[0]}
-          max={bounds.score[1]}
-          onChange={v => setFilters(prev => ({ ...prev, scoreRange: v as [number, number] }))}
-        />
+        <FormControl size="small" sx={{ minWidth: 130 }}>
+          <InputLabel>Min score</InputLabel>
+          <Select
+            label="Min score"
+            value={filters.minScore}
+            onChange={e => setFilters(prev => ({ ...prev, minScore: e.target.value as number }))}
+          >
+            <MenuItem value={0}>Any</MenuItem>
+            {[9, 8, 7, 6, 5, 4, 3, 2, 1].map(n => (
+              <MenuItem key={n} value={n}>{n}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-        <RangeFilter
-          label="Bytes range"
-          value={filters.bytesRange}
-          min={bounds.bytes[0]}
-          max={bounds.bytes[1]}
-          onChange={v => setFilters(prev => ({ ...prev, bytesRange: v as [number, number] }))}
-        />
-
-        <RangeFilter
-          label="Times range"
-          value={filters.timesRange}
-          min={bounds.times[0]}
-          max={bounds.times[1]}
-          onChange={v => setFilters(prev => ({ ...prev, timesRange: v as [number, number] }))}
-        />
+        <FormControl size="small" sx={{ minWidth: 130 }}>
+          <InputLabel>Last seen</InputLabel>
+          <Select
+            label="Last seen"
+            value={filters.lastSeenWindow}
+            onChange={e => setFilters(prev => ({ ...prev, lastSeenWindow: e.target.value as LastSeenWindow }))}
+          >
+            <MenuItem value="hour">Last hour</MenuItem>
+            <MenuItem value="day">Last day</MenuItem>
+            <MenuItem value="week">Last week</MenuItem>
+            <MenuItem value="all">All</MenuItem>
+          </Select>
+        </FormControl>
 
         <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Chip
-            icon={resultCount === 0 ? <SearchOffIcon /> : undefined}
-            label={`${resultCount} / ${totalCount} shown`}
-            color={resultCount === 0 ? 'default' : 'primary'}
-            size="small"
-          />
+          {resultCount < totalCount && (
+            <Chip
+              icon={resultCount === 0 ? <SearchOffIcon /> : undefined}
+              label={`${resultCount} / ${totalCount} shown`}
+              color={resultCount === 0 ? 'default' : 'primary'}
+              size="small"
+            />
+          )}
           <Button size="small" variant="outlined" onClick={resetFilters}>
             Clear filters
           </Button>
         </Box>
       </Box>
     </Paper>
-  );
-}
-
-interface RangeFilterProps {
-  label: string;
-  value: [number, number];
-  min: number;
-  max: number;
-  onChange: (v: number | number[]) => void;
-}
-
-function RangeFilter({ label, value, min, max, onChange }: RangeFilterProps) {
-  if (min === max) {
-    return (
-      <Chip
-        label={`${label}: ${min}`}
-        size="small"
-        variant="outlined"
-      />
-    );
-  }
-
-  return (
-    <Accordion disableGutters sx={{ minWidth: 200, flex: '0 0 auto' }}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography variant="body2">{label}</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Box sx={{ px: 1 }}>
-          <Slider
-            value={value}
-            min={min}
-            max={max}
-            onChange={(_, v) => onChange(v)}
-            valueLabelDisplay="auto"
-            size="small"
-          />
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="caption">{min}</Typography>
-            <Typography variant="caption">{max}</Typography>
-          </Box>
-        </Box>
-      </AccordionDetails>
-    </Accordion>
   );
 }

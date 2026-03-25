@@ -75,26 +75,24 @@ public class ApiController {
 
     @GetMapping("/history")
     public ResponseEntity<HostHistoryResponseDto> getHistory(
-            @RequestParam String source,
-            @RequestParam String destination) {
-        InetAddress sourceAddr;
-        InetAddress destAddr;
+            @RequestParam("source") String source,
+            @RequestParam("destination") String destination) {
         try {
-            sourceAddr = InetAddress.getByName(source);
-            destAddr = InetAddress.getByName(destination);
+            InetAddress sourceAddr = InetAddress.getByName(source);
+            InetAddress destAddr = InetAddress.getByName(destination);
+            try (DomainSocketComms comms = ipcService.connect()) {
+                comms.writeSocketMessage(new HostHistoryQuery(sourceAddr, destAddr));
+                HostHistoryResponse response = comms.readSocketMessage(HostHistoryResponse.class);
+                if (response == null) {
+                    return ResponseEntity.status(502).build();
+                }
+                List<String> history = response.results() != null
+                        ? Arrays.asList(response.results())
+                        : List.of();
+                return ResponseEntity.ok(new HostHistoryResponseDto(source, destination, history));
+            }
         } catch (UnknownHostException e) {
             return ResponseEntity.badRequest().build();
-        }
-        try (DomainSocketComms comms = ipcService.connect()) {
-            comms.writeSocketMessage(new HostHistoryQuery(sourceAddr, destAddr));
-            HostHistoryResponse response = comms.readSocketMessage(HostHistoryResponse.class);
-            if (response == null) {
-                return ResponseEntity.status(502).build();
-            }
-            List<String> history = response.results() != null
-                    ? Arrays.asList(response.results())
-                    : List.of();
-            return ResponseEntity.ok(new HostHistoryResponseDto(source, destination, history));
         } catch (Exception e) {
             logger.error("IPC error on /api/history", e);
             return ResponseEntity.status(503).build();

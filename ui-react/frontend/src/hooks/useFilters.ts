@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { SummaryRow } from '../api/client';
 import { SortState } from './useSorting';
 
@@ -7,29 +7,24 @@ export type SortColumn =
   | 'destination'
   | 'lastSeen'
   | 'isCurrent'
-  | 'scoreNumeric'
-  | 'totalBytes'
-  | 'totalTimes';
+  | 'scoreNumeric';
+
+export type LastSeenWindow = 'hour' | 'day' | 'week' | 'all';
 
 export interface FilterState {
-  textSearch: string;
+  source: string;
+  destination: string;
   currentOnly: boolean;
-  scoreRange: [number, number];
-  bytesRange: [number, number];
-  timesRange: [number, number];
-}
-
-export interface Bounds {
-  score: [number, number];
-  bytes: [number, number];
-  times: [number, number];
+  minScore: number;
+  lastSeenWindow: LastSeenWindow;
 }
 
 export interface UseFiltersResult {
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
   filtered: SummaryRow[];
-  bounds: Bounds;
+  sourceOptions: string[];
+  destinationOptions: string[];
 }
 
 function comparator(a: SummaryRow, b: SummaryRow, sort: SortState<SortColumn>): number {
@@ -37,7 +32,7 @@ function comparator(a: SummaryRow, b: SummaryRow, sort: SortState<SortColumn>): 
   const col = sort.column;
   let cmp = 0;
 
-  if (col === 'scoreNumeric' || col === 'totalBytes' || col === 'totalTimes') {
+  if (col === 'scoreNumeric') {
     cmp = (a[col] as number) - (b[col] as number);
   } else if (col === 'lastSeen') {
     cmp = new Date(a.lastSeen).getTime() - new Date(b.lastSeen).getTime();
@@ -49,76 +44,48 @@ function comparator(a: SummaryRow, b: SummaryRow, sort: SortState<SortColumn>): 
 }
 
 export function useFilters(rows: SummaryRow[], sort: SortState<SortColumn>): UseFiltersResult {
-  const bounds = useMemo<Bounds>(() => {
-    if (rows.length === 0) {
-      return { score: [0, 0], bytes: [0, 0], times: [0, 0] };
-    }
-    let minScore = Infinity, maxScore = -Infinity;
-    let minBytes = Infinity, maxBytes = -Infinity;
-    let minTimes = Infinity, maxTimes = -Infinity;
-    for (const r of rows) {
-      if (r.scoreNumeric < minScore) minScore = r.scoreNumeric;
-      if (r.scoreNumeric > maxScore) maxScore = r.scoreNumeric;
-      if (r.totalBytes < minBytes) minBytes = r.totalBytes;
-      if (r.totalBytes > maxBytes) maxBytes = r.totalBytes;
-      if (r.totalTimes < minTimes) minTimes = r.totalTimes;
-      if (r.totalTimes > maxTimes) maxTimes = r.totalTimes;
-    }
-    return {
-      score: [minScore, maxScore],
-      bytes: [minBytes, maxBytes],
-      times: [minTimes, maxTimes],
-    };
-  }, [rows]);
-
   const [filters, setFilters] = useState<FilterState>({
-    textSearch: '',
+    source: '',
+    destination: '',
     currentOnly: false,
-    scoreRange: [0, 0],
-    bytesRange: [0, 0],
-    timesRange: [0, 0],
+    minScore: 0,
+    lastSeenWindow: 'all',
   });
 
-  // Sync filter ranges to bounds after first data load
-  useEffect(() => {
-    if (rows.length === 0) return;
-    setFilters(prev => ({
-      ...prev,
-      scoreRange: bounds.score,
-      bytesRange: bounds.bytes,
-      timesRange: bounds.times,
-    }));
-  }, [bounds, rows.length]);
+  const sourceOptions = useMemo<string[]>(
+    () => ['', ...Array.from(new Set(rows.map(r => r.source))).sort()],
+    [rows]
+  );
+
+  const destinationOptions = useMemo<string[]>(
+    () => ['', ...Array.from(new Set(rows.map(r => r.destination))).sort()],
+    [rows]
+  );
 
   const filtered = useMemo<SummaryRow[]>(() => {
     let result = rows;
 
-    if (filters.textSearch.trim()) {
-      const q = filters.textSearch.toLowerCase();
-      result = result.filter(
-        r =>
-          r.source.toLowerCase().includes(q) ||
-          r.destination.toLowerCase().includes(q)
-      );
+    if (filters.source) {
+      result = result.filter(r => r.source === filters.source);
+    }
+
+    if (filters.destination) {
+      result = result.filter(r => r.destination === filters.destination);
     }
 
     if (filters.currentOnly) {
       result = result.filter(r => r.isCurrent === 'Yes');
     }
 
-    const [minScore, maxScore] = filters.scoreRange;
-    const [minBytes, maxBytes] = filters.bytesRange;
-    const [minTimes, maxTimes] = filters.timesRange;
+    if (filters.minScore > 0) {
+      result = result.filter(r => r.scoreNumeric >= filters.minScore);
+    }
 
-    result = result.filter(
-      r =>
-        r.scoreNumeric >= minScore &&
-        r.scoreNumeric <= maxScore &&
-        r.totalBytes >= minBytes &&
-        r.totalBytes <= maxBytes &&
-        r.totalTimes >= minTimes &&
-        r.totalTimes <= maxTimes
-    );
+    if (filters.lastSeenWindow !== 'all') {
+      const windowMs = { hour: 3600000, day: 86400000, week: 604800000 }[filters.lastSeenWindow];
+      const cutoff = Date.now() - windowMs;
+      result = result.filter(r => new Date(r.lastSeen).getTime() >= cutoff);
+    }
 
     if (sort.column) {
       result = [...result].sort((a, b) => comparator(a, b, sort));
@@ -127,5 +94,5 @@ export function useFilters(rows: SummaryRow[], sort: SortState<SortColumn>): Use
     return result;
   }, [rows, filters, sort]);
 
-  return { filters, setFilters, filtered, bounds };
+  return { filters, setFilters, filtered, sourceOptions, destinationOptions };
 }

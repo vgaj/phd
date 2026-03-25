@@ -17,39 +17,32 @@ import ListItemText from '@mui/material/ListItemText';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
-import { fetchSummary, SummaryRow } from '../api/client';
+import { fetchSummary, fetchHistory, SummaryRow } from '../api/client';
 import { useSorting } from '../hooks/useSorting';
 import { useFilters, SortColumn } from '../hooks/useFilters';
 import SortableHeader from './SortableHeader';
 import FilterBar from './FilterBar';
 
-interface Props {
-  onViewHistory: (source: string, destination: string) => void;
-}
-
 function rowKey(row: SummaryRow): string {
   return `${row.sourceIp}|${row.destinationIp}`;
 }
 
-function scoreChipColor(score: number): 'error' | 'warning' | 'success' {
-  if (score >= 70) return 'error';
-  if (score >= 30) return 'warning';
-  return 'success';
-}
-
-export default function SummaryTable({ onViewHistory }: Props) {
+export default function SummaryTable() {
   const [rows, setRows] = useState<SummaryRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const [expandedObs, setExpandedObs] = useState<Set<string>>(new Set());
+  const [obsData, setObsData] = useState<Record<string, string[] | null>>({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
   const { sort, toggleSort } = useSorting<SortColumn>('scoreNumeric');
-  const { filters, setFilters, filtered, bounds } = useFilters(rows, sort);
+  const { filters, setFilters, filtered, sourceOptions, destinationOptions } = useFilters(rows, sort);
 
   useEffect(() => {
     fetchSummary()
@@ -72,10 +65,25 @@ export default function SummaryTable({ onViewHistory }: Props) {
   const toggleExpand = (key: string) => {
     setExpandedRows(prev => {
       const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      return next;
+    });
+  };
+
+  const toggleObs = (row: SummaryRow) => {
+    const key = rowKey(row);
+    setExpandedObs(prev => {
+      const next = new Set(prev);
       if (next.has(key)) {
         next.delete(key);
       } else {
         next.add(key);
+        if (!(key in obsData)) {
+          setObsData(d => ({ ...d, [key]: null }));
+          fetchHistory(row.sourceIp, row.destinationIp)
+            .then(res => setObsData(d => ({ ...d, [key]: res.history })))
+            .catch(() => setObsData(d => ({ ...d, [key]: ['Error loading history'] })));
+        }
       }
       return next;
     });
@@ -101,7 +109,8 @@ export default function SummaryTable({ onViewHistory }: Props) {
         <FilterBar
           filters={filters}
           setFilters={setFilters}
-          bounds={bounds}
+          sourceOptions={sourceOptions}
+          destinationOptions={destinationOptions}
           resultCount={filtered.length}
           totalCount={rows.length}
         />
@@ -115,16 +124,16 @@ export default function SummaryTable({ onViewHistory }: Props) {
                 <SortableHeader column="lastSeen" label="Last Seen" sort={sort} onSort={toggleSort} />
                 <SortableHeader column="isCurrent" label="Current" sort={sort} onSort={toggleSort} />
                 <SortableHeader column="scoreNumeric" label="Score" sort={sort} onSort={toggleSort} />
-                <SortableHeader column="totalBytes" label="Bytes" sort={sort} onSort={toggleSort} />
-                <SortableHeader column="totalTimes" label="Times" sort={sort} onSort={toggleSort} />
-                <TableCell>Details</TableCell>
-                <TableCell>Observations</TableCell>
+                <TableCell />
+                <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
               {pageRows.map(row => {
                 const key = rowKey(row);
                 const expanded = expandedRows.has(key);
+                const obsExpanded = expandedObs.has(key);
+                const obs = obsData[key];
                 return (
                   <>
                     <TableRow key={key} hover>
@@ -138,43 +147,63 @@ export default function SummaryTable({ onViewHistory }: Props) {
                           size="small"
                         />
                       </TableCell>
+                      <TableCell>{row.score}</TableCell>
                       <TableCell>
-                        <Chip
-                          label={row.score}
-                          color={scoreChipColor(row.scoreNumeric)}
+                        <Button
                           size="small"
-                        />
-                      </TableCell>
-                      <TableCell>{row.totalBytes.toLocaleString()}</TableCell>
-                      <TableCell>{row.totalTimes.toLocaleString()}</TableCell>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <IconButton size="small" onClick={() => toggleExpand(key)}>
-                            {expanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-                          </IconButton>
-                          {row.details.length} detail{row.details.length !== 1 ? 's' : ''}
-                        </Box>
+                          variant="text"
+                          endIcon={expanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                          onClick={() => toggleExpand(key)}
+                          sx={{ textTransform: 'none' }}
+                        >
+                          patterns
+                        </Button>
                       </TableCell>
                       <TableCell>
                         <Button
                           size="small"
-                          variant="outlined"
-                          onClick={() => onViewHistory(row.sourceIp, row.destinationIp)}
+                          variant="text"
+                          endIcon={obsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                          onClick={() => toggleObs(row)}
+                          sx={{ textTransform: 'none' }}
                         >
-                          View
+                          data
                         </Button>
                       </TableCell>
                     </TableRow>
                     <TableRow key={`${key}-expand`}>
-                      <TableCell colSpan={9} sx={{ py: 0, border: 0 }}>
+                      <TableCell colSpan={7} sx={{ py: 0, border: 0 }}>
                         <Collapse in={expanded} unmountOnExit>
                           <List dense sx={{ pl: 2 }}>
-                            {row.details.map((d, i) => (
-                              <ListItem key={i} sx={{ py: 0 }}>
-                                <ListItemText primary={`• ${d}`} />
-                              </ListItem>
-                            ))}
+                            {row.details.map((d, i) => {
+                              const isSub = d.startsWith('- ');
+                              return (
+                                <ListItem key={i} sx={{ py: 0, pl: isSub ? 4 : 0 }}>
+                                  <ListItemText primary={isSub ? d.slice(2) : `• ${d}`} />
+                                </ListItem>
+                              );
+                            })}
                           </List>
+                        </Collapse>
+                      </TableCell>
+                    </TableRow>
+                    <TableRow key={`${key}-obs`}>
+                      <TableCell colSpan={7} sx={{ py: 0, border: 0 }}>
+                        <Collapse in={obsExpanded} unmountOnExit>
+                          {!obs ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, pl: 2 }}>
+                              <CircularProgress size={16} />
+                              <Typography variant="body2">Loading...</Typography>
+                            </Box>
+                          ) : (
+                            <List dense sx={{ pl: 2 }}>
+                              {obs.map((line, i) => (
+                                <ListItem key={i} sx={{ py: 0 }}>
+                                  <ListItemText primary={line} />
+                                </ListItem>
+                              ))}
+                            </List>
+                          )}
                         </Collapse>
                       </TableCell>
                     </TableRow>
