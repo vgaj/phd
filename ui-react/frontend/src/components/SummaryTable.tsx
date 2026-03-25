@@ -8,7 +8,6 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TablePagination from '@mui/material/TablePagination';
 import IconButton from '@mui/material/IconButton';
-import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
 import List from '@mui/material/List';
@@ -18,6 +17,8 @@ import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
@@ -36,8 +37,8 @@ export default function SummaryTable() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-  const [expandedObs, setExpandedObs] = useState<Set<string>>(new Set());
   const [obsData, setObsData] = useState<Record<string, string[] | null>>({});
+  const [activeTab, setActiveTab] = useState<Record<string, number>>({});
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
 
@@ -57,7 +58,6 @@ export default function SummaryTable() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Reset page when filters or sort change
   useEffect(() => {
     setPage(0);
   }, [filters, sort]);
@@ -70,23 +70,14 @@ export default function SummaryTable() {
     });
   };
 
-  const toggleObs = (row: SummaryRow) => {
-    const key = rowKey(row);
-    setExpandedObs(prev => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-        if (!(key in obsData)) {
-          setObsData(d => ({ ...d, [key]: null }));
-          fetchHistory(row.sourceIp, row.destinationIp)
-            .then(res => setObsData(d => ({ ...d, [key]: res.history })))
-            .catch(() => setObsData(d => ({ ...d, [key]: ['Error loading history'] })));
-        }
-      }
-      return next;
-    });
+  const handleTabChange = (key: string, row: SummaryRow, tab: number) => {
+    setActiveTab(prev => ({ ...prev, [key]: tab }));
+    if (tab === 1 && !(key in obsData)) {
+      setObsData(d => ({ ...d, [key]: null }));
+      fetchHistory(row.sourceIp, row.destinationIp)
+        .then(res => setObsData(d => ({ ...d, [key]: res.history })))
+        .catch(() => setObsData(d => ({ ...d, [key]: ['Error loading history'] })));
+    }
   };
 
   if (loading) {
@@ -125,14 +116,13 @@ export default function SummaryTable() {
                 <SortableHeader column="isCurrent" label="Current" sort={sort} onSort={toggleSort} />
                 <SortableHeader column="scoreNumeric" label="Score" sort={sort} onSort={toggleSort} />
                 <TableCell />
-                <TableCell />
               </TableRow>
             </TableHead>
             <TableBody>
               {pageRows.map(row => {
                 const key = rowKey(row);
                 const expanded = expandedRows.has(key);
-                const obsExpanded = expandedObs.has(key);
+                const tab = activeTab[key] ?? 0;
                 const obs = obsData[key];
                 return (
                   <>
@@ -149,60 +139,52 @@ export default function SummaryTable() {
                       </TableCell>
                       <TableCell>{row.score}</TableCell>
                       <TableCell>
-                        <Button
-                          size="small"
-                          variant="text"
-                          endIcon={expanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-                          onClick={() => toggleExpand(key)}
-                          sx={{ textTransform: 'none' }}
-                        >
-                          patterns
-                        </Button>
-                      </TableCell>
-                      <TableCell>
-                        <Button
-                          size="small"
-                          variant="text"
-                          endIcon={obsExpanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-                          onClick={() => toggleObs(row)}
-                          sx={{ textTransform: 'none' }}
-                        >
-                          data
-                        </Button>
+                        <IconButton size="small" onClick={() => toggleExpand(key)}>
+                          {expanded ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                        </IconButton>
                       </TableCell>
                     </TableRow>
-                    <TableRow key={`${key}-expand`}>
-                      <TableCell colSpan={7} sx={{ py: 0, border: 0 }}>
+                    <TableRow key={`${key}-detail`}>
+                      <TableCell colSpan={6} sx={{ py: 0, border: 0 }}>
                         <Collapse in={expanded} unmountOnExit>
-                          <List dense sx={{ pl: 2 }}>
-                            {row.details.map((d, i) => {
-                              const isSub = d.startsWith('- ');
-                              return (
-                                <ListItem key={i} sx={{ py: 0, pl: isSub ? 4 : 0 }}>
-                                  <ListItemText primary={isSub ? d.slice(2) : `• ${d}`} />
-                                </ListItem>
-                              );
-                            })}
-                          </List>
-                        </Collapse>
-                      </TableCell>
-                    </TableRow>
-                    <TableRow key={`${key}-obs`}>
-                      <TableCell colSpan={7} sx={{ py: 0, border: 0 }}>
-                        <Collapse in={obsExpanded} unmountOnExit>
-                          {!obs ? (
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, pl: 2 }}>
-                              <CircularProgress size={16} />
-                              <Typography variant="body2">Loading...</Typography>
-                            </Box>
-                          ) : (
+                          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                            <Tabs
+                              value={tab}
+                              onChange={(_, v) => handleTabChange(key, row, v)}
+                              textColor="inherit"
+                              indicatorColor="primary"
+                            >
+                              <Tab label="Patterns" sx={{ textTransform: 'none', minHeight: 36 }} />
+                              <Tab label="Data" sx={{ textTransform: 'none', minHeight: 36 }} />
+                            </Tabs>
+                          </Box>
+                          {tab === 0 && (
                             <List dense sx={{ pl: 2 }}>
-                              {obs.map((line, i) => (
-                                <ListItem key={i} sx={{ py: 0 }}>
-                                  <ListItemText primary={line} />
-                                </ListItem>
-                              ))}
+                              {row.details.map((d, i) => {
+                                const isSub = d.startsWith('- ');
+                                return (
+                                  <ListItem key={i} sx={{ py: 0, pl: isSub ? 4 : 0 }}>
+                                    <ListItemText primary={isSub ? d.slice(2) : d} />
+                                  </ListItem>
+                                );
+                              })}
                             </List>
+                          )}
+                          {tab === 1 && (
+                            !obs ? (
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, p: 1, pl: 2 }}>
+                                <CircularProgress size={16} />
+                                <Typography variant="body2">Loading...</Typography>
+                              </Box>
+                            ) : (
+                              <List dense sx={{ pl: 2 }}>
+                                {obs.map((line, i) => (
+                                  <ListItem key={i} sx={{ py: 0 }}>
+                                    <ListItemText primary={line} />
+                                  </ListItem>
+                                ))}
+                              </List>
+                            )
                           )}
                         </Collapse>
                       </TableCell>
