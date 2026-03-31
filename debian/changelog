@@ -1,3 +1,9 @@
+phone-home-detector (0.1.17) noble; urgency=medium
+
+  * Migrated the user interface to a new implementation built with React
+
+ -- Viru Gajanayake <viru.gajanayake@yahoo.com>  Web, 01 Apr 2026 09:00:00 +0930
+
 phone-home-detector (0.1.16) noble; urgency=medium
 
   * Scheduling and threading improvements
