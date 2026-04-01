@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Paper from '@mui/material/Paper';
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
@@ -36,6 +36,7 @@ export default function SummaryTable() {
   const [rows, setRows] = useState<SummaryRow[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [obsData, setObsData] = useState<Record<string, string[] | null>>({});
   const [activeTab, setActiveTab] = useState<Record<string, number>>({});
@@ -45,7 +46,8 @@ export default function SummaryTable() {
   const { sort, toggleSort } = useSorting<SortColumn>('scoreNumeric');
   const { filters, setFilters, filtered, sourceOptions, destinationOptions } = useFilters(rows, sort);
 
-  useEffect(() => {
+  const loadData = useCallback((initial: boolean) => {
+    if (initial) setLoading(true); else setRefreshing(true);
     fetchSummary()
       .then(data => {
         const mapped: SummaryRow[] = data.results.map(r => ({
@@ -53,10 +55,13 @@ export default function SummaryTable() {
           scoreNumeric: parseFloat(r.score) || 0,
         }));
         setRows(mapped);
+        setError(null);
       })
       .catch(e => setError(String(e)))
-      .finally(() => setLoading(false));
+      .finally(() => { setLoading(false); setRefreshing(false); });
   }, []);
+
+  useEffect(() => { loadData(true); }, [loadData]);
 
   useEffect(() => {
     setPage(0);
@@ -104,6 +109,8 @@ export default function SummaryTable() {
           destinationOptions={destinationOptions}
           resultCount={filtered.length}
           totalCount={rows.length}
+          onRefresh={() => loadData(false)}
+          refreshing={refreshing}
         />
 
         <TableContainer>
