@@ -70,23 +70,25 @@ public class DomainSocketComms implements AutoCloseable {
             Class<T> READ_TYPE) throws IOException {
         // Read the size
         ByteBuffer sizeBuffer = ByteBuffer.allocate(4);
-        int bytesRead = channel.read(sizeBuffer);
-        sizeBuffer.flip();
-        if (bytesRead < 0) {
-            return null;
+        while (sizeBuffer.hasRemaining()) {
+            int bytesRead = channel.read(sizeBuffer);
+            if (bytesRead < 0) {
+                return null;
+            }
         }
+        sizeBuffer.flip();
         int messageSize = sizeBuffer.getInt();
 
         // Read from domain socket
         ByteBuffer messageBuffer = ByteBuffer.allocate(messageSize);
-        bytesRead = channel.read(messageBuffer);
-        if (bytesRead < 0) {
-            return null;
+        while (messageBuffer.hasRemaining()) {
+            int bytesRead = channel.read(messageBuffer);
+            if (bytesRead < 0) {
+                return null;
+            }
         }
 
-        byte[] bytes = new byte[bytesRead];
-        messageBuffer.flip();
-        messageBuffer.get(bytes);
+        byte[] bytes = messageBuffer.array();
 
         InputStream is = new ByteArrayInputStream(bytes);
         ObjectInputStream ois = new ObjectInputStream(is);
