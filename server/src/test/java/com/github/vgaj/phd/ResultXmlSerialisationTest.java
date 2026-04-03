@@ -27,7 +27,6 @@ package com.github.vgaj.phd;
 import com.github.vgaj.phd.server.result.*;
 import com.github.vgaj.phd.server.address.SourceAndDestinationAddress;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -47,7 +46,7 @@ public class ResultXmlSerialisationTest {
     }
 
     @Test
-    void roundTripAnalysisResult() throws JsonProcessingException {
+    void roundTripAnalysisResult() {
         // Arrange
         int interval1 = 1;
         int intervalCount1 = 2;
@@ -81,7 +80,7 @@ public class ResultXmlSerialisationTest {
     }
 
     @Test
-    void roundTripEmptyAnalysisResult() throws JsonProcessingException {
+    void roundTripEmptyAnalysisResult() {
         // Arrange
         AnalysisResultImpl result = new AnalysisResultImpl();
         result.addIntervalCount(TransferIntervalMinutes.of(1), TransferCount.of(2));
@@ -98,7 +97,7 @@ public class ResultXmlSerialisationTest {
     }
 
     @Test
-    void roundTripRemoteAddress() throws UnknownHostException, JsonProcessingException, NoSuchFieldException, IllegalAccessException {
+    void roundTripRemoteAddress() throws UnknownHostException, NoSuchFieldException, IllegalAccessException {
         // Arrange
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8, (byte) 8, (byte) 8, (byte) 4, (byte) 4);
         address.lookupDestinationHost();
@@ -137,7 +136,7 @@ public class ResultXmlSerialisationTest {
     }
 
     @Test
-    void roundTripResultsSaveList() throws UnknownHostException, JsonProcessingException {
+    void roundTripResultsSaveList() throws UnknownHostException {
         // Arrange
         SourceAndDestinationAddress address = new SourceAndDestinationAddress((byte) 8, (byte) 8, (byte) 8, (byte) 8);
         address.lookupDestinationHost();
