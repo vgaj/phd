@@ -1,3 +1,10 @@
+phone-home-detector (0.1.18) noble; urgency=medium
+
+  * Improved UI usability and handling of a large number of results
+  * Updated to SpringBoot 4 and Jackson 3
+
+ -- Viru Gajanayake <viru.gajanayake@yahoo.com>  Web, 08 Apr 2026 09:00:00 +0930
+
 phone-home-detector (0.1.17) noble; urgency=medium
 
   * Migrated the user interface to a new implementation built with React
