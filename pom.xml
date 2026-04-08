@@ -15,7 +15,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
-    <revision>0.1.20</revision>
+    <revision>0.1.21</revision>
     <spring.version>4.0.5</spring.version>
     <node.version>v22.13.1</node.version>
   </properties>
