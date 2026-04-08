@@ -1,3 +1,9 @@
+phone-home-detector (0.1.19) noble; urgency=medium
+
+  * Addressing build issues
+
+ -- Viru Gajanayake <viru.gajanayake@yahoo.com>  Wed, 08 Apr 2026 15:00:00 +0930
+
 phone-home-detector (0.1.18) noble; urgency=medium
 
   * Improved UI usability and handling of a large number of results
