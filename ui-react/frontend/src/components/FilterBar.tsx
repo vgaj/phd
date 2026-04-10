@@ -8,6 +8,8 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
 import SearchOffIcon from '@mui/icons-material/SearchOff';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -42,31 +44,23 @@ export default function FilterBar({ filters, setFilters, sourceOptions, destinat
 
         {/* Row 1: Source + Destination side by side */}
         <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-          <FormControl size="small" fullWidth>
-            <InputLabel>Source</InputLabel>
-            <Select
-              label="Source"
-              value={filters.source}
-              onChange={e => setFilters(prev => ({ ...prev, source: e.target.value }))}
-            >
-              {sourceOptions.map(opt => (
-                <MenuItem key={opt} value={opt}>{opt === '' ? 'All' : opt}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            size="small"
+            options={sourceOptions}
+            getOptionLabel={opt => opt === '' ? 'All' : opt}
+            value={filters.source}
+            onChange={(_e, val) => setFilters(prev => ({ ...prev, source: val ?? '' }))}
+            renderInput={params => <TextField {...params} label="Source" />}
+          />
 
-          <FormControl size="small" fullWidth>
-            <InputLabel>Destination</InputLabel>
-            <Select
-              label="Destination"
-              value={filters.destination}
-              onChange={e => setFilters(prev => ({ ...prev, destination: e.target.value }))}
-            >
-              {destinationOptions.map(opt => (
-                <MenuItem key={opt} value={opt}>{opt === '' ? 'All' : opt}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            size="small"
+            options={destinationOptions}
+            getOptionLabel={opt => opt === '' ? 'All' : opt}
+            value={filters.destination}
+            onChange={(_e, val) => setFilters(prev => ({ ...prev, destination: val ?? '' }))}
+            renderInput={params => <TextField {...params} label="Destination" />}
+          />
         </Box>
 
         {/* Row 2: remaining filters + result count + clear */}
