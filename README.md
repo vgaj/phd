@@ -13,7 +13,7 @@ Phone Home Detector running in hotspot mode will monitor the traffic to identify
 
 ![Diagram showing how Phone Home Detector is setup](phone-home-detector.png)
 ## Installation and usage
-Currently, the Phone Home Detector is only packaged for **Ubuntu 24.04**.
+Currently, the Phone Home Detector is packaged for **Ubuntu 24.04** and **Ubuntu 26.04**.
 To install add the PPA and install:
 ```
 sudo add-apt-repository -y ppa:viru7/phd
@@ -32,11 +32,11 @@ phone-home-detector -?
 There is also a simple web interface available at http://localhost:9080/
 
 ## Hotspot mode setup
-Note that this requires **Ubuntu Server 24.04** with the GUI installed using:
+Note that this requires **Ubuntu Server** with the GUI installed using:
 ```
 sudo apt install -y ubuntu-desktop
 ```
-You can also use **Ubuntu Workstation 24.04**. 
+You can also use **Ubuntu Workstation**. 
 However, on more than one occasion I have found that bpftool (which this project is dependent on) fails to work after an upgrade. 
 Ubuntu Server is not setup with HWE so the kernel version is fixed.
 
@@ -104,6 +104,7 @@ In workstation mode it also runs an additional BPF program to attempt to identif
 ## Support
 The following distributions and kernel versions have been tested:
 * Ubuntu 24.04
+* Ubuntu 26.04
 
 ## Known Issues
 * No IPv6 support
